@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>性别角色心理测验 · 贝母 BSRI 中文版</title>
-<meta name="description" content="基于贝姆性别角色量表（BSRI）的 60 题自我探索测验，看你的「坚韧果断」与「温柔共情」两种特质，并在四象限里看见自己与大家的位置。" />
+<title>性别角色心理测验 · CSRI-50 中文版</title>
+<meta name="description" content="基于中国大学生性别角色量表（CSRI-50，刘电芝 2011）的自我探索测验，看你的「坚韧果断」与「温柔共情」两种特质，并在四象限里看见自己与大家的位置。" />
 <style>
   :root{
     --pink:#ff5e8a;
@@ -184,12 +184,12 @@
       <h1>你身上，<br>藏着怎样的自己？</h1>
       <p class="sub">有人说温柔是女生的样子，坚强是男生的样子。<br>可你，也许比这些标签更丰富。</p>
       <div class="tags">
-        <span class="tag">🌟 60 题</span>
+        <span class="tag">🌟 50 题</span>
         <span class="tag">⏱ 约 3 分钟</span>
         <span class="tag">💗 暖心解读</span>
       </div>
       <div class="card-note">
-        💌 这是一份基于<b>贝姆性别角色量表（BSRI）</b>的小测验。<br>
+        💌 这是一份基于<b>中国大学生性别角色量表（CSRI-50）</b>的小测验。<br>
         它会看看你身上「坚韧果断」与「温柔共情」这两种特质各自有多浓，
         然后告诉你——<b>你，是哪一种独特的存在</b>。
         <div class="note-sep">
@@ -214,7 +214,7 @@
   <!-- 答题 -->
   <section id="quiz" class="screen">
     <div class="quiz-head">
-      <div class="row"><span>🌸 一点点看清自己</span><span class="head-right"><span id="prog-text">0 / 60</span></span></div>
+      <div class="row"><span>🌸 一点点看清自己</span><span class="head-right"><span id="prog-text">0 / 50</span></span></div>
       <div class="progress"><i id="prog-bar"></i></div>
       <p class="q-hint">请为下面每句话与自己的符合程度打分（1 = 很不符合，7 = 很符合）。</p>
     </div>
@@ -258,7 +258,7 @@
               <span><i style="background:#ff5e8a"></i>女生落点</span>
               <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
             </div>
-            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 <b>4.9</b>（BSRI 60 题版的<b>常模中位数</b>，学界通行做法，源自 Bem 1974 原版大样本中位数；在 1–7 量表里距左/下约 2/3 处，故色块非正方形）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
+            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界为 CSRI-50 常模中位数：<b>男性化 4.8 / 女性化 5.0</b>（刘电芝 2011，全国 5008 名大学生常模；两轴分界不同，故色块非正方形）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
           </div>
 
           <div class="r-section">
@@ -292,7 +292,7 @@
         </div>
 
         <div class="r-foot">
-          测验依据贝姆性别角色量表（BSRI）编制 · 结果由你的自我描述生成，仅供参考与自我探索，<b>不作临床诊断</b> 💗<br>说明：本站以 <b>4.9</b> 作为四象限分界，即 BSRI 60 题版的<b>常模中位数</b>（学界通行做法，源自 Bem 1974 原版大样本中位数）；连续得分（男性化 / 女性化）更值得参考。
+          测验依据中国大学生性别角色量表（CSRI-50，刘电芝 2011，基于 Bem 1974 与钱铭怡 2000 发展而来）编制 · 结果由你的自我描述生成，仅供参考与自我探索，<b>不作临床诊断</b> 💗<br>说明：本站以 <b>男性化 4.8 / 女性化 5.0</b> 作为四象限分界，即 CSRI-50 的<b>常模中位数</b>（全国 5008 名大学生复测得出，属中国本土常模）；连续得分（男性化 / 女性化）更值得参考。
         </div>
       </div>
 
@@ -320,23 +320,33 @@
 <canvas id="confetti"></canvas>
 
 <script>
-/* ============ 题目数据（贝母 BSRI 中文版，按 每3题一组 M/F/中性 循环） ============ */
-const M = ["维护自己的信念","独立的","果断、有主见的","个性坚强的","有力量感的","有领导能力的","乐于冒险","做决定不拖泥带水","能照顾好自己","有掌控感的","有男子气概的","敢于坚持立场","有冲劲的","像个领头人","有自己主意的","爱竞争的","有雄心壮志的","善于分析问题的","爱运动的","凡事靠自己的"];
-const F = ["情意绵绵的","会表达同情的","对别人的需要很敏感","善解人意的","有同情心的","乐于安抚受伤的人","温柔的","喜欢小孩的","温暖的","随和的","快活的","容易感到幸福的","说话轻声细语的","文雅的","忠诚的","害羞的","容易被夸奖打动的","容易相信人的","孩子气的","有女人味的"];
-const N = ["适应性强的","真诚的","严肃认真的","守规矩的","友好的","不太靠谱的","做事用心的","情绪起伏大的","快乐的","靠得住的","诚实的","爱嫉妒的","不爱张扬的","捉摸不定的","有点虚荣的","讨人喜欢的","没有条理的","说话得体的","爱表现的","乐于助人的"];
-
-/* 按 每3题一组(M/F/中性) 混合，得到 60 题 */
-const questions = [];
-for(let i=0;i<60;i++){
-  const g = i%3;
-  if(g===0) questions.push({cat:'M', word:M[Math.floor(i/3)]});
-  else if(g===1) questions.push({cat:'F', word:F[Math.floor(i/3)]});
-  else questions.push({cat:'N', word:N[Math.floor(i/3)]});
-}
+/* ============ 题目数据（中国大学生性别角色量表 CSRI-50，刘电芝 2011） ============
+   50 题 = 男性化(M)16 + 女性化(F)16 + 中性干扰(N)18，按原量表发表顺序（已混合 M/F/N）。
+   计分仅取 M、F 各 16 题均值；N 18 题作干扰，不计入得分。词表源自 xinlixue.cn 逐题公布版。 */
+const ITEMS = [
+ {cat:'F',word:'有亲和力的'},{cat:'M',word:'乐于冒险的'},{cat:'F',word:'节俭的'},
+ {cat:'N',word:'懈怠的'},{cat:'M',word:'有领导风范的'},{cat:'M',word:'大度的'},
+ {cat:'F',word:'文静的'},{cat:'N',word:'认真的'},{cat:'N',word:'真诚的'},
+ {cat:'N',word:'自以为是的'},{cat:'M',word:'冷静的'},{cat:'N',word:'孝顺的'},
+ {cat:'N',word:'谦虚的'},{cat:'F',word:'善于倾听的'},{cat:'M',word:'沉稳的'},
+ {cat:'F',word:'心细的'},{cat:'N',word:'得过且过的'},{cat:'N',word:'乐群的'},
+ {cat:'F',word:'能体谅人的'},{cat:'F',word:'语调柔和的'},{cat:'N',word:'愉快的'},
+ {cat:'M',word:'有判断力的'},{cat:'N',word:'傲慢的'},{cat:'M',word:'心胸开阔的'},
+ {cat:'N',word:'推诿责任的'},{cat:'M',word:'理性的'},{cat:'F',word:'勤俭的'},
+ {cat:'F',word:'富有同情心的'},{cat:'N',word:'消极的'},{cat:'M',word:'男子气的'},
+ {cat:'F',word:'有爱心的'},{cat:'M',word:'慷慨的'},{cat:'M',word:'有组织能力的'},
+ {cat:'F',word:'乐于安慰人的'},{cat:'M',word:'胆大的'},{cat:'N',word:'不卑不亢的'},
+ {cat:'M',word:'豪放的'},{cat:'N',word:'乐于助人的'},{cat:'F',word:'女子气的'},
+ {cat:'F',word:'文雅的'},{cat:'N',word:'投其所好的'},{cat:'M',word:'有领导能力的'},
+ {cat:'F',word:'温柔的'},{cat:'M',word:'勇敢的'},{cat:'N',word:'墨守成规的'},
+ {cat:'N',word:'诚实的'},{cat:'M',word:'有支配力的'},{cat:'F',word:'温顺的'},
+ {cat:'N',word:'不合群的'},{cat:'F',word:'善解人意的'}
+];
+const questions = ITEMS.map(it=>({cat:it.cat, word:it.word}));
 
 const SCALE = ["很不符合","基本不是","比较不符合","说不清","较符合","基本符合","很符合"];
-const answers = new Array(60).fill(0);
-let _milestoneShown = {20:false, 40:false}; // 1/3、2/3 鼓励提示只弹一次
+const answers = new Array(50).fill(0);
+let _milestoneShown = {17:false, 33:false}; // 1/3、2/3 鼓励提示只弹一次（50 题下的约数）
 
 /* ============ 渲染答题 ============ */
 function renderQuiz(){
@@ -370,20 +380,21 @@ function renderQuiz(){
 /* 鼓励特效：累计填完 20 题（1/3）、40 题（2/3）时各弹一次 */
 function updateProgress(){
   const done = answers.filter(a=>a>0).length;
-  document.getElementById('prog-text').textContent = done + ' / 60';
-  document.getElementById('prog-bar').style.width = (done/60*100)+'%';
-  if(done===20 && !_milestoneShown[20]){
-    _milestoneShown[20]=true;
+  document.getElementById('prog-text').textContent = done + ' / 50';
+  document.getElementById('prog-bar').style.width = (done/50*100)+'%';
+  if(done===17 && !_milestoneShown[17]){
+    _milestoneShown[17]=true;
     cheer('已完成 1/3 啦 🌟\n慢慢来，你愿意花时间看看自己，就很了不起');
   }
-  if(done===40 && !_milestoneShown[40]){
-    _milestoneShown[40]=true;
+  if(done===33 && !_milestoneShown[33]){
+    _milestoneShown[33]=true;
     cheer('完成 2/3 了 💪\n再坚持一下，你离「看清自己」更近一步');
   }
 }
 
-/* ============ 计分 & 分类（分界 = 4.9，即 BSRI 60 题版常模中位数，学界通行做法） ============ */
-const THRESHOLD = 4.9; // BSRI 60题版常模中位数：均值≥4.9 视为该维度"高分"（源自 Bem 1974 原版大样本中位数；底块按 4.9 切分，故非正方形）
+/* ============ 计分 & 分类（分界 = CSRI-50 常模中位数：男性化 4.8 / 女性化 5.0） ============ */
+const M_THRESHOLD = 4.8; // CSRI-50 男性化分量表常模中位数（刘电芝 2011，全国 5008 名大学生复测）
+const F_THRESHOLD = 5.0; // CSRI-50 女性化分量表常模中位数
 function compute(){
   let sumM=0,nM=0,sumF=0,nF=0;
   questions.forEach((q,i)=>{
@@ -392,9 +403,9 @@ function compute(){
   });
   const mScore = sumM/nM, fScore = sumF/nF;
   let type;
-  if(mScore>=THRESHOLD && fScore>=THRESHOLD) type='androgynous';
-  else if(mScore>=THRESHOLD && fScore<THRESHOLD) type='masculine';
-  else if(mScore<THRESHOLD && fScore>=THRESHOLD) type='feminine';
+  if(mScore>=M_THRESHOLD && fScore>=F_THRESHOLD) type='androgynous';
+  else if(mScore>=M_THRESHOLD && fScore<F_THRESHOLD) type='masculine';
+  else if(mScore<M_THRESHOLD && fScore>=F_THRESHOLD) type='feminine';
   else type='undifferentiated';
   return {mScore,fScore,type};
 }
@@ -484,8 +495,8 @@ function pickGender(g){
 }
 function finishQuiz(){
   const done = answers.filter(a=>a>0).length;
-  if(done<60){
-    toast(`还差 ${60-done} 题哦，先填完再揭晓 ✨`);
+  if(done<50){
+    toast(`还差 ${50-done} 题哦，先填完再揭晓 ✨`);
     const first = answers.findIndex(a=>a===0);
     const el = document.querySelector(`.opt[data-q="${first}"]`);
     if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
@@ -501,7 +512,7 @@ function finishQuiz(){
 }
 function restart(){
   answers.fill(0);
-  _milestoneShown = {20:false, 40:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
+  _milestoneShown = {17:false, 33:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
   show('cover');
 }
 function toast(msg){
@@ -566,7 +577,7 @@ async function submitAndLoadPoints(r){
     m:+r.mScore.toFixed(3), f:+r.fScore.toFixed(3), type:r.type,
     gender:currentGender||'unknown',
     uid: myUid,                 // 匿名提取码：后台据此存/取本人明细
-    answers: answers.map(Number) // 60 题完整作答（-1 等缺失记为 0）
+    answers: answers.map(Number) // 50 题完整作答（-1 等缺失记为 0）
   };
   // 先立即画出你自己的点（不等后端，秒出图）
   renderScatter([], me);
@@ -622,8 +633,8 @@ function renderScatter(realPoints, me){
   const toX = v => x0 + (v-MIN)/(MAX-MIN)*(x1-x0);
   const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 男性化在上（Y 轴=男性化）
   ctx.clearRect(0,0,W,H);
-  // 背景四区淡色：按 4.9 常模中位数切分（非几何正中，故色块非正方形），与本站分类规则一致
-  const midX = toX(4.9), midY = toY(4.9);   // 4.9 常模中位数分界
+  // 背景四区淡色：按 CSRI-50 常模中位数切分（X=女性化@5.0，Y=男性化@4.8，两轴分界不同，故色块非正方形），与本站分类规则一致
+  const midX = toX(5.0), midY = toY(4.8);   // 女性化 5.0 / 男性化 4.8 常模中位数分界
   ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,midX-x0,midY-y0);                     // 左上 男性化（蓝）
   ctx.fillStyle = '#f0eaff'; ctx.fillRect(midX,y0,x1-midX,midY-y0);                   // 右上 双性化（紫）
   ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,midY,x1-x0,y1-midY);                     // 左下 未分化（黄）
@@ -640,7 +651,7 @@ function renderScatter(realPoints, me){
   ctx.fillStyle='#7a6a73'; ctx.font='bold 22px -apple-system,"PingFang SC",sans-serif';
   ctx.fillText('女性化 →', (x0+x1)/2, y1+34);
   ctx.save();ctx.translate(x0-34,(y0+y1)/2);ctx.rotate(-Math.PI/2);ctx.fillText('男性化 →',0,0);ctx.restore();
-  // 象限标签（居中于各自 4.9 色块）
+  // 象限标签（居中于各自 CSRI-50 色块）
   ctx.font='bold 19px -apple-system,"PingFang SC",sans-serif';
   ctx.fillStyle='#9a8aa6';
   ctx.fillText('男性化', (x0+midX)/2, y0+22);
@@ -696,9 +707,10 @@ function buildPayloadFromRecord(rec){
     score:(rec.answers && rec.answers[i]!=null) ? Number(rec.answers[i]) : 0
   }));
   return {
-    meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date(rec.ts||Date.now()).toISOString(),
+    meta:{test:'中国大学生性别角色量表(CSRI-50)', generatedAt:new Date(rec.ts||Date.now()).toISOString(),
           gender:rec.gender||'unknown', uid:rec.uid},
-    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2), threshold:4.9},
+    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2),
+            threshold:{masculinity:4.8, femininity:5.0}},
     type:rec.type, typeLabel:REPORT[rec.type]?REPORT[rec.type].title:rec.type,
     answers:ans
   };
@@ -706,8 +718,9 @@ function buildPayloadFromRecord(rec){
 function buildPayload(r){
   const ans = questions.map((q,i)=>({no:i+1, word:q.word, category:q.cat, score:answers[i]}));
   return {
-    meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date().toISOString(), gender:currentGender||'unknown'},
-    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2), threshold:4.9},
+    meta:{test:'中国大学生性别角色量表(CSRI-50)', generatedAt:new Date().toISOString(), gender:currentGender||'unknown'},
+    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2),
+            threshold:{masculinity:4.8, femininity:5.0}},
     type:r.type, typeLabel:REPORT[r.type].title,
     answers:ans
   };
@@ -715,9 +728,9 @@ function buildPayload(r){
 function buildPrompt(r){
   const rep = REPORT[r.type];
   const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
-  return `我刚做完一份「贝姆性别角色量表（BSRI）」小测验。
-我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；在本站 4.9 常模分界下归为「${rep.title}」。
-附件 JSON 是我 60 道题的具体作答（含每题类别 M/F/中性 与我的打分）。
+  return `我刚做完一份「中国大学生性别角色量表（CSRI-50）」小测验。
+我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；在本站男性化 4.8 / 女性化 5.0 常模分界下归为「${rep.title}」。
+附件 JSON 是我 50 道题的具体作答（含每题类别 M/F/中性 与我的打分）。
 请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊：
 1）这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战；
 2）在团队合作和职业选择里，我更适合扮演什么角色；
