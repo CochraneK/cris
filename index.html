@@ -77,6 +77,16 @@
   .q-card .q-top{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
   .q-card .num{font-size:13px;font-weight:700;color:var(--pink);background:var(--pink-bg);border-radius:8px;padding:2px 8px;flex:none;}
   .q-card .word{font-size:17px;font-weight:700;}
+  .q-card .num.jump{cursor:pointer;transition:background .12s,color .12s;}
+  .q-card .num.jump:hover{background:var(--pink);color:#fff;}
+  /* 预览模式（点第1题序号进入）：只展示群体分布，隐藏一切个人报告板块 */
+  #report-card.preview .r-head{display:none;}
+  #report-card.preview .score-box{display:none;}
+  #report-card.preview .r-body .r-section:not(#sec-scatter){display:none;}
+  #report-card.preview .take-away{display:none;}
+  #report-card.preview .acts{display:none;}
+  .preview-banner{background:#f0f6ff;border:1px dashed #bcd4f5;border-radius:12px;padding:10px 13px;font-size:12.5px;color:#3f6aa8;line-height:1.7;margin:0 0 12px;}
+  .preview-banner b{color:#2f5a9a;}
   .opts{display:flex;gap:7px;}
   .opt{flex:1;min-height:48px;border:2px solid #ffe0ea;border-radius:13px;background:#fffdfe;
     display:flex;align-items:center;justify-content:center;cursor:pointer;
@@ -242,6 +252,7 @@
   <section id="result" class="screen">
     <div class="result">
       <div id="report-card">
+        <div class="preview-banner" id="preview-banner" style="display:none;">👀 你正以<b>预览模式</b>查看——这里只展示大家累计的落点分布（目前还没有你的作答）。想看自己的类型，从首页开始测一遍就好～</div>
         <div class="r-head" id="r-head">
           <div class="big" id="r-emoji">🌟</div>
           <h2 id="r-title">你的类型</h2>
@@ -261,7 +272,7 @@
             </div>
           </div>
 
-          <div class="r-section">
+          <div class="r-section" id="sec-scatter">
             <h3>你和大家站在哪</h3>
             <p class="counter" id="counter">正在绘制落点图…</p>
             <div class="scatter-wrap">
@@ -403,7 +414,7 @@ function renderQuiz(){
       opts += `<div class="opt" data-q="${idx}" data-v="${v}">${v}</div>`;
     }
     card.innerHTML = `
-      <div class="q-top"><span class="num">${idx+1}</span><span class="word">${q.word}</span></div>
+      <div class="q-top"><span class="num${idx===0?' jump':''}"${idx===0?' title="悄悄点一下，直接看看大家的位置（预览）"':''}>${idx+1}</span><span class="word">${q.word}</span></div>
       <div class="opts">${opts}</div>
       <div class="scale-tip"><span>很不符合</span><span>很符合</span></div>`;
     box.appendChild(card);
@@ -418,6 +429,9 @@ function renderQuiz(){
       updateProgress();
     });
   });
+  // 隐藏入口：点第 1 题的序号「1」直接进结果页，只看群体累计分布（无个人作答）
+  const num1 = box.querySelector('.num.jump');
+  if(num1) num1.addEventListener('click', enterPreview);
 }
 
 /* 鼓励特效：累计填完 20 题（1/3）、40 题（2/3）时各弹一次 */
@@ -525,6 +539,7 @@ function startQuiz(){
     return;
   }
   renderQuiz(); updateProgress();
+  exitPreview();
   show('quiz');
 }
 function pickGender(g){
@@ -536,6 +551,44 @@ function pickGender(g){
     b.classList.toggle('female', on && g==='female');
   });
 }
+/* 隐藏入口：点第 1 题序号「1」进入——只看群体累计分布，无个人作答。
+   不提交、不算分、不显示任何个人报告板块；点「再测一次」/ 回首页即退出预览。 */
+function enterPreview(){
+  const card = document.getElementById('report-card');
+  card.classList.add('preview');
+  document.getElementById('preview-banner').style.display = 'block';
+  document.getElementById('counter').textContent = '正在加载大家的位置…';
+  // 单点（me=null）只画群体；后端/示例拉取逻辑复用，但不传 me、不提交
+  loadCommunityPoints();
+  show('result');
+}
+/* 拉取群体落点（预览与正式提交共用），me 为 null 时不画自己的点 */
+let _lastCommunityPoints = [];
+async function loadCommunityPoints(){
+  let realPoints = [];
+  let usingSample = false;
+  try{
+    const resp = await fetch(API_BASE+'/api/points',{cache:'no-store'});
+    const data = await resp.json();
+    realPoints = data.points || [];
+  }catch(e){ realPoints = []; }
+  if(realPoints.length===0){
+    try{
+      const r2 = await fetch('assets/data/history.json',{cache:'no-store'});
+      const d2 = await r2.json();
+      const sample = (d2.points||[]).map(p=>({m:p.m, f:p.f, gender:(p.g||'unknown')}));
+      if(sample.length){ realPoints = sample; usingSample = true; }
+    }catch(e){}
+  }
+  _lastCommunityPoints = realPoints;
+  document.getElementById('counter').textContent = usingSample
+    ? `下面是示例分布（${realPoints.length} 人，演示用）～真实数据收集中 🌟`
+    : (realPoints.length>0
+        ? `已经有 ${realPoints.length} 位填写者填过啦，下面是大家的位置 ✨`
+        : `真实数据收集中，下面是示例分布（演示用）🌟`);
+  renderScatter(realPoints, null);
+}
+function lastPoints(){ return _lastCommunityPoints; }
 function finishQuiz(){
   const done = answers.filter(a=>a>0).length;
   if(done<50){
@@ -554,7 +607,15 @@ function finishQuiz(){
 function restart(){
   answers.fill(0);
   _milestoneShown = {17:false, 33:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
+  exitPreview();
   show('cover');
+}
+/* 退出预览模式：清 preview 类与横幅 */
+function exitPreview(){
+  const card = document.getElementById('report-card');
+  if(card) card.classList.remove('preview');
+  const b = document.getElementById('preview-banner');
+  if(b) b.style.display = 'none';
 }
 function toast(msg){
   const t=document.getElementById('toast');
@@ -635,28 +696,9 @@ async function submitAndLoadPoints(r){
         if(j && j.uid){ myUid = j.uid; try{localStorage.setItem('bsri_uid', j.uid);}catch(e){} } // 回存，保持前后端一致
       }catch(e){/* 离线或后端不可用，忽略 */}
       clearTimeout(timer);
-      let realPoints = [];
-      let usingSample = false;
-      try{
-        const resp = await fetch(API_BASE+'/api/points',{cache:'no-store'});
-        const data = await resp.json();
-        realPoints = data.points || [];
-      }catch(e){ realPoints = []; }
-      // 后端不可达（如纯静态部署 / 后端故障）时，回退到内置示例分布（演示用，明确标注）
-      if(realPoints.length===0){
-        try{
-          const r2 = await fetch('assets/data/history.json',{cache:'no-store'});
-          const d2 = await r2.json();
-          const sample = (d2.points||[]).map(p=>({m:p.m, f:p.f, gender:(p.g||'unknown')}));
-          if(sample.length){ realPoints = sample; usingSample = true; }
-        }catch(e){/* 连示例都拉不到就只画自己的点 */}
-      }
-      document.getElementById('counter').textContent = usingSample
-        ? `下面是示例分布（${realPoints.length} 人，演示用）～真实数据收集中，亮色大点是你 🌟`
-        : (realPoints.length>0
-            ? `已经有 ${realPoints.length} 位填写者填过啦，下面是你和大家的位置 ✨`
-            : `你是较早填写的人之一～真实数据积累中，亮色大点是你 🌟`);
-      renderScatter(realPoints, me);
+      // 复用群体拉取逻辑（提交后再拉一次，保证含自己）
+      await loadCommunityPoints();
+      renderScatter(await lastPoints(), me);
     }catch(e){}
   })();
 }
