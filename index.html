@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>性别角色心理测验 · 贝母 BSRI 中文版</title>
 <meta name="description" content="基于贝姆性别角色量表（BSRI）的 60 题自我探索测验，看你的「坚韧果断」与「温柔共情」两种特质，并在四象限里看见自己与大家的位置。" />
 <style>
@@ -128,6 +128,9 @@
   .prompt-box{display:block;background:#fff;border:1px dashed #e7d8e0;border-radius:14px;padding:14px;font-size:12.5px;line-height:1.85;color:#5a4a54;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
   .prompt-tip{font-size:12.5px;color:var(--ink-soft);margin:0 0 8px;line-height:1.6;}
   .data-note{font-size:12.5px;color:#6a5a64;line-height:1.85;background:#f3f8ff;border:1px solid #dce9ff;border-radius:14px;padding:12px 14px;margin:0 0 14px;}
+  .code-note{background:#fff7fb;border-color:#ffd9e8;}
+  .uid-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;color:#d63384;background:#fff0f6;border:1px solid #ffc9de;border-radius:8px;padding:2px 8px;letter-spacing:.5px;word-break:break-all;}
+  .muted{color:#9a8aa6;font-size:11.5px;}
   .data-note b{color:var(--ink);}
   .take-away{padding:0 22px;}
   .uid-line{font-size:12.5px;color:var(--ink-soft);background:#f1f6ff;border:1px dashed #cfe0ff;border-radius:12px;padding:11px 13px;margin-top:14px;line-height:1.7;}
@@ -255,7 +258,7 @@
               <span><i style="background:#ff5e8a"></i>女生落点</span>
               <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
             </div>
-            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 <b>5.0</b>（本站为直观展示暂设的<b>可视化参考分界</b>，并非 BSRI 通用诊断或标准常模界值；在 1–7 量表里距左/下 2/3 处，故色块非正方形）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
+            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 <b>4.9</b>（BSRI 60 题版的<b>常模中位数</b>，学界通行做法，源自 Bem 1974 原版大样本中位数；在 1–7 量表里距左/下约 2/3 处，故色块非正方形）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
           </div>
 
           <div class="r-section">
@@ -281,13 +284,15 @@
           <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的温柔，哪些是你一点点练出来的坚韧。<br>所以，把这份数据带走吧。你可以去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更"像你"的自我介绍。<br><b>数据在你自己手里，怎么用它、和谁聊，都由你说了算。</b></p>
 
           <div class="data-note">📋 关于你的数据：为了方便把你和大家的落点一起展示在群体分布图上，匿名保存了你的作答记录——<b>不含任何能识别你的信息</b>。 💗</div>
+          <div class="data-note code-note">🔑 你的<b>数据提取码</b>：<code id="uid-code" class="uid-code"></code><br><span class="muted">换手机或清缓存后，在结果页凭它仍可取回你的作答数据。</span></div>
 
           <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
+          <button class="btn outline" onclick="copyPrompt()">📋 复制 AI 开场白</button>
           <div class="prompt-box" id="prompt-box"></div>
         </div>
 
         <div class="r-foot">
-          测验依据贝姆性别角色量表（BSRI）编制 · 结果由你的自我描述生成，仅供参考与自我探索，<b>不作临床诊断</b> 💗<br>说明：本站以 <b>5.0</b> 作为四象限的<b>可视化参考分界</b>，并非 BSRI 通用诊断或标准常模界值；连续得分（男性化 / 女性化）更值得参考。
+          测验依据贝姆性别角色量表（BSRI）编制 · 结果由你的自我描述生成，仅供参考与自我探索，<b>不作临床诊断</b> 💗<br>说明：本站以 <b>4.9</b> 作为四象限分界，即 BSRI 60 题版的<b>常模中位数</b>（学界通行做法，源自 Bem 1974 原版大样本中位数）；连续得分（男性化 / 女性化）更值得参考。
         </div>
       </div>
 
@@ -377,8 +382,8 @@ function updateProgress(){
   }
 }
 
-/* ============ 计分 & 分类（本站以 5.0 作为可视化参考分界，非 BSRI 通用标准界值） ============ */
-const THRESHOLD = 5.0; // 本站可视化参考分界：均值≥5 视为该维度"高分"（非 BSRI 官方固定 cutoff；底块按 5.0 切分，故非正方形）
+/* ============ 计分 & 分类（分界 = 4.9，即 BSRI 60 题版常模中位数，学界通行做法） ============ */
+const THRESHOLD = 4.9; // BSRI 60题版常模中位数：均值≥4.9 视为该维度"高分"（源自 Bem 1974 原版大样本中位数；底块按 4.9 切分，故非正方形）
 function compute(){
   let sumM=0,nM=0,sumF=0,nF=0;
   questions.forEach((q,i)=>{
@@ -496,6 +501,7 @@ function finishQuiz(){
 }
 function restart(){
   answers.fill(0);
+  _milestoneShown = {20:false, 40:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
   show('cover');
 }
 function toast(msg){
@@ -547,7 +553,7 @@ function cheer(msg){
 }
 
 /* ============ 后端 API（共存模式：有后端用真实数据，无后端回退内置样本） ============ */
-const API_BASE = 'https://polished-moon-b698.cunyikang.workers.dev';   // 真实落点后端（Cloudflare Worker + KV）。后端不可达时仅显示你自己的点。
+const API_BASE = 'https://polished-moon-b698.cunyikang.workers.dev';   // 真实落点后端（Cloudflare Worker + D1）。后端不可达时回退到内置示例分布。
 let currentResult = null;
 let currentGender = '';
 let myUid = '';   // 匿名提取码：本人凭它从后台取回自己的明细，随机不可猜
@@ -578,14 +584,26 @@ async function submitAndLoadPoints(r){
       }catch(e){/* 离线或后端不可用，忽略 */}
       clearTimeout(timer);
       let realPoints = [];
+      let usingSample = false;
       try{
         const resp = await fetch(API_BASE+'/api/points',{cache:'no-store'});
         const data = await resp.json();
         realPoints = data.points || [];
       }catch(e){ realPoints = []; }
-      document.getElementById('counter').textContent =
-        realPoints.length>0 ? `已经有 ${realPoints.length} 位真实朋友填过啦，下面是你和大家的位置 ✨`
-            : `你是较早填写的人之一～真实数据积累中，亮色大点是你 🌟`;
+      // 后端不可达（如纯静态部署 / 后端故障）时，回退到内置示例分布（演示用，明确标注）
+      if(realPoints.length===0){
+        try{
+          const r2 = await fetch('assets/data/history.json',{cache:'no-store'});
+          const d2 = await r2.json();
+          const sample = (d2.points||[]).map(p=>({m:p.m, f:p.f, gender:(p.g||'unknown')}));
+          if(sample.length){ realPoints = sample; usingSample = true; }
+        }catch(e){/* 连示例都拉不到就只画自己的点 */}
+      }
+      document.getElementById('counter').textContent = usingSample
+        ? `下面是示例分布（${realPoints.length} 人，演示用）～真实数据收集中，亮色大点是你 🌟`
+        : (realPoints.length>0
+            ? `已经有 ${realPoints.length} 位填写者填过啦，下面是你和大家的位置 ✨`
+            : `你是较早填写的人之一～真实数据积累中，亮色大点是你 🌟`);
       renderScatter(realPoints, me);
     }catch(e){}
   })();
@@ -604,8 +622,8 @@ function renderScatter(realPoints, me){
   const toX = v => x0 + (v-MIN)/(MAX-MIN)*(x1-x0);
   const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 男性化在上（Y 轴=男性化）
   ctx.clearRect(0,0,W,H);
-  // 背景四区淡色：按 5.0 可视化参考分界切分（非几何正中，故色块非正方形），与本站分类规则一致
-  const midX = toX(5), midY = toY(5);   // 5.0 分界
+  // 背景四区淡色：按 4.9 常模中位数切分（非几何正中，故色块非正方形），与本站分类规则一致
+  const midX = toX(4.9), midY = toY(4.9);   // 4.9 常模中位数分界
   ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,midX-x0,midY-y0);                     // 左上 男性化（蓝）
   ctx.fillStyle = '#f0eaff'; ctx.fillRect(midX,y0,x1-midX,midY-y0);                   // 右上 双性化（紫）
   ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,midY,x1-x0,y1-midY);                     // 左下 未分化（黄）
@@ -622,7 +640,7 @@ function renderScatter(realPoints, me){
   ctx.fillStyle='#7a6a73'; ctx.font='bold 22px -apple-system,"PingFang SC",sans-serif';
   ctx.fillText('女性化 →', (x0+x1)/2, y1+34);
   ctx.save();ctx.translate(x0-34,(y0+y1)/2);ctx.rotate(-Math.PI/2);ctx.fillText('男性化 →',0,0);ctx.restore();
-  // 象限标签（居中于各自 5.0 色块）
+  // 象限标签（居中于各自 4.9 色块）
   ctx.font='bold 19px -apple-system,"PingFang SC",sans-serif';
   ctx.fillStyle='#9a8aa6';
   ctx.fillText('男性化', (x0+midX)/2, y0+22);
@@ -680,7 +698,7 @@ function buildPayloadFromRecord(rec){
   return {
     meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date(rec.ts||Date.now()).toISOString(),
           gender:rec.gender||'unknown', uid:rec.uid},
-    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2), threshold:5.0},
+    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2), threshold:4.9},
     type:rec.type, typeLabel:REPORT[rec.type]?REPORT[rec.type].title:rec.type,
     answers:ans
   };
@@ -689,7 +707,7 @@ function buildPayload(r){
   const ans = questions.map((q,i)=>({no:i+1, word:q.word, category:q.cat, score:answers[i]}));
   return {
     meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date().toISOString(), gender:currentGender||'unknown'},
-    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2), threshold:5.0},
+    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2), threshold:4.9},
     type:r.type, typeLabel:REPORT[r.type].title,
     answers:ans
   };
@@ -698,7 +716,7 @@ function buildPrompt(r){
   const rep = REPORT[r.type];
   const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
   return `我刚做完一份「贝姆性别角色量表（BSRI）」小测验。
-我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；在本站 5.0 参考分界下归为「${rep.title}」。
+我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；在本站 4.9 常模分界下归为「${rep.title}」。
 附件 JSON 是我 60 道题的具体作答（含每题类别 M/F/中性 与我的打分）。
 请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊：
 1）这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战；
