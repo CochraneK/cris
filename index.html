@@ -128,8 +128,6 @@
   .prompt-box{display:block;background:#fff;border:1px dashed #e7d8e0;border-radius:14px;padding:14px;font-size:12.5px;line-height:1.85;color:#5a4a54;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
   .prompt-tip{font-size:12.5px;color:var(--ink-soft);margin:0 0 8px;line-height:1.6;}
   .data-note{font-size:12.5px;color:#6a5a64;line-height:1.85;background:#f3f8ff;border:1px solid #dce9ff;border-radius:14px;padding:12px 14px;margin:0 0 14px;}
-  .code-note{background:#fff7fb;border-color:#ffd9e8;}
-  .uid-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;color:#d63384;background:#fff0f6;border:1px solid #ffc9de;border-radius:8px;padding:2px 8px;letter-spacing:.5px;word-break:break-all;}
   .muted{color:#9a8aa6;font-size:11.5px;}
   .data-note b{color:var(--ink);}
   .take-away{padding:0 22px;}
@@ -284,7 +282,6 @@
           <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的温柔，哪些是你一点点练出来的坚韧。<br>所以，把这份数据带走吧。你可以去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更"像你"的自我介绍。<br><b>数据在你自己手里，怎么用它、和谁聊，都由你说了算。</b></p>
 
           <div class="data-note">📋 关于你的数据：为了方便把你和大家的落点一起展示在群体分布图上，匿名保存了你的作答记录——<b>不含任何能识别你的信息</b>。 💗</div>
-          <div class="data-note code-note">🔑 你的<b>数据提取码</b>：<code id="uid-code" class="uid-code"></code><br><span class="muted">换手机或清缓存后，在结果页凭它仍可取回你的作答数据。</span></div>
 
           <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
           <button class="btn outline" onclick="copyPrompt()">📋 复制 AI 开场白</button>
@@ -503,11 +500,9 @@ function finishQuiz(){
     return;
   }
   const r = compute();
-  ensureUid();              // 生成/取回本机提取码
+  ensureUid();              // 生成/取回本机匿名码（仅作后端主键去重用，不展示）
   renderReport(r);
   show('result');
-  const codeEl = document.getElementById('uid-code');
-  if(codeEl) codeEl.textContent = myUid;   // 展示「数据提取码」
   submitAndLoadPoints(r);
 }
 function restart(){
@@ -567,16 +562,16 @@ function cheer(msg){
 const API_BASE = 'https://polished-moon-b698.cunyikang.workers.dev';   // 真实落点后端（Cloudflare Worker + D1）。后端不可达时回退到内置示例分布。
 let currentResult = null;
 let currentGender = '';
-let myUid = '';   // 匿名提取码：本人凭它从后台取回自己的明细，随机不可猜
+let myUid = '';   // 匿名码：本人凭它从后台取回自己的明细，随机不可猜
 
 async function submitAndLoadPoints(r){
   currentResult = r;
-  ensureUid();   // 确保本机有匿名提取码
+  ensureUid();   // 确保本机有匿名码
   const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:currentGender||'unknown'};
   const payload = {
     m:+r.mScore.toFixed(3), f:+r.fScore.toFixed(3), type:r.type,
     gender:currentGender||'unknown',
-    uid: myUid,                 // 匿名提取码：后台据此存/取本人明细
+    uid: myUid,                 // 匿名码：后台据此存/取本人明细
     answers: answers.map(Number) // 50 题完整作答（-1 等缺失记为 0）
   };
   // 先立即画出你自己的点（不等后端，秒出图）
@@ -679,7 +674,7 @@ function renderScatter(realPoints, me){
 }
 
 /* ============ 导出数据 & 复用引导 ============ */
-// 确保本机有匿名提取码（存入 localStorage，同一浏览器再次访问可用；不依赖账号）
+// 确保本机有匿名码（存入 localStorage，同一浏览器再次访问可用；不依赖账号）
 function ensureUid(){
   let u = '';
   try { u = localStorage.getItem('bsri_uid') || ''; } catch(e){}
@@ -738,7 +733,7 @@ function buildPrompt(r){
 谢谢，请多结合我的具体作答来谈。`;
 }
 async function downloadData(){
-  // 优先从后台取回「本人」数据（凭匿名提取码，只取回自己的）
+  // 优先从后台取回「本人」数据（凭匿名码，只取回自己的）
   const uid = myUid || (function(){ try{return localStorage.getItem('bsri_uid')||'';}catch(e){return '';} })();
   if(uid){
     try{
