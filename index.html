@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>性别角色心理测验 · 贝母 BSRI 中文版</title>
+<meta name="description" content="基于贝姆性别角色量表（BSRI）的 60 题自我探索测验，看你的「坚韧果断」与「温柔共情」两种特质，并在四象限里看见自己与大家的位置。" />
+<style>
+  :root{
+    --pink:#ff5e8a;
+    --pink-soft:#ff8fab;
+    --pink-bg:#ffe3ec;
+    --purple:#b388ff;
+    --ink:#3a2a33;
+    --ink-soft:#7a6a73;
+    --card:#ffffff;
+    --masc:#5b8def;     /* 男性化 蓝 */
+    --fem:#ff7eb3;      /* 女性化 粉 */
+    --shadow:0 10px 30px rgba(255,94,138,.18);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(165deg,#ffe3ec 0%,#ffd6e8 35%,#f3e6ff 70%,#e6f0ff 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    display:flex;justify-content:center;
+  }
+  .app{width:100%;max-width:480px;min-height:100vh;position:relative;padding:0 0 0;}
+
+  /* 漂浮装饰 */
+  .blob{position:fixed;border-radius:50%;filter:blur(40px);opacity:.5;z-index:0;pointer-events:none;}
+  .b1{width:200px;height:200px;background:#ffb3d1;top:-40px;left:-50px;animation:float 9s ease-in-out infinite;}
+  .b2{width:160px;height:160px;background:#c9b3ff;bottom:40px;right:-40px;animation:float 11s ease-in-out infinite reverse;}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(22px)}}
+
+  .screen{display:none;animation:fade .45s ease;}
+  .screen.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ===== 封面 ===== */
+  .cover{padding:64px 26px 40px;text-align:center;position:relative;z-index:1;}
+  .cover .emoji-row{font-size:38px;letter-spacing:8px;margin-bottom:18px;}
+  .cover h1{font-size:27px;line-height:1.45;margin:0 0 14px;font-weight:800;
+    background:linear-gradient(120deg,#ff5e8a,#b388ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .cover .sub{font-size:15px;color:var(--ink-soft);line-height:1.8;margin:0 auto 26px;max-width:320px;}
+  .tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:34px;}
+  .tag{font-size:12px;background:#fff;color:var(--pink);padding:6px 13px;border-radius:20px;box-shadow:var(--shadow);}
+  .card-note{background:#fff;border-radius:22px;padding:18px 20px;box-shadow:var(--shadow);text-align:left;font-size:13.5px;color:var(--ink-soft);line-height:1.85;margin-bottom:30px;}
+  .card-note b{color:var(--ink);}
+  .card-note .note-sep{margin-top:13px;padding-top:13px;border-top:1px dashed #e7dce6;font-size:12.5px;color:#6a5a64;line-height:1.85;}
+  .card-note .note-sep b{color:var(--ink);}
+  .btn{
+    display:inline-block;width:100%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#ff5e8a,#ff8fab);
+    color:#fff;font-size:17px;font-weight:700;padding:16px;border-radius:18px;
+    box-shadow:0 12px 26px rgba(255,94,138,.4);transition:transform .15s;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn.ghost{background:#fff;color:var(--pink);box-shadow:var(--shadow);margin-top:12px;}
+  .disclaimer{font-size:11px;color:#b0a3ab;margin-top:18px;line-height:1.6;}
+  .privacy-note{font-size:12.5px;color:#6a5a64;line-height:1.85;background:#f3f8ff;border:1px solid #dce9ff;border-radius:14px;padding:12px 14px;margin:0 0 18px;}
+  .privacy-note b{color:#3a2d34;}
+
+  /* ===== 答题 ===== */
+  .quiz-head{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#ff5e8a,#b388ff);
+    color:#fff;padding:14px 18px 12px;box-shadow:0 4px 14px rgba(179,136,255,.3);}
+  .quiz-head .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px;}
+  .head-right{display:flex;gap:12px;align-items:center;}
+  .progress{height:7px;background:rgba(255,255,255,.35);border-radius:10px;overflow:hidden;}
+  .q-hint{font-size:12px;line-height:1.5;color:rgba(255,255,255,.92);margin:9px 2px 0;}
+  .progress > i{display:block;height:100%;width:0;background:#fff;border-radius:10px;transition:width .3s;}
+  .q-list{padding:16px 16px 110px;}
+  .q-card{background:#fff;border-radius:20px;padding:16px 16px 14px;margin-bottom:14px;box-shadow:var(--shadow);}
+  .q-card .q-top{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+  .q-card .num{font-size:13px;font-weight:700;color:var(--pink);background:var(--pink-bg);border-radius:8px;padding:2px 8px;flex:none;}
+  .q-card .word{font-size:17px;font-weight:700;}
+  .opts{display:flex;gap:7px;}
+  .opt{flex:1;min-height:48px;border:2px solid #ffe0ea;border-radius:13px;background:#fffdfe;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    font-size:18px;font-weight:800;color:var(--ink-soft);transition:.15s;user-select:none;}
+  .opt.on{background:linear-gradient(135deg,#ff5e8a,#ff8fab);color:#fff;border-color:transparent;transform:translateY(-3px);box-shadow:0 8px 16px rgba(255,94,138,.35);}
+  .scale-tip{display:flex;justify-content:space-between;font-size:11px;color:#c2b5bd;margin-top:9px;}
+  .scale-tip span{padding:0 4px;background:rgba(255,255,255,.5);border-radius:6px;}
+
+  .quiz-foot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#fff 70%,rgba(255,255,255,0));z-index:6;}
+  .quiz-foot .btn{padding:14px;font-size:16px;}
+
+  /* ===== 报告 ===== */
+  .result{padding:0 0 40px;position:relative;z-index:1;}
+  #report-card{margin:22px 16px 0;background:#fff;border-radius:26px;overflow:hidden;box-shadow:var(--shadow);}
+  .r-head{padding:30px 24px 26px;color:#fff;text-align:center;background:linear-gradient(135deg,#ff5e8a,#b388ff);}
+  .r-head .big{font-size:60px;line-height:1;margin-bottom:10px;}
+  .r-head h2{margin:0 0 8px;font-size:24px;font-weight:800;}
+  .r-head .quote{font-size:14px;opacity:.95;line-height:1.7;max-width:300px;margin:0 auto;}
+  .r-body{padding:22px 22px 8px;}
+  .score-box{display:flex;gap:14px;margin-bottom:6px;}
+  .score{flex:1;background:#faf6fb;border-radius:16px;padding:14px;}
+  .score .lab{font-size:12px;color:var(--ink-soft);margin-bottom:8px;}
+  .score .lab b{color:var(--ink);}
+  .bar{height:10px;border-radius:8px;background:#eee3;overflow:hidden;}
+  .bar > i{display:block;height:100%;border-radius:8px;width:0;transition:width .9s ease;}
+  .bar.m > i{background:linear-gradient(90deg,#7aa0ff,#5b8def);}
+  .bar.f > i{background:linear-gradient(90deg,#ff9ec7,#ff7eb3);}
+  .score .val{font-size:13px;font-weight:700;margin-top:6px;}
+  .score .val.m{color:var(--masc);} .score .val.f{color:var(--fem);}
+  .counter{font-size:13px;color:var(--pink);font-weight:600;margin:0 0 24px;}
+  .gender-pick{background:#fff;border-radius:22px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:24px;}
+  .gp-title{font-size:14px;color:var(--ink);margin:0 0 13px;font-weight:600;}
+  .gp-opts{display:flex;gap:12px;}
+  .gp{flex:1;border:2px solid #ffe0ea;background:#fffdfe;border-radius:16px;padding:14px 0;font-size:16px;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent;}
+  .gp[data-g="male"]{border-color:#cfe0ff;color:#3f7fe0;background:#f5f9ff;}      /* 男生=蓝 */
+  .gp[data-g="female"]{border-color:#ffd6e4;color:#ff5e8a;background:#fff5f9;}    /* 女生=粉 */
+  .gp.on.male{background:linear-gradient(135deg,#5b8def,#3f7fe0);color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 16px rgba(63,127,224,.35);}
+  .gp.on.female{background:linear-gradient(135deg,#ff8fab,#ff5e8a);color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 16px rgba(255,94,138,.35);}
+  .scatter-wrap{margin-top:4px;background:#faf6fb;border-radius:16px;padding:10px;}
+  .scatter-wrap canvas{width:100%;height:auto;display:block;border-radius:12px;}
+  .scatter-cap{font-size:12px;color:var(--ink-soft);line-height:1.65;margin-top:9px;}
+  .scatter-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--ink-soft);}
+  .scatter-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+  .lead{font-size:13.5px;color:var(--ink-soft);line-height:1.85;margin:0 0 14px;}
+  .lead b{color:var(--ink);}
+  .data-acts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .btn.small{font-size:14px;padding:12px 14px;border-radius:14px;flex:1;min-width:130px;background:#fff;color:var(--pink);box-shadow:var(--shadow);}
+  .prompt-box{display:block;background:#fff;border:1px dashed #e7d8e0;border-radius:14px;padding:14px;font-size:12.5px;line-height:1.85;color:#5a4a54;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
+  .prompt-tip{font-size:12.5px;color:var(--ink-soft);margin:0 0 8px;line-height:1.6;}
+  .data-note{font-size:12.5px;color:#6a5a64;line-height:1.85;background:#f3f8ff;border:1px solid #dce9ff;border-radius:14px;padding:12px 14px;margin:0 0 14px;}
+  .data-note b{color:var(--ink);}
+  .take-away{padding:0 22px;}
+  .uid-line{font-size:12.5px;color:var(--ink-soft);background:#f1f6ff;border:1px dashed #cfe0ff;border-radius:12px;padding:11px 13px;margin-top:14px;line-height:1.7;}
+  .uid-line code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#fff;color:#3f7fe0;padding:2px 8px;border-radius:7px;font-size:12px;word-break:break-all;}
+  .uid-line a{color:var(--pink);font-weight:700;cursor:pointer;margin-left:6px;}
+  .r-section{margin-top:22px;}
+  .r-section h3{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:7px;}
+  .r-section h3::before{content:"";width:5px;height:16px;border-radius:4px;background:linear-gradient(var(--pink),var(--purple));}
+  .r-section p{font-size:14.5px;line-height:1.95;color:#4a3b44;margin:0 0 12px;}
+  .r-section p .hl{color:var(--pink);font-weight:700;}
+  .tips{background:linear-gradient(135deg,#fff3f8,#f4eeff);border-radius:16px;padding:16px 18px;margin-top:8px;}
+  .tips .t{font-size:14px;line-height:1.85;color:#4a3b44;margin:0 0 8px;padding-left:22px;position:relative;}
+  .tips .t:last-child{margin-bottom:0;}
+  .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
+  .r-foot{padding:6px 22px 26px;font-size:11.5px;color:#b0a3ab;line-height:1.7;}
+  .result .acts{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px;}
+  .result .acts .btn.share{background:linear-gradient(135deg,#5b8def,#3f7fe0);box-shadow:0 12px 26px rgba(63,127,224,.4);}
+  .result .acts .btn.again{background:#fff;color:var(--pink);box-shadow:var(--shadow);}
+  .acts-row{display:flex;gap:12px;}
+  .acts-row .btn{flex:1;}
+  .btn.outline{background:linear-gradient(135deg,#ff8fab,#ff5e8a);color:#fff;box-shadow:0 12px 26px rgba(255,94,138,.4);}
+  .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+    background:rgba(58,42,51,.92);color:#fff;font-size:13px;padding:11px 18px;border-radius:14px;
+    opacity:0;transition:.3s;z-index:30;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .hidden{display:none!important;}
+
+  /* ===== 鼓励弹层 + 撒花 ===== */
+  #cheer{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+    background:rgba(20,14,22,.4);opacity:0;pointer-events:none;transition:opacity .25s;}
+  #cheer.show{opacity:1;pointer-events:auto;}
+  .cheer-card{background:#fff;border-radius:26px;padding:30px 32px;max-width:82%;text-align:center;
+    box-shadow:0 24px 70px rgba(0,0,0,.3);transform:scale(.82);transition:transform .32s cubic-bezier(.2,1.35,.4,1);}
+  #cheer.show .cheer-card{transform:scale(1);}
+  .cheer-emoji{font-size:52px;line-height:1;margin-bottom:12px;animation:cheerPop .55s ease;}
+  .cheer-msg{font-size:16px;font-weight:800;color:#3a2d34;line-height:1.75;white-space:pre-line;}
+  @keyframes cheerPop{0%{transform:scale(0) rotate(-15deg)}60%{transform:scale(1.25) rotate(6deg)}100%{transform:scale(1)}}
+  #confetti{position:fixed;inset:0;z-index:60;pointer-events:none;}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="app">
+
+  <!-- 封面 -->
+  <section id="cover" class="screen active">
+    <div class="cover">
+      <div class="emoji-row">🌸 ✨ 🔥</div>
+      <h1>你身上，<br>藏着怎样的自己？</h1>
+      <p class="sub">有人说温柔是女生的样子，坚强是男生的样子。<br>可你，也许比这些标签更丰富。</p>
+      <div class="tags">
+        <span class="tag">🌟 60 题</span>
+        <span class="tag">⏱ 约 3 分钟</span>
+        <span class="tag">💗 暖心解读</span>
+      </div>
+      <div class="card-note">
+        💌 这是一份基于<b>贝姆性别角色量表（BSRI）</b>的小测验。<br>
+        它会看看你身上「坚韧果断」与「温柔共情」这两种特质各自有多浓，
+        然后告诉你——<b>你，是哪一种独特的存在</b>。
+        <div class="note-sep">
+          🔒 <b>你的作答会被匿名保存</b>，<b>不含姓名、微信、手机号、IP</b>。
+          保存是为了方便你随时下载自己的数据，也让你和朋友一起看到「自己和大家的位置」🌟
+        </div>
+      </div>
+
+      <div class="gender-pick">
+        <p class="gp-title">先悄悄告诉我，你是 👦 还是 👧？</p>
+        <div class="gp-opts">
+          <button type="button" class="gp" data-g="male" onclick="pickGender('male')">👦 男生</button>
+          <button type="button" class="gp" data-g="female" onclick="pickGender('female')">👧 女生</button>
+        </div>
+      </div>
+
+      <button class="btn" onclick="startQuiz()">开始认识自己 →</button>
+      <p class="disclaimer">本测验仅供自我探索与娱乐参考，不构成任何心理诊断。</p>
+    </div>
+  </section>
+
+  <!-- 答题 -->
+  <section id="quiz" class="screen">
+    <div class="quiz-head">
+      <div class="row"><span>🌸 一点点看清自己</span><span class="head-right"><span id="prog-text">0 / 60</span></span></div>
+      <div class="progress"><i id="prog-bar"></i></div>
+      <p class="q-hint">请为下面每句话与自己的符合程度打分（1 = 很不符合，7 = 很符合）。</p>
+    </div>
+    <div class="q-list" id="q-list"></div>
+    <div class="quiz-foot">
+      <button class="btn" id="submit-btn" onclick="finishQuiz()">查看我的结果 ✨</button>
+    </div>
+  </section>
+
+  <!-- 报告 -->
+  <section id="result" class="screen">
+    <div class="result">
+      <div id="report-card">
+        <div class="r-head" id="r-head">
+          <div class="big" id="r-emoji">🌟</div>
+          <h2 id="r-title">你的类型</h2>
+          <div class="quote" id="r-quote"></div>
+        </div>
+        <div class="r-body">
+          <div class="score-box">
+            <div class="score">
+              <div class="lab"><b>男性化特质</b><br>坚韧 · 果断 · 行动</div>
+              <div class="bar m"><i id="bar-m"></i></div>
+              <div class="val m" id="val-m">0.0</div>
+            </div>
+            <div class="score">
+              <div class="lab"><b>女性化特质</b><br>温柔 · 共情 · 细腻</div>
+              <div class="bar f"><i id="bar-f"></i></div>
+              <div class="val f" id="val-f">0.0</div>
+            </div>
+          </div>
+
+          <div class="r-section">
+            <h3>你和大家站在哪</h3>
+            <p class="counter" id="counter">正在绘制落点图…</p>
+            <div class="scatter-wrap">
+              <canvas id="scatter" width="640" height="640"></canvas>
+            </div>
+            <div class="scatter-legend">
+              <span><i style="background:#3f7fe0"></i>男生落点</span>
+              <span><i style="background:#ff5e8a"></i>女生落点</span>
+              <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
+            </div>
+            <div class="scatter-cap">横轴=男性化特质，纵轴=女性化特质。底色四大块就是四种类型区域（左上女性化 / 右上双性化 / 左下未分化 / 右下男性化）。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
+          </div>
+
+          <div class="r-section">
+            <h3>关于你，想先说一句</h3>
+            <p id="r-open"></p>
+          </div>
+          <div class="r-section">
+            <h3>你身上的「坚韧」</h3>
+            <p id="r-masc"></p>
+          </div>
+          <div class="r-section">
+            <h3>你身上的「温柔」</h3>
+            <p id="r-fem"></p>
+          </div>
+          <div class="r-section">
+            <h3>给独一无二的你</h3>
+            <div class="tips" id="r-tips"></div>
+          </div>
+        </div>
+
+        <div class="r-section take-away">
+          <h3>把数据带走，去和别的 AI 聊聊 💗</h3>
+          <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的温柔，哪些是你一点点练出来的坚韧。<br>所以，把这份数据带走吧。你可以去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更"像你"的自我介绍。<br><b>数据在你自己手里，怎么用它、和谁聊，都由你说了算。</b></p>
+
+          <div class="data-note">📋 关于你的数据：为了方便把你和大家的落点一起展示在群体分布图上，匿名保存了你的作答记录——<b>不含任何能识别你的信息</b>。 💗</div>
+
+          <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
+          <div class="prompt-box" id="prompt-box"></div>
+        </div>
+
+        <div class="r-foot">
+          测验依据贝姆性别角色量表（BSRI）编制 · 结果由你的自我描述生成，仅供参考与自我探索，不作临床诊断 💗
+        </div>
+      </div>
+
+      <div class="acts">
+        <div class="acts-row">
+          <button class="btn share" onclick="saveImage()">📷 保存报告</button>
+          <button class="btn outline" onclick="downloadData()">📥 下载数据</button>
+        </div>
+        <button class="btn again" onclick="restart()">↺ 再测一次</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 鼓励弹层（1/3、2/3 时动态居中 + 撒花） -->
+<div id="cheer">
+  <div class="cheer-card">
+    <div class="cheer-emoji">🎉</div>
+    <div class="cheer-msg" id="cheer-msg"></div>
+  </div>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ============ 题目数据（贝母 BSRI 中文版，按 每3题一组 M/F/中性 循环） ============ */
+const M = ["维护自己的信念","独立的","果断、有主见的","个性坚强的","有力量感的","有领导能力的","乐于冒险","做决定不拖泥带水","能照顾好自己","有掌控感的","有男子气概的","敢于坚持立场","有冲劲的","像个领头人","有自己主意的","爱竞争的","有雄心壮志的","善于分析问题的","爱运动的","凡事靠自己的"];
+const F = ["情意绵绵的","会表达同情的","对别人的需要很敏感","善解人意的","有同情心的","乐于安抚受伤的人","温柔的","喜欢小孩的","温暖的","随和的","快活的","容易感到幸福的","说话轻声细语的","文雅的","忠诚的","害羞的","容易被夸奖打动的","容易相信人的","孩子气的","有女人味的"];
+const N = ["适应性强的","真诚的","严肃认真的","守规矩的","友好的","不太靠谱的","做事用心的","情绪起伏大的","不太开心的","靠得住的","诚实的","爱嫉妒的","不爱张扬的","捉摸不定的","有点虚荣的","讨人喜欢的","喜欢独处的","爱奉承人的","爱表现的","乐于助人的"];
+
+/* 按 每3题一组(M/F/中性) 混合，得到 60 题 */
+const questions = [];
+for(let i=0;i<60;i++){
+  const g = i%3;
+  if(g===0) questions.push({cat:'M', word:M[Math.floor(i/3)]});
+  else if(g===1) questions.push({cat:'F', word:F[Math.floor(i/3)]});
+  else questions.push({cat:'N', word:N[Math.floor(i/3)]});
+}
+
+const SCALE = ["很不符合","基本不是","比较不符合","说不清","较符合","基本符合","很符合"];
+const answers = new Array(60).fill(0);
+let _milestoneShown = {20:false, 40:false}; // 1/3、2/3 鼓励提示只弹一次
+
+/* ============ 渲染答题 ============ */
+function renderQuiz(){
+  const box = document.getElementById('q-list');
+  box.innerHTML = '';
+  questions.forEach((q,idx)=>{
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    let opts = '';
+    for(let v=1;v<=7;v++){
+      opts += `<div class="opt" data-q="${idx}" data-v="${v}">${v}</div>`;
+    }
+    card.innerHTML = `
+      <div class="q-top"><span class="num">${idx+1}</span><span class="word">${q.word}</span></div>
+      <div class="opts">${opts}</div>
+      <div class="scale-tip"><span>很不符合</span><span>很符合</span></div>`;
+    box.appendChild(card);
+  });
+  box.querySelectorAll('.opt').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const q = +el.dataset.q, v = +el.dataset.v;
+      answers[q] = v;
+      const siblings = box.querySelectorAll(`.opt[data-q="${q}"]`);
+      siblings.forEach(s=>s.classList.remove('on'));
+      el.classList.add('on');
+      updateProgress();
+    });
+  });
+}
+
+/* 鼓励特效：累计填完 20 题（1/3）、40 题（2/3）时各弹一次 */
+function updateProgress(){
+  const done = answers.filter(a=>a>0).length;
+  document.getElementById('prog-text').textContent = done + ' / 60';
+  document.getElementById('prog-bar').style.width = (done/60*100)+'%';
+  if(done===20 && !_milestoneShown[20]){
+    _milestoneShown[20]=true;
+    cheer('已完成 1/3 啦 🌟\n慢慢来，你愿意花时间看看自己，就很了不起');
+  }
+  if(done===40 && !_milestoneShown[40]){
+    _milestoneShown[40]=true;
+    cheer('完成 2/3 了 💪\n再坚持一下，你离「看清自己」更近一步');
+  }
+}
+
+/* ============ 计分 & 分类（固定分界 5.0） ============ */
+const THRESHOLD = 5.0; // 个人自测固定分界：均值≥5 视为该维度"高分"
+function compute(){
+  let sumM=0,nM=0,sumF=0,nF=0;
+  questions.forEach((q,i)=>{
+    if(q.cat==='M'){sumM+=answers[i];nM++;}
+    if(q.cat==='F'){sumF+=answers[i];nF++;}
+  });
+  const mScore = sumM/nM, fScore = sumF/nF;
+  let type;
+  if(mScore>=THRESHOLD && fScore>=THRESHOLD) type='androgynous';
+  else if(mScore>=THRESHOLD && fScore<THRESHOLD) type='masculine';
+  else if(mScore<THRESHOLD && fScore>=THRESHOLD) type='feminine';
+  else type='undifferentiated';
+  return {mScore,fScore,type};
+}
+
+/* ============ 报告文案（暖心 · 启发 · 客观谨慎） ============ */
+const REPORT = {
+  androgynous:{
+    emoji:'🌟', title:'双性化 · 刚柔并济的你',
+    quote:'你不必二选一，温柔与锋芒，你都拥有。',
+    open:'先给你一个大大的拥抱 🤗。你的结果里，<span class="hl">「坚韧」和「温柔」两个维度都很高</span>——这在心理学里有个很美的名字，叫「双性化」（androgyny）。它不代表「不分男女」，而是代表你没有被任何标签框住：该勇敢时有力量，该柔软时有温度。',
+    masc:'在需要的时候，你<span class="hl">靠得住、有主见、敢担当</span>。你不一定非要逞强，但你知道自己要什么，也愿意为想要的东西去争取。这种「能扛事」的底气，是很多人偷偷羡慕你的地方。',
+    fem:'而转身面对在意的人，你又<span class="hl">细腻、共情、懂得照顾情绪</span>。你能察觉到别人没说出口的难过，也愿意把温柔给出去。这让你既独立，又不孤单——因为你也擅长把关系经营得暖暖的。',
+    tips:['你最大的天赋，是「灵活」：场景需要什么，你就能长出什么样子，别被"男生该怎样/女生该怎样"束缚。','偶尔也会累，刚强和温柔都用多了会耗神，记得留一点给自己。','不必为了合群而藏起某一面——你本来就比标签丰富得多。']
+  },
+  masculine:{
+    emoji:'🔥', title:'男性化 · 坚定的力量型',
+    quote:'你身上的光，是一种让人安心的坚定。',
+    open:'想先说：你的<span class="hl">「坚韧果断」维度很高</span>，而温柔那一面相对没那么外放。这没什么不好——你身上有一种很珍贵的「行动力与担当」，是那种天塌下来也有人顶着的感觉。',
+    masc:'你<span class="hl">独立、果敢、有掌控感</span>。遇到事情你倾向于先解决，而不是先emo；你相信自己的判断，也愿意为选择负责。这种「稳得住」的气场，会让身边人不自觉地信任你、依赖你。',
+    fem:'你的温柔可能不是挂在嘴边的那种，但<span class="hl">它藏在行动里</span>——也许是你默默把事办好，也许是你不善表达却始终在。如果偶尔也想被照顾、想示弱，那完全 OK，刚强的人也可以有软肋。',
+    tips:['你的力量很宝贵，但也允许自己「不 always 坚强」。','试着把情绪说出来，不用每次都自己扛，在乎你的人想靠近你。','温柔不是弱点，偶尔示弱反而让人更想守护你。']
+  },
+  feminine:{
+    emoji:'🌸', title:'女性化 · 温柔而有力量',
+    quote:'你温柔，却有着千钧之力。',
+    open:'想轻轻抱抱你 🌷。你的<span class="hl">「温柔共情」维度很高</span>，而锋芒那一面相对内敛。你身上有一种很治愈的气息——不是软弱，是「把别人放在心上」的能力，这其实特别了不起。',
+    fem:'你<span class="hl">善解人意、细腻、懂得照顾人</span>。你能接住别人的情绪，也愿意付出耐心与体贴。在关系里，你常常是那个让气氛变暖、让彼此靠得更近的人。这份温柔，是很多人的避风港。',
+    masc:'而你的坚定，可能更多是「默默坚持」的那种——<span class="hl">为了在意的人，你可以很有韧性</span>。你不必时刻锋利，但当底线被触碰，你心里那杆秤一直都在。',
+    tips:['你的温柔很珍贵，但请先温柔地对待自己。','别总把别人放前面——你的需要同样重要。','学会说"不"，温柔的人也要有边界，那不是冷漠，是自爱。']
+  },
+  undifferentiated:{
+    emoji:'🌿', title:'未分化 · 自由不被定义',
+    quote:'你自由，不被任何框框装下。',
+    open:'想告诉你：你的结果里，<span class="hl">「坚韧」和「温柔」两个维度都不算高</span>，这在量表里叫「未分化」。但请别误会——这绝不等于「没特点」。它更像是：你<span class="hl">不被传统的性别角色绑架</span>，活得比较自在、随性，按自己的节奏来。',
+    masc:'你不一定追求「强势」或「掌控」，<span class="hl">更在意舒服自在</span>。该出手时你也会出手，只是不想为了符合期待而硬撑某种姿态。这种「不勉强自己」其实挺通透的。',
+    fem:'你也不刻意扮演「温柔体贴」的角色，<span class="hl">对人对己都挺松弛</span>。你更像是：谁靠近我，我就自然相处；标签贴不上你，因为你本就不打算被定义。',
+    tips:['不被定义不是空白，是你的自由，请好好享受它。','如果某天想长出某面特质，也完全可以，慢慢来。','顺着自己的节奏生活，比活成别人期待的样子更值得。']
+  }
+};
+
+/* ============ 渲染报告 ============ */
+function renderReport(r){
+  const rep = REPORT[r.type];
+  document.getElementById('r-emoji').textContent = rep.emoji;
+  document.getElementById('r-title').textContent = rep.title;
+  document.getElementById('r-quote').textContent = rep.quote;
+  document.getElementById('r-open').innerHTML = rep.open;
+  document.getElementById('r-masc').innerHTML = rep.masc;
+  document.getElementById('r-fem').innerHTML = rep.fem;
+  document.getElementById('r-tips').innerHTML = rep.tips.map(t=>`<p class="t">${t}</p>`).join('');
+  document.getElementById('prompt-box').textContent = buildPrompt(r);
+  /* 分数条 */
+  const mPct = Math.min(100, r.mScore/7*100);
+  const fPct = Math.min(100, r.fScore/7*100);
+  document.getElementById('val-m').textContent = r.mScore.toFixed(1) + ' / 7';
+  document.getElementById('val-f').textContent = r.fScore.toFixed(1) + ' / 7';
+  requestAnimationFrame(()=>{
+    document.getElementById('bar-m').style.width = mPct+'%';
+    document.getElementById('bar-f').style.width = fPct+'%';
+  });
+}
+
+/* ============ 流程控制 ============ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function startQuiz(){
+  if(!currentGender){
+    toast('先悄悄选一下性别哦～ 👦👧');
+    const gp=document.querySelector('.gender-pick');
+    if(gp) gp.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  renderQuiz(); updateProgress();
+  show('quiz');
+}
+function pickGender(g){
+  currentGender = g;
+  document.querySelectorAll('.gp').forEach(b=>{
+    const on = b.dataset.g===g;
+    b.classList.toggle('on', on);
+    b.classList.toggle('male', on && g==='male');
+    b.classList.toggle('female', on && g==='female');
+  });
+}
+function finishQuiz(){
+  const done = answers.filter(a=>a>0).length;
+  if(done<60){
+    toast(`还差 ${60-done} 题哦，先填完再揭晓 ✨`);
+    const first = answers.findIndex(a=>a===0);
+    const el = document.querySelector(`.opt[data-q="${first}"]`);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const r = compute();
+  ensureUid();              // 生成/取回本机提取码
+  renderReport(r);
+  show('result');
+  const codeEl = document.getElementById('uid-code');
+  if(codeEl) codeEl.textContent = myUid;   // 展示「数据提取码」
+  submitAndLoadPoints(r);
+}
+function restart(){
+  answers.fill(0);
+  show('cover');
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ============ 动态居中鼓励弹层 + 撒花 ============ */
+function launchConfetti(){
+  const c=document.getElementById('confetti'); if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width=window.innerWidth, H=c.height=window.innerHeight;
+  const colors=['#ff5e8a','#3f7fe0','#b388ff','#ffd166','#06d6a0','#ff8fab'];
+  const N=160, parts=[];
+  for(let i=0;i<N;i++){
+    parts.push({x:Math.random()*W, y:-20-Math.random()*H*0.4,
+      vx:(Math.random()-0.5)*5, vy:2+Math.random()*4.5,
+      s:6+Math.random()*9, rot:Math.random()*6.28, vr:(Math.random()-0.5)*0.35,
+      color:colors[i%colors.length], shape:Math.random()<0.5?0:1});
+  }
+  const t0=performance.now();
+  (function frame(t){
+    ctx.clearRect(0,0,W,H);
+    let alive=false;
+    for(const p of parts){
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.045; p.rot+=p.vr;
+      if(p.y < H+30){
+        alive=true;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        ctx.fillStyle=p.color;
+        if(p.shape===0) ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);
+        else { ctx.beginPath(); ctx.arc(0,0,p.s/2,0,6.28); ctx.fill(); }
+        ctx.restore();
+      }
+    }
+    if(alive && t-t0<2800) requestAnimationFrame(frame);
+    else ctx.clearRect(0,0,W,H);
+  })(t0);
+}
+function cheer(msg){
+  const el=document.getElementById('cheer');
+  document.getElementById('cheer-msg').textContent=msg;
+  el.classList.add('show');
+  launchConfetti();
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'),2800);
+  el.onclick=()=>el.classList.remove('show');   // 点一下提前关闭
+}
+
+/* ============ 后端 API（共存模式：有后端用真实数据，无后端回退内置样本） ============ */
+const API_BASE = 'https://polished-moon-b698.cunyikang.workers.dev';   // 真实落点后端（Cloudflare Worker + KV）。后端不可达时仅显示你自己的点。
+let currentResult = null;
+let currentGender = '';
+let myUid = '';   // 匿名提取码：本人凭它从后台取回自己的明细，随机不可猜
+
+async function submitAndLoadPoints(r){
+  currentResult = r;
+  ensureUid();   // 确保本机有匿名提取码
+  const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:currentGender||'unknown'};
+  const payload = {
+    m:+r.mScore.toFixed(3), f:+r.fScore.toFixed(3), type:r.type,
+    gender:currentGender||'unknown',
+    uid: myUid,                 // 匿名提取码：后台据此存/取本人明细
+    answers: answers.map(Number) // 60 题完整作答（-1 等缺失记为 0）
+  };
+  // 先立即画出你自己的点（不等后端，秒出图）
+  renderScatter([], me);
+  document.getElementById('counter').textContent = '正在绘制落点图…';
+  // 后台异步：提交 + 拉取真实全体落点（不阻塞渲染）
+  (async()=>{
+    try{
+      const ctl = new AbortController();
+      const timer = setTimeout(()=>ctl.abort(), 3000);
+      try{
+        const resp = await fetch(API_BASE+'/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload),signal:ctl.signal});
+        const j = await resp.json().catch(()=>null);
+        if(j && j.uid){ myUid = j.uid; try{localStorage.setItem('bsri_uid', j.uid);}catch(e){} } // 回存，保持前后端一致
+      }catch(e){/* 离线或后端不可用，忽略 */}
+      clearTimeout(timer);
+      let realPoints = [];
+      try{
+        const resp = await fetch(API_BASE+'/api/points',{cache:'no-store'});
+        const data = await resp.json();
+        realPoints = data.points || [];
+      }catch(e){ realPoints = []; }
+      document.getElementById('counter').textContent =
+        realPoints.length>0 ? `已经有 ${realPoints.length} 位真实朋友填过啦，下面是你和大家的位置 ✨`
+            : `你是较早填写的人之一～真实数据积累中，亮色大点是你 🌟`;
+      renderScatter(realPoints, me);
+    }catch(e){}
+  })();
+}
+
+/* ============ 四象限散点图 ============ */
+function genderColor(g){
+  return {male:'#3f7fe0', female:'#ff5e8a'}[g] || '#b9aeb6';   // 男=蓝 女=粉
+}
+function renderScatter(realPoints, me){
+  const cv = document.getElementById('scatter');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height, pad = 56;
+  const x0 = pad, x1 = W - pad, y0 = pad, y1 = H - pad;   // 画布内边距
+  const MIN=1, MAX=7;
+  const toX = v => x0 + (v-MIN)/(MAX-MIN)*(x1-x0);
+  const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 女性化在上
+  ctx.clearRect(0,0,W,H);
+  // 背景四区淡色
+  ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,(x1-x0)/2,(y1-y0)/2);                 // 左上 女性化
+  ctx.fillStyle = '#fff0f6'; ctx.fillRect((x0+x1)/2,y0,(x1-x0)/2,(y1-y0)/2);          // 右上 双性化
+  ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,(y0+y1)/2,(x1-x0)/2,(y1-y0)/2);          // 左下 未分化
+  ctx.fillStyle = '#f0eaff'; ctx.fillRect((x0+x1)/2,(y0+y1)/2,(x1-x0)/2,(y1-y0)/2);   // 右下 男性化
+  // 网格 + 坐标轴
+  ctx.strokeStyle='#e3d8df'; ctx.lineWidth=1;
+  ctx.font='20px -apple-system,"PingFang SC",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  for(let v=1;v<=7;v+=1){
+    const gx=toX(v), gy=toY(v);
+    ctx.beginPath();ctx.moveTo(gx,y0);ctx.lineTo(gx,y1);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x0,gy);ctx.lineTo(x1,gy);ctx.stroke();
+  }
+  // 轴标题
+  ctx.fillStyle='#7a6a73'; ctx.font='bold 22px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillText('男性化 →', (x0+x1)/2, y1+34);
+  ctx.save();ctx.translate(x0-34,(y0+y1)/2);ctx.rotate(-Math.PI/2);ctx.fillText('女性化 →',0,0);ctx.restore();
+  // 象限标签
+  ctx.font='bold 19px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillStyle='#9a8aa6';
+  ctx.fillText('女性化', (x0+x1)/4, y0+22);
+  ctx.fillText('双性化', (x0+x1)*3/4, y0+22);
+  ctx.fillText('未分化', (x0+x1)/4, y1-22);
+  ctx.fillText('男性化', (x0+x1)*3/4, y1-22);
+  // 真实全体落点（按性别上色：男蓝 女粉）
+  (realPoints||[]).forEach(p=>{
+    const c = genderColor(p.gender || 'unknown');
+    ctx.beginPath();
+    ctx.fillStyle = c + 'b0';   // 约 69% 透明
+    ctx.arc(toX(p.m), toY(p.f), 6.5, 0, Math.PI*2); ctx.fill();
+  });
+  // 自己的点（按性别高亮 + 白圈）
+  if(me){
+    const cx=toX(me.mScore), cy=toY(me.fScore);
+    const mc = genderColor(me.gender);
+    ctx.beginPath(); ctx.fillStyle = mc + '33'; ctx.arc(cx,cy,22,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.fillStyle = mc; ctx.arc(cx,cy,10,0,Math.PI*2); ctx.fill();
+    ctx.lineWidth=3.5; ctx.strokeStyle='#fff'; ctx.stroke();
+    // 图例「你（高亮）」跟随性别变色：男蓝 女粉
+    const lm = document.getElementById('legend-me');
+    if(lm){ lm.style.background = mc; lm.style.boxShadow = '0 0 0 2px ' + mc; }
+  }
+}
+
+/* ============ 导出数据 & 复用引导 ============ */
+// 确保本机有匿名提取码（存入 localStorage，同一浏览器再次访问可用；不依赖账号）
+function ensureUid(){
+  let u = '';
+  try { u = localStorage.getItem('bsri_uid') || ''; } catch(e){}
+  if(!/^[A-Za-z0-9_-]{8,64}$/.test(u)){
+    u = (crypto && crypto.randomUUID) ? crypto.randomUUID()
+        : 'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+    try { localStorage.setItem('bsri_uid', u); } catch(e){}
+  }
+  myUid = u;
+  return u;
+}
+// 把结构化对象触发为文件下载
+function triggerDownload(obj, filename){
+  const blob = new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+// 由后台明细记录还原成与 buildPayload 同构的导出对象
+function buildPayloadFromRecord(rec){
+  const ans = questions.map((q,i)=>({
+    no:i+1, word:q.word, category:q.cat,
+    score:(rec.answers && rec.answers[i]!=null) ? Number(rec.answers[i]) : 0
+  }));
+  return {
+    meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date(rec.ts||Date.now()).toISOString(),
+          gender:rec.gender||'unknown', uid:rec.uid},
+    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2), threshold:5.0},
+    type:rec.type, typeLabel:REPORT[rec.type]?REPORT[rec.type].title:rec.type,
+    answers:ans
+  };
+}
+function buildPayload(r){
+  const ans = questions.map((q,i)=>({no:i+1, word:q.word, category:q.cat, score:answers[i]}));
+  return {
+    meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date().toISOString(), gender:currentGender||'unknown'},
+    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2), threshold:5.0},
+    type:r.type, typeLabel:REPORT[r.type].title,
+    answers:ans
+  };
+}
+function buildPrompt(r){
+  const rep = REPORT[r.type];
+  const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
+  return `我刚做完一份「贝姆性别角色量表（BSRI）」小测验。
+我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；类型判定为「${rep.title}」。
+附件 JSON 是我 60 道题的具体作答（含每题类别 M/F/中性 与我的打分）。
+请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊：
+1）这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战；
+2）在团队合作和职业选择里，我更适合扮演什么角色；
+3）有哪些被我忽略、但其实很珍贵的特质。
+谢谢，请多结合我的具体作答来谈。`;
+}
+async function downloadData(){
+  // 优先从后台取回「本人」数据（凭匿名提取码，只取回自己的）
+  const uid = myUid || (function(){ try{return localStorage.getItem('bsri_uid')||'';}catch(e){return '';} })();
+  if(uid){
+    try{
+      const resp = await fetch(API_BASE+'/api/mine',{headers:{'x-bsri-uid':uid},cache:'no-store'});
+      if(resp.ok){
+        const rec = await resp.json();
+        triggerDownload(buildPayloadFromRecord(rec), '我的性别角色数据.json');
+        toast('已从后台取回你的数据 💗');
+        return;
+      }
+    }catch(e){ /* 落到本地兜底 */ }
+  }
+  // 兜底：本地依据当前作答生成（断网时也能用）
+  try{
+    const r = currentResult || compute();
+    triggerDownload(buildPayload(r), '我的性别角色数据.json');
+    toast('已下载（本地生成，未连后台）💗');
+  }catch(e){ toast('下载失败，请重试'); }
+}
+function copyPrompt(){
+  const r = currentResult || compute();
+  const text = buildPrompt(r);
+  // 把开场白展示在下方（此前是空的虚线框，现已默认隐藏，点击后再显示）
+  const pb = document.getElementById('prompt-box');
+  pb.textContent = text;
+  pb.style.display = 'block';
+  const ok = ()=>toast('开场白已复制，去粘贴给别的 AI 吧 📋');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok).catch(()=>fallbackCopy(text,ok));
+  }else fallbackCopy(text,ok);
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; ta.style.top='0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try{ document.execCommand('copy'); cb(); }
+  catch(e){ toast('复制失败，可长按上方文字手动复制'); }
+  document.body.removeChild(ta);
+}
+
+/* ============ 保存图片 ============ */
+function ensureH2C(){
+  if(window.html2canvas) return Promise.resolve();
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload=res; s.onerror=rej; document.head.appendChild(s);
+  });
+}
+function saveImage(){
+  toast('正在生成图片…');
+  ensureH2C().then(()=>{
+    const card=document.getElementById('report-card');
+    return html2canvas(card,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+  }).then(canvas=>{
+    const link=document.createElement('a');
+    link.download='我的性别角色报告.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    toast('已保存，去发小红书吧 💗');
+  }).catch(()=>{
+    toast('图片生成需要联网，可直接截图保存哦');
+  });
+}
+</script>
+</body>
+</html>
