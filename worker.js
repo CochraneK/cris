@@ -1,127 +1,118 @@
-// BSRI 落点收集 · Cloudflare Worker + KV（免费、无需信用卡）
-// 经典 service worker 格式（addEventListener + 全局绑定），兼容性最好。
-// 作用：
-//   1) 真实累积每个填写者的 (M, F, 性别, 类型) 落点，前端 /api/points 读取真实全体分布（散点图用）
-//   2) 匿名存每个人的 60 题完整作答（resp:<uid>），本人凭 uid 可取回「只属于自己的数据」
-//
-// 部署（自动化脚本 cf_deploy.sh 已搞定）：
-//   - KV 命名空间 bsri-points 存放全体落点（键 points）与每人明细（键 resp:<uid>）
-//   - 本 Worker 绑定一个 KV 变量，变量名必须是 POINTS（全局可用，无需 env 参数）
-//   - 部署后地址形如 https://polished-moon-b698.cunyikang.workers.dev
-//
-// 隐私说明：只存匿名字段（M/F/类型/性别/60题打分 + 随机 uid），绝不存姓名、微信、IP。
-// 每人用自己的 uid 取回，uid 为随机长串，他人无法猜到，因此「只能下载自己的数据」。
-//
-// 接口：
-//   GET  /api/points  -> {"points":[{"m":..,"f":..,"type":..,"gender":..}, ...]}   全体落点（散点图）
-//   POST /api/submit  -> body {"m","f","type","gender","uid","answers":[60个1-7]}
-//                         返回 {"ok":true,"count":N,"uid":<实际用的uid>}
-//   GET  /api/mine    -> 头部 x-bsri-uid 或 ?uid= 传自己的 uid；返回该人明细（404=无记录）
-//   OPTIONS           -> CORS 预检（已放行跨域，前端在 GitHub Pages 上也能调用）
+// BSRI Worker —— Cloudflare D1 版（模块格式）
+// 安全要点（按审查意见 ③④⑤ 实现）：
+//  ③ 群体数据用 D1（一行一个 respondent），不再用单 KV key 做 read-modify-write，避免并发覆盖/写额度问题；
+//  ④ 不信任客户端上传的 m/f/type，全部由 answers 后端重算；校验 answers 必为 60 题、每题整数 1–7；校验 Origin；
+//  ⑤ 按 uid 主键 INSERT OR REPLACE，天然去重——同一人重复测试只保留最新一条（"已有 N 位填写者"= 不同 uid 数）。
+// 注意：首次部署前需在 Cloudflare 侧建好 D1 数据库并把绑定名设为 DB（见 cf_deploy.sh）。
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, x-bsri-uid',
-};
+const THRESHOLD = 4.9;   // BSRI 60题版常模中位数（学界通行分界，源自 Bem 1974 原版大样本中位数），与前端一致
 
-const KEY = 'points';          // KV 中存放全体落点的键
-const MAX_KEEP = 5000;         // 散点图最多保留最近 5000 条，控制体积
-const DETAIL_PREFIX = 'resp:'; // 每人明细键前缀：resp:<uid>
+// 允许的跨域来源（前端部署在 GitHub Pages）。本地 localhost/127.0.0.1 也放行便于自测。
+const ALLOWED_ORIGINS = ['https://cochranek.github.io'];
 
-// uid 只接受安全字符，避免奇怪的 KV 键名
-function safeUid(u){
-  return (typeof u === 'string' && /^[A-Za-z0-9_-]{8,64}$/.test(u)) ? u : null;
-}
-function newUid(){
-  try { return crypto.randomUUID(); }
-  catch(e){ return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,10); }
-}
-const clamp = v => Math.max(1, Math.min(7, +v));
-
-async function readAll() {
-  const raw = await POINTS.get(KEY);   // POINTS 是 KV 全局绑定
-  return raw ? JSON.parse(raw) : [];
-}
-async function writeAll(arr) {
-  await POINTS.put(KEY, JSON.stringify(arr));
+function corsHeaders(request){
+  const origin = request.headers.get('origin');
+  const h = {
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, x-bsri-uid',
+    'Access-Control-Max-Age': '86400',
+    'Content-Type': 'application/json',
+  };
+  if(origin && checkOrigin(request)) h['Access-Control-Allow-Origin'] = origin;
+  return h;
 }
 
-async function handle(request) {
+function checkOrigin(request){
+  const origin = request.headers.get('origin');
+  if(!origin) return true;                                  // 无 Origin（curl/同域直连）放行
+  if(ALLOWED_ORIGINS.includes(origin)) return true;
+  if(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return true;  // 本地自测
+  return false;
+}
+
+// 后端按题序自算 M/F/type（与前端分类规则完全一致；忽略客户端上传值）
+// 题序与前端 index.html 相同：i%3===0 → M，i%3===1 → F，i%3===2 → N
+function computeFromAnswers(answers){
+  let sumM=0,nM=0,sumF=0,nF=0;
+  for(let i=0;i<60;i++){
+    const a = answers[i];
+    const c = i%3===0 ? 'M' : (i%3===1 ? 'F' : 'N');
+    if(c==='M'){ sumM+=a; nM++; }
+    else if(c==='F'){ sumF+=a; nF++; }
+  }
+  const m = nM ? sumM/nM : 0;
+  const f = nF ? sumF/nF : 0;
+  let type;
+  if(m>=THRESHOLD && f>=THRESHOLD) type='androgynous';
+  else if(m>=THRESHOLD && f<THRESHOLD) type='masculine';
+  else if(m<THRESHOLD && f>=THRESHOLD) type='feminine';
+  else type='undifferentiated';
+  return { m:+m.toFixed(3), f:+f.toFixed(3), type };
+}
+
+function isValidAnswers(a){
+  if(!Array.isArray(a) || a.length!==60) return false;
+  for(const v of a){
+    if(typeof v!=='number' || !Number.isInteger(v) || v<1 || v>7) return false;
+  }
+  return true;
+}
+
+const UID_RE = /^[A-Za-z0-9_-]{8,64}$/;
+
+async function handle(request, env){
   const url = new URL(request.url);
   const p = url.pathname;
 
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS });
+  if(request.method==='OPTIONS'){
+    return new Response(null, {status:204, headers:corsHeaders(request)});
+  }
+  if(!checkOrigin(request)){
+    return new Response(JSON.stringify({error:'origin not allowed'}), {status:403, headers:corsHeaders(request)});
   }
 
-  if (p === '/api/points') {
-    const pts = await readAll();
-    return new Response(JSON.stringify({ points: pts }), {
-      headers: { 'Content-Type': 'application/json', ...CORS },
-    });
+  // 确保表存在（幂等；低流量下开销可忽略）
+  try{
+    await env.DB.prepare(
+      'CREATE TABLE IF NOT EXISTS responses (' +
+      'uid TEXT PRIMARY KEY, gender TEXT, m REAL, f REAL, type TEXT, answers TEXT, created_at INTEGER)'
+    ).run();
+  }catch(e){ /* 已存在则忽略 */ }
+
+  if(p==='/api/points' && request.method==='GET'){
+    const {results} = await env.DB.prepare('SELECT uid, gender, m, f, type FROM responses').all();
+    return new Response(JSON.stringify({points: results || []}), {headers:corsHeaders(request)});
   }
 
-  if (p === '/api/submit' && request.method === 'POST') {
-    let data;
-    try { data = await request.json(); }
-    catch (e) {
-      return new Response(JSON.stringify({ ok: false, error: 'bad json' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...CORS } });
-    }
-    const m = Number(data.m), f = Number(data.f);
-    if (!isFinite(m) || !isFinite(f)) {
-      return new Response(JSON.stringify({ ok: false, error: 'm/f required' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...CORS } });
-    }
-    const t = typeof data.type === 'string' ? data.type : 'unknown';
-    const g = typeof data.gender === 'string' ? data.gender : 'unknown';
-    const uid = safeUid(data.uid) || newUid();
-    // 取 60 题作答（若前端传了）；过滤成合法数字
-    const answers = Array.isArray(data.answers)
-      ? data.answers.map(v => Number(v)).filter(n => isFinite(n))
-      : [];
-
-    // ① 存个人明细（键 resp:<uid>），本人可凭 uid 取回
-    const record = {
-      uid,
-      m: clamp(m), f: clamp(f),
-      type: t, gender: g,
-      ts: Date.now(),
-      answers,
-    };
-    await POINTS.put(DETAIL_PREFIX + uid, JSON.stringify(record));
-
-    // ② 全体落点（供散点图），与明细分开存，互不干扰
-    const pts = await readAll();
-    pts.push({ m: clamp(m), f: clamp(f), type: t, gender: g, ts: record.ts });
-    const trimmed = pts.slice(-MAX_KEEP);
-    await writeAll(trimmed);
-
-    return new Response(JSON.stringify({ ok: true, count: trimmed.length, uid }),
-      { headers: { 'Content-Type': 'application/json', ...CORS } });
+  if(p==='/api/mine' && request.method==='GET'){
+    const uid = request.headers.get('x-bsri-uid') || '';
+    if(!UID_RE.test(uid)) return new Response(JSON.stringify({error:'bad uid'}), {status:400, headers:corsHeaders(request)});
+    const row = await env.DB.prepare('SELECT * FROM responses WHERE uid=?').bind(uid).first();
+    if(!row) return new Response(JSON.stringify({error:'not found'}), {status:404, headers:corsHeaders(request)});
+    // 前端 buildPayloadFromRecord 按 rec.answers[i] 索引，需还原为数组
+    try{ row.answers = JSON.parse(row.answers || '[]'); }catch(e){ row.answers = []; }
+    return new Response(JSON.stringify({ok:true, data: row}), {headers:corsHeaders(request)});
   }
 
-  if (p === '/api/mine' && request.method === 'GET') {
-    // 优先读自定义头，其次查询参数（换设备时用户手动贴码）
-    let uid = request.headers.get('x-bsri-uid');
-    if (!uid) uid = url.searchParams.get('uid');
-    uid = safeUid(uid);
-    if (!uid) {
-      return new Response(JSON.stringify({ error: 'missing_or_invalid_uid' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...CORS } });
+  if(p==='/api/submit' && request.method==='POST'){
+    let body;
+    try{ body = await request.json(); }catch(e){
+      return new Response(JSON.stringify({error:'bad json'}), {status:400, headers:corsHeaders(request)});
     }
-    const raw = await POINTS.get(DETAIL_PREFIX + uid);
-    if (!raw) {
-      return new Response(JSON.stringify({ error: 'not_found' }),
-        { status: 404, headers: { 'Content-Type': 'application/json', ...CORS } });
-    }
-    return new Response(raw, { headers: { 'Content-Type': 'application/json', ...CORS } });
+    const uid = typeof body.uid==='string' ? body.uid : '';
+    const gender = ['male','female','unknown'].includes(body.gender) ? body.gender : 'unknown';
+    const answers = body.answers;
+    if(!UID_RE.test(uid)) return new Response(JSON.stringify({error:'bad uid'}), {status:400, headers:corsHeaders(request)});
+    if(!isValidAnswers(answers)) return new Response(JSON.stringify({error:'answers must be an array of 60 integers 1-7'}), {status:400, headers:corsHeaders(request)});
+    // 后端自算，忽略客户端可能伪造的 m/f/type
+    const {m,f,type} = computeFromAnswers(answers);
+    await env.DB.prepare(
+      'INSERT OR REPLACE INTO responses (uid, gender, m, f, type, answers, created_at) VALUES (?,?,?,?,?,?,?)'
+    ).bind(uid, gender, m, f, type, JSON.stringify(answers), Date.now()).run();
+    return new Response(JSON.stringify({ok:true, uid}), {headers:corsHeaders(request)});
   }
 
-  return new Response('BSRI points API — GET /api/points, POST /api/submit, GET /api/mine', { headers: CORS });
+  return new Response(JSON.stringify({error:'not found'}), {status:404, headers:corsHeaders(request)});
 }
 
-addEventListener('fetch', (event) => {
-  event.respondWith(handle(event.request));
-});
+export default { async fetch(request, env){ return handle(request, env); } };
