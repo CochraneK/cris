@@ -255,7 +255,7 @@
               <span><i style="background:#ff5e8a"></i>女生落点</span>
               <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
             </div>
-            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 BSRI 判定阈值 <b>5.0</b>（在 1–7 量表里距左/下 2/3 处，故色块非正方形、但严格对应分类）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
+            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 <b>5.0</b>（本站为直观展示暂设的<b>可视化参考分界</b>，并非 BSRI 通用诊断或标准常模界值；在 1–7 量表里距左/下 2/3 处，故色块非正方形）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
           </div>
 
           <div class="r-section">
@@ -287,7 +287,7 @@
         </div>
 
         <div class="r-foot">
-          测验依据贝姆性别角色量表（BSRI）编制 · 结果由你的自我描述生成，仅供参考与自我探索，不作临床诊断 💗
+          测验依据贝姆性别角色量表（BSRI）编制 · 结果由你的自我描述生成，仅供参考与自我探索，<b>不作临床诊断</b> 💗<br>说明：本站以 <b>5.0</b> 作为四象限的<b>可视化参考分界</b>，并非 BSRI 通用诊断或标准常模界值；连续得分（男性化 / 女性化）更值得参考。
         </div>
       </div>
 
@@ -377,8 +377,8 @@ function updateProgress(){
   }
 }
 
-/* ============ 计分 & 分类（固定分界 5.0，BSRI 常用标准） ============ */
-const THRESHOLD = 5.0; // 个人自测固定分界：均值≥5 视为该维度"高分"（BSRI 常用标准；底块按 5.0 切分，故非正方形）
+/* ============ 计分 & 分类（本站以 5.0 作为可视化参考分界，非 BSRI 通用标准界值） ============ */
+const THRESHOLD = 5.0; // 本站可视化参考分界：均值≥5 视为该维度"高分"（非 BSRI 官方固定 cutoff；底块按 5.0 切分，故非正方形）
 function compute(){
   let sumM=0,nM=0,sumF=0,nF=0;
   questions.forEach((q,i)=>{
@@ -604,7 +604,7 @@ function renderScatter(realPoints, me){
   const toX = v => x0 + (v-MIN)/(MAX-MIN)*(x1-x0);
   const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 男性化在上（Y 轴=男性化）
   ctx.clearRect(0,0,W,H);
-  // 背景四区淡色：按 BSRI 5.0 判定阈值切分（非几何正中，故色块非正方形），与类型分类完全一致
+  // 背景四区淡色：按 5.0 可视化参考分界切分（非几何正中，故色块非正方形），与本站分类规则一致
   const midX = toX(5), midY = toY(5);   // 5.0 分界
   ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,midX-x0,midY-y0);                     // 左上 男性化（蓝）
   ctx.fillStyle = '#f0eaff'; ctx.fillRect(midX,y0,x1-midX,midY-y0);                   // 右上 双性化（紫）
@@ -698,7 +698,7 @@ function buildPrompt(r){
   const rep = REPORT[r.type];
   const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
   return `我刚做完一份「贝姆性别角色量表（BSRI）」小测验。
-我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；类型判定为「${rep.title}」。
+我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；在本站 5.0 参考分界下归为「${rep.title}」。
 附件 JSON 是我 60 道题的具体作答（含每题类别 M/F/中性 与我的打分）。
 请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊：
 1）这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战；
