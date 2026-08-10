@@ -125,8 +125,24 @@
   .lead b{color:var(--ink);}
   .data-acts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
   .btn.small{font-size:14px;padding:12px 14px;border-radius:14px;flex:1;min-width:130px;background:#fff;color:var(--pink);box-shadow:var(--shadow);}
-  .prompt-box{display:block;background:#fff;border:1px dashed #e7d8e0;border-radius:14px;padding:14px;font-size:12.5px;line-height:1.85;color:#5a4a54;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
+  .prompt-box{position:relative;display:block;background:#fff;border:1px dashed #e7d8e0;border-radius:14px;padding:14px;padding-top:40px;font-size:12.5px;line-height:1.85;color:#5a4a54;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
+  .copy-mini{position:absolute;top:9px;right:9px;font-size:12px;padding:6px 11px;border-radius:11px;border:1px solid #f0d3df;background:#fff;color:var(--pink);cursor:pointer;box-shadow:var(--shadow);font-weight:600;line-height:1;transition:transform .12s;}
+  .copy-mini:active{transform:scale(.94);}
   .prompt-tip{font-size:12.5px;color:var(--ink-soft);margin:0 0 8px;line-height:1.6;}
+  .evidence .ev-intro{font-size:12.5px;color:var(--ink-soft);line-height:1.8;margin:0 0 13px;}
+  .evidence .ev-intro b{color:var(--ink);}
+  .ev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .ev-card{background:#fff;border:1px solid #efe6ec;border-radius:14px;padding:12px 13px;}
+  .ev-card h4{font-size:13.5px;margin:0 0 8px;color:var(--ink);}
+  .ev-card .ev-sub{font-size:10.5px;color:#d6579b;background:#fdeef5;border-radius:8px;padding:1px 7px;margin-left:5px;font-weight:700;vertical-align:middle;}
+  .ev-card p{font-size:12px;color:#5a4a54;line-height:1.7;margin:0 0 7px;}
+  .ev-card p:last-child{margin-bottom:0;}
+  .ev-warn{background:#fff8ef;border:1px solid #ffe6c2;border-radius:10px;padding:7px 9px;color:#8a6d3b;}
+  .ev-warn b{color:#7a5a25;}
+  .cite{font-size:10.5px;color:#a294ad;margin-left:3px;white-space:nowrap;}
+  .cite::before{content:"〔";}
+  .cite::after{content:"〕";}
+  @media (max-width:430px){ .ev-grid{grid-template-columns:1fr;} }
   .data-note{font-size:12.5px;color:#6a5a64;line-height:1.85;background:#f3f8ff;border:1px solid #dce9ff;border-radius:14px;padding:12px 14px;margin:0 0 14px;}
   .muted{color:#9a8aa6;font-size:11.5px;}
   .data-note b{color:var(--ink);}
@@ -256,7 +272,7 @@
               <span><i style="background:#ff5e8a"></i>女生落点</span>
               <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
             </div>
-            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界为 CSRI-50 常模中位数：<b>男性化 4.8 / 女性化 5.0</b>（刘电芝 2011，全国 5008 名大学生常模；两轴分界不同，故色块非正方形）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
+            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块即四种类型区域，分界为 CSRI-50 常模中位数：<b>男性化 4.8 / 女性化 5.0</b>（刘电芝 2011，全国 5008 名大学生常模；两轴分界不同，故色块非正方形）。</div>
           </div>
 
           <div class="r-section">
@@ -275,6 +291,37 @@
             <h3>给独一无二的你</h3>
             <div class="tips" id="r-tips"></div>
           </div>
+
+          <div class="r-section evidence">
+            <h3>各类型的实证研究怎么说 📚</h3>
+            <p class="ev-intro">下面是心理学界对不同性别角色类型的实证发现（汇总国内外研究，每条都标注了出处与年份）。注意：这些是<b>群体平均趋势</b>，不是对你个人的判定——你永远是那个具体的、比标签丰富的人 💗</p>
+            <div class="ev-grid">
+              <div class="ev-card">
+                <h4>双性化者<span class="ev-sub">男女特质都高</span></h4>
+                <p>· 主观幸福感、总体自我价值感<b>最高</b>，被多项研究视为最理想的性别角色类型 <span class="cite">许婵贞 2007</span><span class="cite">王学 等 2009</span></p>
+                <p>· 抑郁、焦虑水平<b>最低</b>，心理健康水平最高 <span class="cite">王红瑞 2008</span><span class="cite">余小芳 2007</span></p>
+                <p>· 行为更<b>灵活</b>，男女情境下都能自如调用刚强或温柔 <span class="cite">Bem & Lewis 1975</span></p>
+              </div>
+              <div class="ev-card">
+                <h4>男性化者<span class="ev-sub">男高 · 女低</span></h4>
+                <p>· 自尊、独立性、行动力更强；男性特质是<b>自我价值感最有力的预测因子</b> <span class="cite">Whitley 1983</span><span class="cite">王学 等 2009</span></p>
+                <p>· 男生：男性化水平高，积极情感得分更高 <span class="cite">杜军·谢继红 2008</span></p>
+                <p>· 心理健康与双性化接近，明显优于女性化、未分化 <span class="cite">Bassoff & Glass 1982</span></p>
+              </div>
+              <div class="ev-card">
+                <h4>女性化者<span class="ev-sub">男低 · 女高</span></h4>
+                <p>· 共情、人际温暖突出；婚姻中<b>伴侣的幸福感更高</b> <span class="cite">Antill 1983</span></p>
+                <p>· 女生：男性化水平高的女生积极情感更高（女生里"刚柔并济"更受益） <span class="cite">杜军·谢继红 2008</span></p>
+                <p>· 提醒：单纯女性化者在自尊/心理健康上平均偏弱，但<b>温柔本身极珍贵</b> <span class="cite">Bassoff & Glass 1982</span></p>
+              </div>
+              <div class="ev-card">
+                <h4>未分化者<span class="ev-sub">男女都低</span></h4>
+                <p>· 平均自我价值感、心理健康水平<b>最低</b>，但在部分研究中并非必然 <span class="cite">王学 等 2009</span><span class="cite">王红瑞 2008</span></p>
+                <p>· 优势：往往更<b>松弛、不被性别框住</b>，活得自在随性（本工具也以此视角解读你）</p>
+                <p class="ev-warn">⚠️ 量表只测"传统男女特质高低"，未分化 ≠ 没特点、≠ 能力差；很多创造力强、独立思考者本就不贴传统标签 <span class="cite">Bem 1974</span></p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="r-section take-away">
@@ -284,8 +331,7 @@
           <div class="data-note">📋 关于你的数据：为了方便把你和大家的落点一起展示在群体分布图上，匿名保存了你的作答记录——<b>不含任何能识别你的信息</b>。 💗</div>
 
           <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
-          <button class="btn outline" onclick="copyPrompt()">📋 复制 AI 开场白</button>
-          <div class="prompt-box" id="prompt-box"></div>
+          <div class="prompt-box" id="prompt-box"><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button><span id="prompt-text"></span></div>
         </div>
 
         <div class="r-foot">
@@ -453,7 +499,7 @@ function renderReport(r){
   document.getElementById('r-masc').innerHTML = rep.masc;
   document.getElementById('r-fem').innerHTML = rep.fem;
   document.getElementById('r-tips').innerHTML = rep.tips.map(t=>`<p class="t">${t}</p>`).join('');
-  document.getElementById('prompt-box').textContent = buildPrompt(r);
+  document.getElementById('prompt-text').textContent = buildPrompt(r);
   /* 分数条 */
   const mPct = Math.min(100, r.mScore/7*100);
   const fPct = Math.min(100, r.fScore/7*100);
@@ -756,10 +802,7 @@ async function downloadData(){
 function copyPrompt(){
   const r = currentResult || compute();
   const text = buildPrompt(r);
-  // 把开场白展示在下方（此前是空的虚线框，现已默认隐藏，点击后再显示）
-  const pb = document.getElementById('prompt-box');
-  pb.textContent = text;
-  pb.style.display = 'block';
+  // 开场白已常驻展示在 prompt-text 里（prompt-box 内嵌「复制」小按钮）
   const ok = ()=>toast('开场白已复制，去粘贴给别的 AI 吧 📋');
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).then(ok).catch(()=>fallbackCopy(text,ok));
