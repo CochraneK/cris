@@ -1,11 +1,21 @@
-// BSRI Worker —— Cloudflare D1 版（模块格式）
+// CSRI-50 Worker —— Cloudflare D1 版（模块格式）
+// 量表：中国大学生性别角色量表（CSRI-50，刘电芝 等 2011，心理学报）
+//   —— 在 Bem(1974) BSRI 与钱铭怡(2000) CSRI 基础上重编，全国 5008 名大学生常模。
+//   —— 结构：50 题 = 男性化 16 + 女性化 16 + 中性（干扰）18；7 点计分；仅 M/F 计分，N 不计。
+//   —— 分类阈值：男性化分量表常模中位数 4.8、女性化分量表常模中位数 5.0
+//      （双性化 M≥4.8 & F≥5.0；男性化 M≥4.8 & F<5.0；女性化 M<4.8 & F≥5.0；未分化 M<4.8 & F<5.0）。
 // 安全要点（按审查意见 ③④⑤ 实现）：
 //  ③ 群体数据用 D1（一行一个 respondent），不再用单 KV key 做 read-modify-write，避免并发覆盖/写额度问题；
-//  ④ 不信任客户端上传的 m/f/type，全部由 answers 后端重算；校验 answers 必为 60 题、每题整数 1–7；校验 Origin；
+//  ④ 不信任客户端上传的 m/f/type，全部由 answers 后端重算；校验 answers 必为 50 题、每题整数 1–7；校验 Origin；
 //  ⑤ 按 uid 主键 INSERT OR REPLACE，天然去重——同一人重复测试只保留最新一条（"已有 N 位填写者"= 不同 uid 数）。
 // 注意：首次部署前需在 Cloudflare 侧建好 D1 数据库并把绑定名设为 DB（见 cf_deploy.sh）。
 
-const THRESHOLD = 4.9;   // BSRI 60题版常模中位数（学界通行分界，源自 Bem 1974 原版大样本中位数），与前端一致
+const M_THRESHOLD = 4.8;  // CSRI-50 男性化分量表常模中位数（刘电芝 2011，全国 5008 大学生）
+const F_THRESHOLD = 5.0;  // CSRI-50 女性化分量表常模中位数
+
+// 题序类别序列（与前端 index.html 的 ITEMS 顺序严格一致；长度 50：16 M + 16 F + 18 N）
+// M=男性化 F=女性化 N=中性干扰
+const CATS = 'FMFNMMFNNNMNNFMFNNFFNMNMNMFFNMFMMFMNMNFFNMFMNNMFNF';
 
 // 允许的跨域来源（前端部署在 GitHub Pages）。本地 localhost/127.0.0.1 也放行便于自测。
 const ALLOWED_ORIGINS = ['https://cochranek.github.io'];
@@ -31,27 +41,26 @@ function checkOrigin(request){
 }
 
 // 后端按题序自算 M/F/type（与前端分类规则完全一致；忽略客户端上传值）
-// 题序与前端 index.html 相同：i%3===0 → M，i%3===1 → F，i%3===2 → N
 function computeFromAnswers(answers){
   let sumM=0,nM=0,sumF=0,nF=0;
-  for(let i=0;i<60;i++){
+  for(let i=0;i<50;i++){
     const a = answers[i];
-    const c = i%3===0 ? 'M' : (i%3===1 ? 'F' : 'N');
+    const c = CATS[i];
     if(c==='M'){ sumM+=a; nM++; }
     else if(c==='F'){ sumF+=a; nF++; }
   }
   const m = nM ? sumM/nM : 0;
   const f = nF ? sumF/nF : 0;
   let type;
-  if(m>=THRESHOLD && f>=THRESHOLD) type='androgynous';
-  else if(m>=THRESHOLD && f<THRESHOLD) type='masculine';
-  else if(m<THRESHOLD && f>=THRESHOLD) type='feminine';
+  if(m>=M_THRESHOLD && f>=F_THRESHOLD) type='androgynous';
+  else if(m>=M_THRESHOLD && f<F_THRESHOLD) type='masculine';
+  else if(m<M_THRESHOLD && f>=F_THRESHOLD) type='feminine';
   else type='undifferentiated';
   return { m:+m.toFixed(3), f:+f.toFixed(3), type };
 }
 
 function isValidAnswers(a){
-  if(!Array.isArray(a) || a.length!==60) return false;
+  if(!Array.isArray(a) || a.length!==50) return false;
   for(const v of a){
     if(typeof v!=='number' || !Number.isInteger(v) || v<1 || v>7) return false;
   }
@@ -103,7 +112,7 @@ async function handle(request, env){
     const gender = ['male','female','unknown'].includes(body.gender) ? body.gender : 'unknown';
     const answers = body.answers;
     if(!UID_RE.test(uid)) return new Response(JSON.stringify({error:'bad uid'}), {status:400, headers:corsHeaders(request)});
-    if(!isValidAnswers(answers)) return new Response(JSON.stringify({error:'answers must be an array of 60 integers 1-7'}), {status:400, headers:corsHeaders(request)});
+    if(!isValidAnswers(answers)) return new Response(JSON.stringify({error:'answers must be an array of 50 integers 1-7'}), {status:400, headers:corsHeaders(request)});
     // 后端自算，忽略客户端可能伪造的 m/f/type
     const {m,f,type} = computeFromAnswers(answers);
     await env.DB.prepare(
