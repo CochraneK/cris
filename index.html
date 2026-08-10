@@ -255,7 +255,7 @@
               <span><i style="background:#ff5e8a"></i>女生落点</span>
               <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
             </div>
-            <div class="scatter-cap">横轴=男性化特质，纵轴=女性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 BSRI 判定阈值 <b>5.0</b>（在 1–7 量表里距左 2/3 处，故色块非正方形、但严格对应分类）：左上女性化 / 右上双性化 / 左下未分化 / 右下男性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
+            <div class="scatter-cap">横轴=女性化特质，纵轴=男性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 BSRI 判定阈值 <b>5.0</b>（在 1–7 量表里距左/下 2/3 处，故色块非正方形、但严格对应分类）：左上男性化 / 右上双性化 / 左下未分化 / 右下女性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
           </div>
 
           <div class="r-section">
@@ -602,14 +602,14 @@ function renderScatter(realPoints, me){
   const x0 = pad, x1 = W - pad, y0 = pad, y1 = H - pad;   // 画布内边距
   const MIN=1, MAX=7;
   const toX = v => x0 + (v-MIN)/(MAX-MIN)*(x1-x0);
-  const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 女性化在上
+  const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 男性化在上（Y 轴=男性化）
   ctx.clearRect(0,0,W,H);
   // 背景四区淡色：按 BSRI 5.0 判定阈值切分（非几何正中，故色块非正方形），与类型分类完全一致
   const midX = toX(5), midY = toY(5);   // 5.0 分界
-  ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,midX-x0,midY-y0);                     // 左上 女性化
-  ctx.fillStyle = '#fff0f6'; ctx.fillRect(midX,y0,x1-midX,midY-y0);                   // 右上 双性化
-  ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,midY,x1-x0,y1-midY);                     // 左下 未分化
-  ctx.fillStyle = '#f0eaff'; ctx.fillRect(midX,midY,x1-midX,y1-midY);                 // 右下 男性化
+  ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,midX-x0,midY-y0);                     // 左上 男性化（蓝）
+  ctx.fillStyle = '#f0eaff'; ctx.fillRect(midX,y0,x1-midX,midY-y0);                   // 右上 双性化（紫）
+  ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,midY,x1-x0,y1-midY);                     // 左下 未分化（黄）
+  ctx.fillStyle = '#fff0f6'; ctx.fillRect(midX,midY,x1-midX,y1-midY);                 // 右下 女性化（粉）
   // 网格 + 坐标轴
   ctx.strokeStyle='#e3d8df'; ctx.lineWidth=1;
   ctx.font='20px -apple-system,"PingFang SC",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
@@ -620,25 +620,25 @@ function renderScatter(realPoints, me){
   }
   // 轴标题
   ctx.fillStyle='#7a6a73'; ctx.font='bold 22px -apple-system,"PingFang SC",sans-serif';
-  ctx.fillText('男性化 →', (x0+x1)/2, y1+34);
-  ctx.save();ctx.translate(x0-34,(y0+y1)/2);ctx.rotate(-Math.PI/2);ctx.fillText('女性化 →',0,0);ctx.restore();
+  ctx.fillText('女性化 →', (x0+x1)/2, y1+34);
+  ctx.save();ctx.translate(x0-34,(y0+y1)/2);ctx.rotate(-Math.PI/2);ctx.fillText('男性化 →',0,0);ctx.restore();
   // 象限标签（居中于各自 5.0 色块）
   ctx.font='bold 19px -apple-system,"PingFang SC",sans-serif';
   ctx.fillStyle='#9a8aa6';
-  ctx.fillText('女性化', (x0+midX)/2, y0+22);
+  ctx.fillText('男性化', (x0+midX)/2, y0+22);
   ctx.fillText('双性化', (midX+x1)/2, y0+22);
   ctx.fillText('未分化', (x0+midX)/2, y1-22);
-  ctx.fillText('男性化', (midX+x1)/2, y1-22);
+  ctx.fillText('女性化', (midX+x1)/2, y1-22);
   // 真实全体落点（按性别上色：男蓝 女粉）
   (realPoints||[]).forEach(p=>{
     const c = genderColor(p.gender || 'unknown');
     ctx.beginPath();
     ctx.fillStyle = c + 'b0';   // 约 69% 透明
-    ctx.arc(toX(p.m), toY(p.f), 6.5, 0, Math.PI*2); ctx.fill();
+    ctx.arc(toX(p.f), toY(p.m), 6.5, 0, Math.PI*2); ctx.fill();   // X=女性化 Y=男性化
   });
   // 自己的点（按性别高亮 + 白圈）
   if(me){
-    const cx=toX(me.mScore), cy=toY(me.fScore);
+    const cx=toX(me.fScore), cy=toY(me.mScore);   // X=女性化 Y=男性化
     const mc = genderColor(me.gender);
     ctx.beginPath(); ctx.fillStyle = mc + '33'; ctx.arc(cx,cy,22,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.fillStyle = mc; ctx.arc(cx,cy,10,0,Math.PI*2); ctx.fill();
