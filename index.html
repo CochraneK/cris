@@ -255,7 +255,7 @@
               <span><i style="background:#ff5e8a"></i>女生落点</span>
               <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
             </div>
-            <div class="scatter-cap">横轴=男性化特质，纵轴=女性化特质，均为 1–7 分。底色四大块就是四种类型区域，按画布正中（量表中点 <b>4.0</b>）等分，是真正的 2×2 正方形：左上女性化 / 右上双性化 / 左下未分化 / 右下男性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
+            <div class="scatter-cap">横轴=男性化特质，纵轴=女性化特质，均为 1–7 分。底色四大块就是四种类型区域，分界在 BSRI 判定阈值 <b>5.0</b>（在 1–7 量表里距左 2/3 处，故色块非正方形、但严格对应分类）：左上女性化 / 右上双性化 / 左下未分化 / 右下男性化。每个点都是一位填写者：🔵男生、🌸女生，亮色大点是你 🌟</div>
           </div>
 
           <div class="r-section">
@@ -377,8 +377,8 @@ function updateProgress(){
   }
 }
 
-/* ============ 计分 & 分类（固定分界 4.0，量表中点） ============ */
-const THRESHOLD = 4.0; // 个人自测固定分界：1–7 量表中点 4.0，均值≥4 视为该维度"高分"（与四象限等分一致）
+/* ============ 计分 & 分类（固定分界 5.0，BSRI 常用标准） ============ */
+const THRESHOLD = 5.0; // 个人自测固定分界：均值≥5 视为该维度"高分"（BSRI 常用标准；底块按 5.0 切分，故非正方形）
 function compute(){
   let sumM=0,nM=0,sumF=0,nF=0;
   questions.forEach((q,i)=>{
@@ -604,11 +604,12 @@ function renderScatter(realPoints, me){
   const toX = v => x0 + (v-MIN)/(MAX-MIN)*(x1-x0);
   const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 女性化在上
   ctx.clearRect(0,0,W,H);
-  // 背景四区淡色：按画布正中（1–7 量表中点 4.0）等分，形成真正 2×2 正方形，与阈值一致
-  ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,(x1-x0)/2,(y1-y0)/2);                 // 左上 女性化
-  ctx.fillStyle = '#fff0f6'; ctx.fillRect((x0+x1)/2,y0,(x1-x0)/2,(y1-y0)/2);          // 右上 双性化
-  ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,(y0+y1)/2,(x1-x0)/2,(y1-y0)/2);          // 左下 未分化
-  ctx.fillStyle = '#f0eaff'; ctx.fillRect((x0+x1)/2,(y0+y1)/2,(x1-x0)/2,(y1-y0)/2);   // 右下 男性化
+  // 背景四区淡色：按 BSRI 5.0 判定阈值切分（非几何正中，故色块非正方形），与类型分类完全一致
+  const midX = toX(5), midY = toY(5);   // 5.0 分界
+  ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,midX-x0,midY-y0);                     // 左上 女性化
+  ctx.fillStyle = '#fff0f6'; ctx.fillRect(midX,y0,x1-midX,midY-y0);                   // 右上 双性化
+  ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,midY,x1-x0,y1-midY);                     // 左下 未分化
+  ctx.fillStyle = '#f0eaff'; ctx.fillRect(midX,midY,x1-midX,y1-midY);                 // 右下 男性化
   // 网格 + 坐标轴
   ctx.strokeStyle='#e3d8df'; ctx.lineWidth=1;
   ctx.font='20px -apple-system,"PingFang SC",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
@@ -621,13 +622,13 @@ function renderScatter(realPoints, me){
   ctx.fillStyle='#7a6a73'; ctx.font='bold 22px -apple-system,"PingFang SC",sans-serif';
   ctx.fillText('男性化 →', (x0+x1)/2, y1+34);
   ctx.save();ctx.translate(x0-34,(y0+y1)/2);ctx.rotate(-Math.PI/2);ctx.fillText('女性化 →',0,0);ctx.restore();
-  // 象限标签（居中于各自 2×2 正方形色块）
+  // 象限标签（居中于各自 5.0 色块）
   ctx.font='bold 19px -apple-system,"PingFang SC",sans-serif';
   ctx.fillStyle='#9a8aa6';
-  ctx.fillText('女性化', (x0+x1)/4, y0+22);
-  ctx.fillText('双性化', (x0+x1)*3/4, y0+22);
-  ctx.fillText('未分化', (x0+x1)/4, y1-22);
-  ctx.fillText('男性化', (x0+x1)*3/4, y1-22);
+  ctx.fillText('女性化', (x0+midX)/2, y0+22);
+  ctx.fillText('双性化', (midX+x1)/2, y0+22);
+  ctx.fillText('未分化', (x0+midX)/2, y1-22);
+  ctx.fillText('男性化', (midX+x1)/2, y1-22);
   // 真实全体落点（按性别上色：男蓝 女粉）
   (realPoints||[]).forEach(p=>{
     const c = genderColor(p.gender || 'unknown');
@@ -679,7 +680,7 @@ function buildPayloadFromRecord(rec){
   return {
     meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date(rec.ts||Date.now()).toISOString(),
           gender:rec.gender||'unknown', uid:rec.uid},
-    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2), threshold:4.0},
+    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2), threshold:5.0},
     type:rec.type, typeLabel:REPORT[rec.type]?REPORT[rec.type].title:rec.type,
     answers:ans
   };
@@ -688,7 +689,7 @@ function buildPayload(r){
   const ans = questions.map((q,i)=>({no:i+1, word:q.word, category:q.cat, score:answers[i]}));
   return {
     meta:{test:'贝姆性别角色量表(BSRI)', generatedAt:new Date().toISOString(), gender:currentGender||'unknown'},
-    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2), threshold:4.0},
+    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2), threshold:5.0},
     type:r.type, typeLabel:REPORT[r.type].title,
     answers:ans
   };
