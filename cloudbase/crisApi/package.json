@@ -1,0 +1,9 @@
+{
+  "name": "crisApi",
+  "version": "1.0.0",
+  "description": "CRIS 性别角色测验后端云函数（腾讯云开发 CloudBase）",
+  "main": "index.js",
+  "dependencies": {
+    "@cloudbase/node-sdk": "^2.6.0"
+  }
+}
