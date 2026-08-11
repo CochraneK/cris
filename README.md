@@ -1,22 +1,20 @@
-# 性别角色探索测验（CSRI-50 中文版）
+# 性别角色探索测验（CRIS · CSRI-50 中文版）
 
 一个**移动优先**的性别角色自我探索网页，基于**中国大学生性别角色量表（CSRI-50，刘电芝 等 2011，心理学报）** 编制。
 该量表在 Sandra Bem (1974) 的 BSRI 与钱铭怡 (2000) 的 CSRI 基础上重编，采用全国 5008 名大学生常模，
 是**当前国内大学生性别角色研究最普遍使用的版本**。50 题 7 点量表，
 帮你在「男性化 / 女性化」两个独立维度上看见自己的交织方式，并在
-**四象限落点图**上找到自己的位置、看见其他填写者的分布。
+**四象限落点图**上找到自己的位置、看见其他真实填写者的分布。
 
-线上地址：https://cochranek.github.io/bsri/
+线上地址：https://cochranek.github.io/cris/
 
 ## 功能
 - 📱 手机友好：单栏响应式、大按钮、进度条
 - 🚻 开场只问性别（👦 男生 / 👧 女生），用于落点图配色与对照（男=蓝、女=粉）
 - 🧮 计分：男性化(M)、女性化(F) 各自 16 题均值，中性 18 题作干扰不计分；以 **男性化 4.8 / 女性化 5.0** 作为四象限分界，即 CSRI-50 的**常模中位数**（刘电芝 2011，全国 5008 名大学生复测得出，中国本土常模）
 - 🌐 四象限落点图：横轴 女性化、纵轴 男性化，以 男性化 4.8 / 女性化 5.0 常模中位数为分界（两轴分界不同，色块非正方）；男蓝、女粉
-- 👥 可见**其他填写者的落点**：
-  - 接入后端（worker.js / D1）时显示**实时真实累积**的全体落点（按 uid 去重，每行一 respondent）；
-  - 纯静态（GitHub Pages）且后端不可达时，回退到内置**示例分布**（`assets/data/history.json`，演示用，明确标注）
-- 🎉 答题鼓励：答到 **1/3、2/3** 时弹出**动态居中的撒花 / 喝彩**提示（不再只是底部小条）
+- 👥 可见**其他真实填写者的落点**：接入后端（worker.js / D1）时显示**实时真实累积**的全体落点（按 uid 去重，每行一 respondent）。前端用 localStorage 缓存群体落点，刷新时秒开、仅增量更新
+- 🎉 答题鼓励：答到 **1/3、2/3** 时弹出**动态居中的撒花 / 喝彩**提示
 - 📝 暖心 / 启发 / 客观谨慎的四种类型详细解读
 - 📸 一键**下载报告截图**（PNG）
 - 📥 一键**下载个人作答数据**（JSON，可拿去和其他 AI 深入交流）
@@ -43,11 +41,9 @@
 ## 目录结构
 ```
 index.html                单文件前端（内联 CSS/JS，含题项、计分、报告、绘图）
-server.py                 可选后端（Flask，跨平台）：提供 /api/submit、/api/points；注意当前 server.py 未实现 D1 / 输入校验 / uid 去重，仅作本地调试，正式群体数据请用 worker.js
+server.py                 可选后端（Flask，跨平台，仅作本地调试）
 worker.js                 生产后端（Cloudflare Worker + D1，免费无需信用卡）：每行一个 respondent；后端按 answers 自算 M/F/type、校验每题为 1–7 整数、按 uid 去重
-assets/data/history.json  内置示例分布（演示用，非真实用户）：后端不可达时前端自动回退到此（字段 g/m/f，映射为 gender 后绘图），保证落点图始终有分布可看
-requirements.txt          server.py 依赖（flask）
-.gitignore                运行期 data/ 与 Python 缓存不入库
+cf_deploy.sh              Cloudflare Worker 一键部署脚本（建 D1 + 绑定 + 部署）
 ```
 
 ## 本地预览（纯静态，无后端）
@@ -55,41 +51,22 @@ requirements.txt          server.py 依赖（flask）
 python3 -m http.server 8000
 # 浏览器打开 http://localhost:8000
 ```
-此时落点图会使用内置匿名样本，仍可完整体验。
-
-## 本地运行（带真实后端，累积真实落点）
-```bash
-pip install -r requirements.txt
-python server.py                 # 默认 http://0.0.0.0:8000
-PORT=9000 python server.py       # 自定义端口
-```
-后端把每个填写者的 (M, F, 性别, 类型) 落点写入 `data/points.json`
-（该目录已被 .gitignore 忽略，不入库），并通过 `/api/points` 返回全体落点。
-前端优先用真实后端；若后端不可用（如 GitHub Pages 纯静态），
-自动回退到 `assets/data/history.json` 的匿名样本，保证始终可见他人分布。
+此时落点图仅展示本人落点（无群体分布），其余功能完整体验。
 
 ## 部署
-- **GitHub Pages（纯静态，开箱即用）**：把 `index.html`、`assets/data/history.json` 推到
-  `main` 分支根目录即可。此时落点图使用内置**示例分布**（演示用），适合先看效果 / 挂链接。
-- **带真实后端（推荐，显示真实落点）**：二选一——
-  - 简单托管：在本机 / 云服务器运行 `server.py`，把 `index.html` 顶部的
-    `const API_BASE = ''` 改成后端地址，即可累积并显示真实全体用户的落点。
-  - **零成本无服务器（推荐，本项目已部署）**：用 `worker.js` 部署到 Cloudflare Workers（免费、无需信用卡），
-    创建并绑定一个 **D1 数据库**（数据库名 `bsri`）后，把 `API_BASE` 改成 Worker 域名即可。本项目已部署后端：
-    `https://polished-moon-b698.cunyikang.workers.dev`（D1 数据库 `bsri`，按 `uid` 主键去重）。
-    前端 `API_BASE` 已指向它，每位真实填写者的落点都会被累积，前端读取的是**真实全体分布**，而非示例。
-    需要重新部署后端时，运行 `bash cf_deploy.sh`（需先设置环境变量 `CLOUDFLARE_API_TOKEN`）。
+- **GitHub Pages（纯静态，开箱即用）**：把 `index.html` 推到 `main` 分支根目录即可。
+- **带真实后端（推荐，显示真实全体落点）**：用 `worker.js` 部署到 Cloudflare Workers（免费、无需信用卡），
+  创建并绑定一个 **D1 数据库**（数据库名 `cris`）后，把 `index.html` 顶部的
+  `const API_BASE` 指向 Worker 域名即可。本项目已部署后端：
+  `https://polished-moon-b698.cunyikang.workers.dev`（D1 数据库 `cris`，按 `uid` 主键去重）。
+  前端 `API_BASE` 已指向它，每位真实填写者的落点都会被累积，前端读取的是**真实全体分布**。
+  需要重新部署后端时，运行 `CLOUDFLARE_API_TOKEN=xxx bash cf_deploy.sh`。
 
 ### 每人「详细作答」独立存储 + 仅本人可取回
-- 除了散点图用的聚合落点，后端还会**匿名存每个人 50 题的完整作答**：
-  每次提交前端生成随机 `uid`（存浏览器 localStorage，即结果页展示的「数据提取码」），连同 50 题打分一起发到
-  `POST /api/submit`；后端用 **D1 按 `uid` 主键**单独保存这份明细（含 m/f/类型/性别/作答数组/时间戳，`INSERT OR REPLACE` 天然去重）。
-- **「每个用户只能下载自己的数据」**：前端「下载我的数据」按钮调用 `GET /api/mine`（头部带
-  `x-bsri-uid` 或 `?uid=`），后端只返回该 `uid` 对应的明细，他人（不知道 uid）无法取回。
-  uid 是 128 位随机串，不可猜；全程**不存姓名 / 微信 / IP**，匿名且隐私安全。
+- 后端匿名存每个人 50 题的完整作答：每次提交前端生成随机 `uid`（存浏览器 localStorage，即结果页展示的「数据提取码」），连同 50 题打分一起发到 `POST /api/submit`；后端用 **D1 按 `uid` 主键**单独保存这份明细（`INSERT OR REPLACE` 天然去重）。
+- **「每个用户只能下载自己的数据」**：前端「下载我的数据」按钮调用 `GET /api/mine`（头部带 `x-cris-uid` 或 `?uid=`），后端只返回该 `uid` 对应的明细，他人（不知道 uid）无法取回。uid 是 128 位随机串，不可猜；全程**不存姓名 / 微信 / IP**，匿名且隐私安全。
 - 换手机或清缓存后，凭结果页展示的「数据提取码」仍可取回自己的数据。
-- 后端接口：`GET /api/points`（全体落点）、`POST /api/submit`（写落点+明细，返回 uid）、
-  `GET /api/mine`（凭 uid 取回本人明细，404=无记录）。
+- 后端接口：`GET /api/points`（全体落点）、`POST /api/submit`（写落点+明细，返回 uid）、`GET /api/mine`（凭 uid 取回本人明细，404=无记录）。
 
 ---
 基于公开量表 BSRI 编制，仅供科普与自我探索。
