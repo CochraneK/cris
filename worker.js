@@ -24,7 +24,7 @@ function corsHeaders(request){
   const origin = request.headers.get('origin');
   const h = {
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, x-bsri-uid',
+    'Access-Control-Allow-Headers': 'Content-Type, x-cris-uid',
     'Access-Control-Max-Age': '86400',
     'Content-Type': 'application/json',
   };
@@ -94,7 +94,7 @@ async function handle(request, env){
   }
 
   if(p==='/api/mine' && request.method==='GET'){
-    const uid = request.headers.get('x-bsri-uid') || '';
+    const uid = request.headers.get('x-cris-uid') || '';
     if(!UID_RE.test(uid)) return new Response(JSON.stringify({error:'bad uid'}), {status:400, headers:corsHeaders(request)});
     const row = await env.DB.prepare('SELECT * FROM responses WHERE uid=?').bind(uid).first();
     if(!row) return new Response(JSON.stringify({error:'not found'}), {status:404, headers:corsHeaders(request)});
@@ -124,4 +124,6 @@ async function handle(request, env){
   return new Response(JSON.stringify({error:'not found'}), {status:404, headers:corsHeaders(request)});
 }
 
+// 模块（ES module）格式入口：Cloudflare 通过 env 注入 D1 绑定 DB（D1 绑定要求必须为 ES module）。
+// handle 内部统一用 env.DB，无需改动其余逻辑。
 export default { async fetch(request, env){ return handle(request, env); } };
