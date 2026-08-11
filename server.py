@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BSRI 心理测验 · 后端服务（跨平台版，已去除 Unix 专用的 fcntl）
+CRIS 心理测验 · 后端服务（跨平台版，已去除 Unix 专用的 fcntl）
 - 提供静态页面 (/)
 - 收集每个填写者的 (男性化, 女性化) 落点
 - /api/submit  提交自己的点  -> {"m":float,"f":float,"type":str,"gender":str}
