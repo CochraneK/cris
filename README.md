@@ -13,7 +13,7 @@
 - 🚻 开场只问性别（👦 男生 / 👧 女生），用于落点图配色与对照（男=蓝、女=粉）
 - 🧮 计分：男性化(M)、女性化(F) 各自 16 题均值，中性 18 题作干扰不计分；以 **男性化 4.8 / 女性化 5.0** 作为四象限分界，即 CSRI-50 的**常模中位数**（刘电芝 2011，全国 5008 名大学生复测得出，中国本土常模）
 - 🌐 四象限落点图：横轴 女性化、纵轴 男性化，以 男性化 4.8 / 女性化 5.0 常模中位数为分界（两轴分界不同，色块非正方）；男蓝、女粉
-- 👥 可见**其他真实填写者的落点**：接入后端（worker.js / D1）时显示**实时真实累积**的全体落点（按 uid 去重，每行一 respondent）。前端用 localStorage 缓存群体落点，刷新时秒开、仅增量更新
+- 👥 可见**其他真实填写者的落点**：接入后端（CloudBase 云函数 / 云数据库）时显示**实时真实累积**的全体落点（按 uid 去重，每行一 respondent）。前端用 localStorage 缓存群体落点，刷新时秒开、仅增量更新
 - 🎉 答题鼓励：答到 **1/3、2/3** 时弹出**动态居中的撒花 / 喝彩**提示
 - 📝 暖心 / 启发 / 客观谨慎的四种类型详细解读
 - 📸 一键**下载报告截图**（PNG）
@@ -42,8 +42,9 @@
 ```
 index.html                单文件前端（内联 CSS/JS，含题项、计分、报告、绘图）
 server.py                 可选后端（Flask，跨平台，仅作本地调试）
-worker.js                 生产后端（Cloudflare Worker + D1，免费无需信用卡）：每行一个 respondent；后端按 answers 自算 M/F/type、校验每题为 1–7 整数、按 uid 去重
-cf_deploy.sh              Cloudflare Worker 一键部署脚本（建 D1 + 绑定 + 部署）
+cloudbase/crisApi/        生产后端（腾讯云开发 CloudBase 云函数 + 云数据库，大陆可达·免费额度）：按 uid 主键去重，后端自算 M/F/type
+cloudbase/deploy_cloudbase.sh  CloudBase 一键部署脚本（需先 tcb login）
+cloudbase/DEPLOY.md       后端部署与跨域配置详细手册
 ```
 
 ## 本地预览（纯静态，无后端）
@@ -55,15 +56,14 @@ python3 -m http.server 8000
 
 ## 部署
 - **GitHub Pages（纯静态，开箱即用）**：把 `index.html` 推到 `main` 分支根目录即可。
-- **带真实后端（推荐，显示真实全体落点）**：用 `worker.js` 部署到 Cloudflare Workers（免费、无需信用卡），
-  创建并绑定一个 **D1 数据库**（数据库名 `cris`）后，把 `index.html` 顶部的
-  `const API_BASE` 指向 Worker 域名即可。本项目已部署后端：
-  `https://polished-moon-b698.cunyikang.workers.dev`（D1 数据库 `cris`，按 `uid` 主键去重）。
-  前端 `API_BASE` 已指向它，每位真实填写者的落点都会被累积，前端读取的是**真实全体分布**。
-  需要重新部署后端时，运行 `CLOUDFLARE_API_TOKEN=xxx bash cf_deploy.sh`。
+- **带真实后端（推荐，显示真实全体落点）**：把 `cloudbase/crisApi/` 部署到**腾讯云开发 CloudBase**（大陆可达·免费额度），
+  在环境里建一个 **云数据库集合 `responses`**，为该云函数开 **HTTP 触发 / 云接入** 并配置跨域白名单 `https://cochranek.github.io`，
+  再把 `index.html` 顶部的 `const API_BASE` 指向云函数域名（形如 `https://<ENV_ID>.ap-shanghai.app.tcloudbase.com/crisApi`）。
+  详细步骤见 `cloudbase/DEPLOY.md`。每位真实填写者的落点都会被累积，前端读取的是**真实全体分布**（大陆用户可直接上传，无需 VPN）。
+  需要重新部署后端时，运行 `ENV_ID=xxx bash cloudbase/deploy_cloudbase.sh`。
 
 ### 每人「详细作答」独立存储 + 仅本人可取回
-- 后端匿名存每个人 50 题的完整作答：每次提交前端生成随机 `uid`（存浏览器 localStorage，即结果页展示的「数据提取码」），连同 50 题打分一起发到 `POST /api/submit`；后端用 **D1 按 `uid` 主键**单独保存这份明细（`INSERT OR REPLACE` 天然去重）。
+- 后端匿名存每个人 50 题的完整作答：每次提交前端生成随机 `uid`（存浏览器 localStorage，即结果页展示的「数据提取码」），连同 50 题打分一起发到 `POST /api/submit`；后端用 **云数据库按 `uid` 主键（doc id）**单独保存这份明细（`set` 天然去重）。
 - **「每个用户只能下载自己的数据」**：前端「下载我的数据」按钮调用 `GET /api/mine`（头部带 `x-cris-uid` 或 `?uid=`），后端只返回该 `uid` 对应的明细，他人（不知道 uid）无法取回。uid 是 128 位随机串，不可猜；全程**不存姓名 / 微信 / IP**，匿名且隐私安全。
 - 换手机或清缓存后，凭结果页展示的「数据提取码」仍可取回自己的数据。
 - 后端接口：`GET /api/points`（全体落点）、`POST /api/submit`（写落点+明细，返回 uid）、`GET /api/mine`（凭 uid 取回本人明细，404=无记录）。
