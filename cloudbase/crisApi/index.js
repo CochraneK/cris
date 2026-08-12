@@ -55,10 +55,13 @@ async function listPoints(){
   const LIMIT = 1000;
   while(true){
     const res = await db.collection(COLLECTION)
-      .field({ uid: true, m: true, f: true, gender: true })
+      .field({ uid: true, m: true, f: true, gender: true, demo: true, source: true })
       .skip(skip).limit(LIMIT).get();
     const list = res.data || [];
-    for(const d of list) out.push({ uid: d.uid, m: d.m, f: d.f, gender: d.gender });
+    for(const d of list){
+      if(d.demo === true) continue;   // 排除隐藏入口产生的合成数据，保证"真实填写者"计数纯净
+      out.push({ uid: d.uid, m: d.m, f: d.f, gender: d.gender, source: d.source });
+    }
     if(list.length < LIMIT) break;
     skip += LIMIT;
     if(skip > 20000) break;   // 安全阀
@@ -84,13 +87,16 @@ exports.main = async (event, context) => {
       let body;
       try{ body = JSON.parse(event.body || '{}'); }catch(e){ return json({ error: 'bad json' }, 400); }
       const uid = String(body.uid || '').slice(0, 64);
-      const gender = ['male', 'female', 'other'].includes(body.gender) ? body.gender : 'other';
+      // 允许 male / female / unknown（前端未选性别时传 unknown），其余归一为 other
+      const gender = ['male', 'female', 'unknown', 'other'].includes(body.gender) ? body.gender : 'other';
       const answers = Array.isArray(body.answers) ? body.answers.slice(0, 50) : [];
       if(!uid || answers.length < 50) return json({ error: 'uid and 50 answers required' }, 400);
       const { m, f, type } = computeScores(answers);
-      const doc = { uid, gender, answers, m, f, type, createdAt: Date.now() };
+      // demo=true 仅来自隐藏入口（前端自动作答），用于后期在库中识别/清理合成数据，不计入"真实填写者"
+      const demo = body.demo === true;
+      const doc = { uid, gender, answers, m, f, type, createdAt: Date.now(), demo, source: String(body.source||'direct').slice(0,16) };
       await db.collection(COLLECTION).doc(uid).set(doc);   // 以 uid 为主键，天然去重/覆盖
-      return json({ uid, m, f, type });
+      return json({ uid, m, f, type, demo });
     }
 
     // —— 取回本人明细 ——
@@ -101,7 +107,7 @@ exports.main = async (event, context) => {
       const res = await db.collection(COLLECTION).doc(uid).get();
       const d = (res.data && res.data[0]) || null;
       if(!d) return json({ error: 'not found' }, 404);
-      return json({ uid: d.uid, gender: d.gender, answers: d.answers, m: d.m, f: d.f, type: d.type, createdAt: d.createdAt });
+      return json({ uid: d.uid, gender: d.gender, answers: d.answers, m: d.m, f: d.f, type: d.type, createdAt: d.createdAt, source: d.source });
     }
 
     return json({ error: 'not found' }, 404);
