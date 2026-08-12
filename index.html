@@ -639,7 +639,7 @@ async function loadCommunityPoints(me){
   }catch(e){
     // 后端不可达：保留缓存（若有），否则提示
     if(!cached.length){
-      document.getElementById('counter').textContent = '暂时连不上数据服务（多半是网络对 workers.dev 的限制）——先看看你自己的位置吧，稍后再试 ✨';
+      document.getElementById('counter').textContent = '暂时连不上数据服务（网络问题）——先看看你自己的位置吧，稍后再试 ✨';
     }
   }
 }
@@ -721,7 +721,10 @@ function cheer(msg){
 }
 
 /* ============ 后端 API（共存模式：有后端用真实数据，无后端回退内置样本） ============ */
-const API_BASE = 'https://polished-moon-b698.cunyikang.workers.dev';   // 真实落点后端（Cloudflare Worker + D1）。后端不可达时仅显示本人落点，不回退示例分布。
+// 真实落点后端：腾讯云开发 CloudBase（大陆可达 · 免费额度）。
+// 环境 cris-d6gkkzled0d106625（地域 ap-shanghai），已部署云函数 crisApi（Event 函数）+ HTTP 网关路由 /crisApi。
+// 前端仅 fetch 该网关，不暴露任何密钥；跨域白名单已写死 https://cochranek.github.io。
+const API_BASE = 'https://cris-d6gkkzled0d106625-1421328052.ap-shanghai.app.tcloudbase.com/crisApi';
 let currentResult = null;
 let currentGender = '';
 let myUid = '';   // 匿名码：本人凭它从后台取回自己的明细，随机不可猜
