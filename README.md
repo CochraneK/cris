@@ -130,7 +130,7 @@
 
 前端加载时读取 `?src=` 并随提交一起发给后端，后端在每条记录上打 `source` 字段（落点与取回接口均已返回该字段）。**这不是程序自动识别平台**，而是你自己在链接上打的"来源标签"（类似 UTM），谁点的是哪条链接就归到哪个来源；它不依赖任何平台 API 或 referer。
 
-> ⚠️ 要让 `source` 真正落库，需把改后的云函数**重新部署到 CloudBase**（`ENV_ID=xxx bash cloudbase/deploy_cloudbase.sh`）；仅更新前端不会写库。之后把 `/api/points` 全量落点按 `source` 分组，即可在 Excel / Python 里对比各渠道的 M/F/type 分布与性别比。
+> ✅ 后端云函数已重部署，`source` 字段现已真实落库（已端到端验证：提交带 `?src=ks` 的记录后，`/api/mine` 能取回 `source:"ks"`）。之后把 `/api/points` 全量落点按 `source` 分组，即可在 Excel / Python 里对比各渠道的 M/F/type 分布与性别比。如需再次改动后端代码，用 `ENV_ID=xxx bash cloudbase/deploy_cloudbase.sh` 重部署即可。
 > ⚠️ 方法学：这测的是"经某渠道招募来的受访者"，**不是该平台全体用户的性别角色分布**；匿名方案跨设备不去重，同一人点不同链接会产生多个 uid（重复计数）。
 
 ## 已知限制
