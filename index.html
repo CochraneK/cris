@@ -106,6 +106,11 @@
   .r-head .big{font-size:60px;line-height:1;margin-bottom:10px;}
   .r-head h2{margin:0 0 8px;font-size:24px;font-weight:800;}
   .r-head .quote{font-size:14px;opacity:.95;line-height:1.7;max-width:300px;margin:0 auto;}
+  /* 头图按类型着色（不再千篇一律粉紫） */
+  .r-head.t-androgynous{background:linear-gradient(135deg,#a06fe6,#b388ff);}
+  .r-head.t-masculine{background:linear-gradient(135deg,#5b8def,#3f7fe0);}
+  .r-head.t-feminine{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
+  .r-head.t-undifferentiated{background:linear-gradient(135deg,#56c596,#34a97f);}
   .r-body{padding:22px 22px 8px;}
   .score-box{display:flex;gap:14px;margin-bottom:6px;}
   .score{flex:1;background:#faf6fb;border-radius:16px;padding:14px;}
@@ -167,6 +172,17 @@
   .r-section h3::before{content:"";width:5px;height:16px;border-radius:4px;background:linear-gradient(var(--pink),var(--purple));}
   .r-section p{font-size:14.5px;line-height:1.95;color:#4a3b44;margin:0 0 12px;}
   .r-section p .hl{color:var(--pink);font-weight:700;}
+  /* 三模型：可扫读的小卡片，替代括号长句 */
+  .model-chips{display:flex;flex-direction:column;gap:8px;margin:2px 0 12px;}
+  .model-chip{background:#faf6fb;border:1px solid #efe6ec;border-radius:12px;padding:9px 12px;font-size:12px;line-height:1.6;color:#5a4a54;}
+  .model-chip b{color:var(--ink);}
+  /* 坚韧/温柔：合并为「你身上的两面」两栏 */
+  .trait-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .trait-block{flex:1;min-width:148px;background:#faf6fb;border-radius:14px;padding:13px 14px;}
+  .trait-block .tlab{display:block;font-size:13px;font-weight:800;margin-bottom:7px;}
+  .trait-block.masc .tlab{color:var(--masc);}
+  .trait-block.fem .tlab{color:var(--fem);}
+  .trait-block p{font-size:13.5px;line-height:1.8;color:#4a3b44;margin:0;}
   .tips{background:linear-gradient(135deg,#fff3f8,#f4eeff);border-radius:16px;padding:16px 18px;margin-top:8px;}
   .tips .t{font-size:14px;line-height:1.85;color:#4a3b44;margin:0 0 8px;padding-left:22px;position:relative;}
   .tips .t:last-child{margin-bottom:0;}
@@ -293,12 +309,11 @@
             <p id="r-open"></p>
           </div>
           <div class="r-section">
-            <h3>你身上的「坚韧」</h3>
-            <p id="r-masc"></p>
-          </div>
-          <div class="r-section">
-            <h3>你身上的「温柔」</h3>
-            <p id="r-fem"></p>
+            <h3>你身上的两面</h3>
+            <div class="trait-row">
+              <div class="trait-block masc"><span class="tlab">🔥 坚韧</span><p id="r-masc"></p></div>
+              <div class="trait-block fem"><span class="tlab">🌸 温柔</span><p id="r-fem"></p></div>
+            </div>
           </div>
           <div class="r-section">
             <h3>给独一无二的你</h3>
@@ -306,24 +321,30 @@
           </div>
 
           <div class="r-section evidence">
-            <h3>和你这种类型有关的实证研究 📚</h3>
-            <p class="ev-intro">下面是与你这种类型相关的发现（汇总国内外研究，每条标注出处与年份）。注意：这些是<b>群体平均趋势</b>，不是对你个人的判定——研究界主要有三种模型解释性别角色与心理健康：① 一致性模型（符合传统性别最健康）；② 双性化模型（两者都高最好）；③ <b>男性化模型</b>（男性化/工具性特质是幸福感的主预测因子）。多项元分析整体更支持男性化模型（Whitley 1985；Taylor &amp; Hall 1982）——换言之，双性化表现好，部分正因为它包含了男性化特质。你永远是那个具体的、比标签丰富的人 💗</p>
+            <h3>这类人的研究证据 📚</h3>
+            <p class="ev-intro">下面是与你这类人相关的研究发现（每条标注出处与年份）。先说明：这些是<b>群体平均趋势</b>，不是对你个人的判定。关于「哪种性别角色最健康」，学界主要有三派：</p>
+            <div class="model-chips">
+              <div class="model-chip"><b>① 一致性模型</b>　符合传统性别角色最健康</div>
+              <div class="model-chip"><b>② 双性化模型</b>　两性特质都高最好</div>
+              <div class="model-chip"><b>③ 男性化模型</b>　工具性特质是幸福感主预测因子（主流元分析更支持）</div>
+            </div>
+            <p class="ev-intro" style="margin-top:2px;">你永远是那个具体的、比标签丰富的人 💗</p>
             <div class="ev-grid" id="ev-grid"></div>
           </div>
         </div>
 
         <div class="r-section take-away">
           <h3>把数据带走，去和别的 AI 聊聊 💗</h3>
-          <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的温柔，哪些是你一点点练出来的坚韧。<br>所以，把这份数据带走吧。你可以去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更"像你"的自我介绍。<br><b>数据在你自己手里，怎么用它、和谁聊，都由你说了算。</b></p>
+          <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的温柔，哪些是你一点点练出来的坚韧。<br>所以，把这份数据带走吧。去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更"像你"的自我介绍。</p>
 
-          <div class="data-note">📋 关于你的数据：为了方便把你和大家的落点一起展示在群体分布图上，匿名保存了你的作答记录——<b>不含任何能识别你的信息</b>。 💗</div>
+          <div class="data-note">📋 关于你的数据：为了方便把你的落点放进群体分布图，匿名保存了作答记录——<b>不含任何能识别你的信息</b>，怎么用、和谁聊，都由你说了算 💗</div>
 
           <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
           <div class="prompt-box" id="prompt-box"><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button><span id="prompt-text"></span></div>
         </div>
 
         <div class="r-foot">
-          测验依据中国大学生性别角色量表（CSRI-50，刘电芝 2011，基于 Bem 1974 与钱铭怡 2000 发展而来）编制 · 结果由你的自我描述生成，仅供参考与自我探索，<b>不作临床诊断</b> 💗<br>说明：本站以 <b>男性化 4.8 / 女性化 5.0</b> 作为四象限分界，即 CSRI-50 的<b>常模中位数</b>（全国 5008 名大学生复测得出，属中国本土常模）；连续得分（男性化 / 女性化）更值得参考。
+          测验依据中国大学生性别角色量表（CSRI-50，刘电芝 2011，基于 Bem 1974 与钱铭怡 2000 发展而来）编制 · 结果由你的自我描述生成，仅供参考与自我探索，<b>不作临床诊断</b> 💗<br>分界与常模说明见上方落点图。连续得分（男性化 / 女性化）比类型标签更值得参考。
         </div>
       </div>
 
@@ -463,7 +484,7 @@ const REPORT = {
     open:'想先说：你的<span class="hl">「坚韧果断」维度很高</span>，而温柔那一面相对没那么外放。这没什么不好——你身上有一种很珍贵的「行动力与担当」，是那种天塌下来也有人顶着的感觉。',
     masc:'你<span class="hl">独立、果敢、有掌控感</span>。遇到事情你倾向于先解决，而不是先emo；你相信自己的判断，也愿意为选择负责。这种「稳得住」的气场，会让身边人不自觉地信任你、依赖你。',
     fem:'你的温柔可能不是挂在嘴边的那种，但<span class="hl">它藏在行动里</span>——也许是你默默把事办好，也许是你不善表达却始终在。如果偶尔也想被照顾、想示弱，那完全 OK，刚强的人也可以有软肋。',
-    tips:['你的力量很宝贵，但也允许自己「不 always 坚强」。','试着把情绪说出来，不用每次都自己扛，在乎你的人想靠近你。','温柔不是弱点，偶尔示弱反而让人更想守护你。']
+    tips:['你的「先解决、再情绪」是天赋，但偶尔把"为什么"说出口，会让合作的人更懂你。','习惯当顶梁柱没错，但让在意的人也来照顾你，关系反而更平衡、更长久。','果断和掌控感天然适合牵头——别因为怕显得"强势"而退到后面，该上时得上。']
   },
   feminine:{
     emoji:'🌸', title:'女性化 · 温柔而有力量',
@@ -500,7 +521,7 @@ const EVIDENCE = {
       '自尊的<b>最强预测因子</b>：35 项研究的元分析显示，男性化特质对自我价值感的解释力远超其他（Whitley 1983）。',
       '与抑郁呈<b>稳健负相关</b>：无论男女，男性化特质越高，抑郁症状越少（Li et al. 2021；Whitley 1985）。',
       '独立、果敢、有掌控感，心理健康水平与双性化接近，明显优于女性化与未分化（Bassoff &amp; Glass 1982）。',
-      '提醒：这份"保护力"来自自信与主动，而非压抑情绪——能扛事也记得允许自己柔软（Gonzalez et al. 2012）。'
+      '提醒：这份"保护力"来自自信与主动，而非压抑情绪——长期情感压抑反而会削弱韧性（Gonzalez et al. 2012）。'
     ]
   },
   feminine:{
@@ -528,6 +549,7 @@ function renderReport(r){
   const rep = REPORT[r.type];
   document.getElementById('r-emoji').textContent = rep.emoji;
   document.getElementById('r-title').textContent = rep.title;
+  document.getElementById('r-head').className = 'r-head t-' + r.type;
   document.getElementById('r-quote').textContent = rep.quote;
   document.getElementById('r-open').innerHTML = rep.open;
   document.getElementById('r-masc').innerHTML = rep.masc;
@@ -539,7 +561,7 @@ function renderReport(r){
   const evBox = document.getElementById('ev-grid');
   if(ev && evBox){
     evBox.innerHTML = `<div class="ev-card c-${r.type}">
-      <h4>${ev.emoji} ${ev.label}<span class="ev-sub">${ev.sub}</span></h4>
+      <h4>${ev.emoji}<span class="ev-sub">${ev.sub}</span></h4>
       ${ev.points.map(p=>`<p>${p}</p>`).join('')}
     </div>`;
   }
