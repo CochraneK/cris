@@ -122,7 +122,7 @@
   .bar.f > i{background:linear-gradient(90deg,#ff9ec7,#ff7eb3);}
   .score .val{font-size:13px;font-weight:700;margin-top:6px;}
   .score .val.m{color:var(--masc);} .score .val.f{color:var(--fem);}
-  .counter{font-size:13px;color:var(--pink);font-weight:600;margin:0 0 24px;}
+  .counter{font-size:13px;color:var(--type,#ff5e8a);font-weight:600;margin:0 0 24px;}
   .gender-pick{background:#fff;border-radius:22px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:24px;}
   .gp-title{font-size:14px;color:var(--ink);margin:0 0 13px;font-weight:600;}
   .gp-opts{display:flex;gap:12px;}
@@ -150,8 +150,8 @@
   .ev-card.c-masculine::before{background:linear-gradient(#6aa0f0,#3f7fe0);}
   .ev-card.c-feminine::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
   .ev-card.c-undifferentiated::before{background:linear-gradient(#f0c674,#e6b24a);}
-  .ev-card h4{font-size:13.5px;margin:0 0 9px;color:var(--ink);display:flex;align-items:center;gap:5px;}
-  .ev-card .ev-sub{font-size:10.5px;color:#d6579b;background:#fdeef5;border-radius:8px;padding:1px 7px;margin-left:auto;font-weight:700;}
+  .ev-card h4{font-size:13.5px;margin:0 0 9px;color:var(--type,#ff5e8a);display:flex;align-items:center;gap:5px;}
+  .ev-card .ev-sub{font-size:10.5px;color:var(--type,#ff5e8a);background:color-mix(in srgb,var(--type,#ff5e8a) 12%,#fff);border-radius:8px;padding:1px 7px;margin-left:auto;font-weight:700;}
   .ev-card p{font-size:12px;color:#5a4a54;line-height:1.7;margin:0 0 7px;}
   .ev-card p:last-child{margin-bottom:0;}
   .ev-warn{background:#fff8ef;border:1px solid #ffe6c2;border-radius:10px;padding:7px 9px;color:#8a6d3b;margin-top:2px;}
@@ -163,16 +163,16 @@
   .take-away{padding:0 22px;}
   .uid-line{font-size:12.5px;color:var(--ink-soft);background:#f1f6ff;border:1px dashed #cfe0ff;border-radius:12px;padding:11px 13px;margin-top:14px;line-height:1.7;}
   .uid-line code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#fff;color:#3f7fe0;padding:2px 8px;border-radius:7px;font-size:12px;word-break:break-all;}
-  .uid-line a{color:var(--pink);font-weight:700;cursor:pointer;margin-left:6px;}
+  .uid-line a{color:var(--type,#ff5e8a);font-weight:700;cursor:pointer;margin-left:6px;}
   .r-section{margin-top:22px;}
-  .r-section h3{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:7px;}
-  .r-section h3::before{content:"";width:5px;height:16px;border-radius:4px;background:linear-gradient(var(--pink),var(--purple));}
+  .r-section h3{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:7px;color:var(--type,#ff5e8a);}
+  .r-section h3::before{content:"";width:5px;height:16px;border-radius:4px;background:var(--type,#ff5e8a);}
   .r-section p{font-size:14.5px;line-height:1.95;color:#4a3b44;margin:0 0 12px;}
-  .r-section p .hl{color:var(--pink);font-weight:700;}
+  .r-section p .hl{color:var(--type,#ff5e8a);font-weight:700;}
   /* 三模型：可扫读的小卡片，替代括号长句 */
   .model-chips{display:flex;flex-direction:column;gap:8px;margin:2px 0 12px;}
   .model-chip{background:#faf6fb;border:1px solid #efe6ec;border-radius:12px;padding:9px 12px;font-size:12px;line-height:1.6;color:#5a4a54;}
-  .model-chip b{color:var(--ink);}
+  .model-chip b{color:var(--type,#ff5e8a);}
   /* 坚韧/温柔：合并为「你身上的两面」两栏 */
   .trait-row{display:flex;gap:12px;flex-wrap:wrap;}
   .trait-block{flex:1;min-width:148px;background:#faf6fb;border-radius:14px;padding:13px 14px;}
@@ -180,7 +180,7 @@
   .trait-block.masc .tlab{color:var(--masc);}
   .trait-block.fem .tlab{color:var(--fem);}
   .trait-block p{font-size:13.5px;line-height:1.8;color:#4a3b44;margin:0;}
-  .tips{background:linear-gradient(135deg,#fff3f8,#f4eeff);border-radius:16px;padding:16px 18px;margin-top:8px;border-left:4px solid var(--type,#ff5e8a);}
+  .tips{background:#faf6fb;background:color-mix(in srgb,var(--type,#ff5e8a) 9%,#fff);border-radius:16px;padding:16px 18px;margin-top:8px;border-left:4px solid var(--type,#ff5e8a);}
   .tips .t{font-size:14px;line-height:1.85;color:#4a3b44;margin:0 0 8px;padding-left:22px;position:relative;}
   .tips .t:last-child{margin-bottom:0;}
   .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
