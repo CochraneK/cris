@@ -60,6 +60,7 @@ async function listPoints(){
     const list = res.data || [];
     for(const d of list){
       if(d.demo === true) continue;   // 排除隐藏入口产生的合成数据，保证"真实填写者"计数纯净
+      if(d.source === 'test') continue;   // 排除测试来源（仅供自己联调），不计入真实分布
       out.push({ uid: d.uid, m: d.m, f: d.f, gender: d.gender, source: d.source });
     }
     if(list.length < LIMIT) break;
