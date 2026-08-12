@@ -127,7 +127,7 @@
 - 抖音：`https://cochranek.github.io/cris/?src=dy`
 - 小红书：`https://cochranek.github.io/cris/?src=xhs`
 - 微信：`https://cochranek.github.io/cris/?src=wx`
-- 测试：`https://cochranek.github.io/cris/?src=test`（供你自己试填/联调；默认计入全体落点，如需不污染真实分布可单独排除）
+- 测试：`https://cochranek.github.io/cris/?src=test`（供你自己试填/联调；已自动从群体分布 /api/points 排除，不污染真实统计，但仍可用自己的 ?uid= 找回该条核对）
 - 裸链（无参数）：记为 `direct`
 
 前端加载时读取 `?src=` 并随提交一起发给后端，后端在每条记录上打 `source` 字段（落点与取回接口均已返回该字段）。**这不是程序自动识别平台**，而是你自己在链接上打的"来源标签"（类似 UTM），谁点的是哪条链接就归到哪个来源；它不依赖任何平台 API 或 referer。
