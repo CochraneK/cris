@@ -133,24 +133,19 @@
   .scatter-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle;}
   .lead{font-size:13.5px;color:var(--ink-soft);line-height:1.85;margin:0 0 14px;}
   .lead b{color:var(--ink);}
-  .data-acts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
-  .btn.small{font-size:14px;padding:12px 14px;border-radius:14px;flex:1;min-width:130px;background:#fff;color:var(--pink);box-shadow:var(--shadow);}
   .prompt-box{position:relative;display:block;background:#fff;border:1px dashed #e7d8e0;border-radius:14px;padding:14px;padding-top:40px;font-size:12.5px;line-height:1.85;color:#5a4a54;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
   .copy-mini{position:absolute;top:9px;right:9px;font-size:12px;padding:6px 11px;border-radius:11px;border:1px solid #f0d3df;background:#fff;color:var(--pink);cursor:pointer;box-shadow:var(--shadow);font-weight:600;line-height:1;transition:transform .12s;}
   .copy-mini:active{transform:scale(.94);}
   .prompt-tip{font-size:12.5px;color:var(--ink-soft);margin:0 0 8px;line-height:1.6;}
   .evidence .ev-intro{font-size:12.5px;color:var(--ink-soft);line-height:1.8;margin:0 0 12px;}
   .evidence .ev-intro b{color:var(--ink);}
-  .ev-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 13px;padding:9px 12px;background:#faf6f9;border:1px solid #efe6ec;border-radius:12px;}
-  .ev-legend span{font-size:11.5px;color:#5a4a54;display:inline-flex;align-items:center;}
-  .ev-legend i{width:11px;height:11px;border-radius:3px;margin-right:5px;display:inline-block;}
-  .ev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;}
+  .ev-grid{display:grid;grid-template-columns:1fr;gap:11px;}
   .ev-card{position:relative;background:#fff;border:1px solid #efe6ec;border-radius:14px;padding:13px 14px 13px 16px;overflow:hidden;box-shadow:0 2px 10px rgba(120,90,110,.05);}
   .ev-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;}
-  .ev-card.c-andro::before{background:linear-gradient(#b98cf0,#a06fe6);}
-  .ev-card.c-masc::before{background:linear-gradient(#6aa0f0,#3f7fe0);}
-  .ev-card.c-fem::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
-  .ev-card.c-undiff::before{background:linear-gradient(#f0c674,#e6b24a);}
+  .ev-card.c-androgynous::before{background:linear-gradient(#b98cf0,#a06fe6);}
+  .ev-card.c-masculine::before{background:linear-gradient(#6aa0f0,#3f7fe0);}
+  .ev-card.c-feminine::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
+  .ev-card.c-undifferentiated::before{background:linear-gradient(#f0c674,#e6b24a);}
   .ev-card h4{font-size:13.5px;margin:0 0 9px;color:var(--ink);display:flex;align-items:center;gap:5px;}
   .ev-card .ev-sub{font-size:10.5px;color:#d6579b;background:#fdeef5;border-radius:8px;padding:1px 7px;margin-left:auto;font-weight:700;}
   .ev-card p{font-size:12px;color:#5a4a54;line-height:1.7;margin:0 0 7px;}
@@ -160,7 +155,6 @@
   .cite{display:inline-block;font-size:10px;color:#9a6fb0;background:#f6eefb;border:1px solid #ecdcf6;border-radius:20px;padding:1px 8px;margin-left:4px;white-space:nowrap;font-weight:600;}
   .cite::before{content:"📑 ";}
   .cite::after{content:"";}
-  @media (max-width:430px){ .ev-grid{grid-template-columns:1fr;} }
   .data-note{font-size:12.5px;color:#6a5a64;line-height:1.85;background:#f3f8ff;border:1px solid #dce9ff;border-radius:14px;padding:12px 14px;margin:0 0 14px;}
   .muted{color:#9a8aa6;font-size:11.5px;}
   .data-note b{color:var(--ink);}
@@ -312,40 +306,9 @@
           </div>
 
           <div class="r-section evidence">
-            <h3>各类型的实证研究怎么说 📚</h3>
-            <p class="ev-intro">下面是心理学界对不同性别角色类型的实证发现（汇总国内外研究，每条都标注了出处与年份）。注意：这些是<b>群体平均趋势</b>，不是对你个人的判定——你永远是那个具体的、比标签丰富的人 💗</p>
-            <div class="ev-legend">
-              <span><i style="background:#a06fe6"></i>双性化（男女都高）</span>
-              <span><i style="background:#3f7fe0"></i>男性化（男高女低）</span>
-              <span><i style="background:#ff5e8a"></i>女性化（男低女高）</span>
-              <span><i style="background:#e6b24a"></i>未分化（男女都低）</span>
-            </div>
-            <div class="ev-grid">
-              <div class="ev-card c-andro">
-                <h4>🌟 双性化者<span class="ev-sub">男女特质都高</span></h4>
-                <p>· 主观幸福感、总体自我价值感<b>最高</b>，被多项研究视为最理想的性别角色类型 <span class="cite">许婵贞 2007</span><span class="cite">王学 等 2009</span></p>
-                <p>· 抑郁、焦虑水平<b>最低</b>，心理健康水平最高 <span class="cite">王红瑞 2008</span><span class="cite">余小芳 2007</span></p>
-                <p>· 行为更<b>灵活</b>，男女情境下都能自如调用刚强或温柔 <span class="cite">Bem & Lewis 1975</span></p>
-              </div>
-              <div class="ev-card c-masc">
-                <h4>💪 男性化者<span class="ev-sub">男高 · 女低</span></h4>
-                <p>· 自尊、独立性、行动力更强；男性特质是<b>自我价值感最有力的预测因子</b> <span class="cite">Whitley 1983</span><span class="cite">王学 等 2009</span></p>
-                <p>· 男生：男性化水平高，积极情感得分更高 <span class="cite">杜军·谢继红 2008</span></p>
-                <p>· 心理健康与双性化接近，明显优于女性化、未分化 <span class="cite">Bassoff & Glass 1982</span></p>
-              </div>
-              <div class="ev-card c-fem">
-                <h4>🌸 女性化者<span class="ev-sub">男低 · 女高</span></h4>
-                <p>· 共情、人际温暖突出；婚姻中<b>伴侣的幸福感更高</b> <span class="cite">Antill 1983</span></p>
-                <p>· 女生：男性化水平高的女生积极情感更高（女生里"刚柔并济"更受益） <span class="cite">杜军·谢继红 2008</span></p>
-                <p>· 提醒：单纯女性化者在自尊/心理健康上平均偏弱，但<b>温柔本身极珍贵</b> <span class="cite">Bassoff & Glass 1982</span></p>
-              </div>
-              <div class="ev-card c-undiff">
-                <h4>🍃 未分化者<span class="ev-sub">男女都低</span></h4>
-                <p>· 平均自我价值感、心理健康水平<b>最低</b>，但在部分研究中并非必然 <span class="cite">王学 等 2009</span><span class="cite">王红瑞 2008</span></p>
-                <p>· 优势：往往更<b>松弛、不被性别框住</b>，活得自在随性（本工具也以此视角解读你）</p>
-                <p class="ev-warn">⚠️ 量表只测"传统男女特质高低"，未分化 ≠ 没特点、≠ 能力差；很多创造力强、独立思考者本就不贴传统标签 <span class="cite">Bem 1974</span></p>
-              </div>
-            </div>
+            <h3>和你这种类型有关的实证研究 📚</h3>
+            <p class="ev-intro">下面是与你这种类型相关的发现（汇总国内外研究，每条标注出处与年份）。注意：这些是<b>群体平均趋势</b>，不是对你个人的判定——研究界主要有三种模型解释性别角色与心理健康：① 一致性模型（符合传统性别最健康）；② 双性化模型（两者都高最好）；③ <b>男性化模型</b>（男性化/工具性特质是幸福感的主预测因子）。多项元分析整体更支持男性化模型（Whitley 1985；Taylor &amp; Hall 1982）——换言之，双性化表现好，部分正因为它包含了男性化特质。你永远是那个具体的、比标签丰富的人 💗</p>
+            <div class="ev-grid" id="ev-grid"></div>
           </div>
         </div>
 
@@ -451,7 +414,7 @@ function renderQuiz(){
   if(num2) num2.addEventListener('click', autoAnswerAndSubmit);
 }
 
-/* 鼓励特效：累计填完 20 题（1/3）、40 题（2/3）时各弹一次 */
+/* 鼓励特效：累计填完 17 题（≈1/3）、33 题（≈2/3）时各弹一次（50 题下的约数） */
 function updateProgress(){
   const done = answers.filter(a=>a>0).length;
   document.getElementById('prog-text').textContent = done + ' / 50';
@@ -520,6 +483,46 @@ const REPORT = {
   }
 };
 
+/* ============ 证据区（按类型组织，renderReport 时只渲染用户所属类型） ============ */
+const EVIDENCE = {
+  androgynous:{
+    emoji:'🌟', label:'双性化 · 刚柔并济', sub:'男女特质都高',
+    points:[
+      '主观幸福感与自我价值感<b>最高</b>，被多项研究视为最理想的性别角色类型（Whitley 1983；Bassoff &amp; Glass 1982）。',
+      '抑郁风险<b>最低</b>：涵盖 58 项研究（1978–2021）的元分析发现，男女特质都高的人最不容易陷入抑郁（Li et al. 2021）。',
+      '行为更<b>灵活</b>，刚强与温柔都能按需调用，压力情境下应对更具适应性（Bem &amp; Lewis 1975；Bem et al. 1976）。',
+      '中老年人的自评健康、生活满意度也更高（Gale-Ross et al. 2009；Lefkowitz &amp; Zeldow 2006）。'
+    ]
+  },
+  masculine:{
+    emoji:'💪', label:'男性化 · 坚定的力量型', sub:'男高 · 女低',
+    points:[
+      '自尊的<b>最强预测因子</b>：35 项研究的元分析显示，男性化特质对自我价值感的解释力远超其他（Whitley 1983）。',
+      '与抑郁呈<b>稳健负相关</b>：无论男女，男性化特质越高，抑郁症状越少（Li et al. 2021；Whitley 1985）。',
+      '独立、果敢、有掌控感，心理健康水平与双性化接近，明显优于女性化与未分化（Bassoff &amp; Glass 1982）。',
+      '提醒：这份"保护力"来自自信与主动，而非压抑情绪——能扛事也记得允许自己柔软（Gonzalez et al. 2012）。'
+    ]
+  },
+  feminine:{
+    emoji:'🌸', label:'女性化 · 温柔而有力量', sub:'男低 · 女高',
+    points:[
+      '共情、人际温暖突出；善于建立并维持<b>支持性的社会关系</b>，而社会支持本身是心理健康的重要保护因子（Matud 2019；Li et al. 2021）。',
+      '在亲密关系里，"温柔体贴"的伴侣往往让关系更幸福（Antill 1983）。',
+      '对青少年而言，女性化（表达性）特质与更积极的人际关系、健康结果相关，有时比男性化更关键（Helgeson &amp; Palladino 2012）。',
+      '提醒：单纯女性化者在自尊/心理健康上平均偏弱，但<b>温柔本身极珍贵</b>，且高社会支持可弥补（Bassoff &amp; Glass 1982）。'
+    ]
+  },
+  undifferentiated:{
+    emoji:'🌿', label:'未分化 · 自由不被定义', sub:'男女都低',
+    points:[
+      '在不少研究中，未分化者的平均自我价值感、自信<b>最低</b>，青少年阶段适应也偏弱（Wells 1994；Napholz 1995）。',
+      '但结论<b>并非绝对</b>：有研究指出，未分化是否"更差"取决于具体指标与性别，不能一概而论（Matud et al. 西班牙普通人群研究）。',
+      '优势：往往更<b>松弛、不被性别框住</b>，活得自在随性——本工具也以此视角解读你。',
+      '很多创造力强、独立思考者本就不贴传统标签；量表只测"传统男女特质高低"，未分化 ≠ 没特点、≠ 能力差（Bem 1974）。'
+    ]
+  }
+};
+
 /* ============ 渲染报告 ============ */
 function renderReport(r){
   const rep = REPORT[r.type];
@@ -531,6 +534,15 @@ function renderReport(r){
   document.getElementById('r-fem').innerHTML = rep.fem;
   document.getElementById('r-tips').innerHTML = rep.tips.map(t=>`<p class="t">${t}</p>`).join('');
   document.getElementById('prompt-text').textContent = buildPrompt(r);
+  /* 证据区：只渲染用户所属类型的卡片（按类型组织，避免 2×2 拥挤） */
+  const ev = EVIDENCE[r.type];
+  const evBox = document.getElementById('ev-grid');
+  if(ev && evBox){
+    evBox.innerHTML = `<div class="ev-card c-${r.type}">
+      <h4>${ev.emoji} ${ev.label}<span class="ev-sub">${ev.sub}</span></h4>
+      ${ev.points.map(p=>`<p>${p}</p>`).join('')}
+    </div>`;
+  }
   /* 分数条 */
   const mPct = Math.min(100, r.mScore/7*100);
   const fPct = Math.min(100, r.fScore/7*100);
@@ -595,8 +607,8 @@ function autoAnswerAndSubmit(){
   const banner = document.getElementById('preview-banner');
   if(banner) banner.style.display = 'none';
   show('result');
-  submitAndLoadPoints(r);
-  toast('已自动作答并提交了一条数据 ✨（可到群体分布图查看你的落点）');
+  submitAndLoadPoints(r, {demo:true});
+  toast('已自动作答并提交了一条「演示数据」✨（已标记，不计入真实填写者）');
 }
 /* 拉取群体落点（预览与正式提交共用），me 为 null 时不画自己的点。
    提速策略：用 localStorage 缓存后端返回的真实点；有缓存时立即用缓存秒出图，
@@ -729,15 +741,17 @@ let currentResult = null;
 let currentGender = '';
 let myUid = '';   // 匿名码：本人凭它从后台取回自己的明细，随机不可猜
 
-async function submitAndLoadPoints(r){
+async function submitAndLoadPoints(r, opts){
   currentResult = r;
   ensureUid();   // 确保本机有匿名码
+  const demo = !!(opts && opts.demo);   // 隐藏入口自动作答时标记，后端据此识别/排除合成数据
   const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:currentGender||'unknown'};
   const payload = {
     m:+r.mScore.toFixed(3), f:+r.fScore.toFixed(3), type:r.type,
     gender:currentGender||'unknown',
     uid: myUid,                 // 匿名码：后台据此存/取本人明细
-    answers: answers.map(Number) // 50 题完整作答（-1 等缺失记为 0）
+    answers: answers.map(Number), // 50 题完整作答（1–7；正常流程已校验全答）
+    demo                        // true=演示/合成数据，供后期识别
   };
   // 先立即画出你自己的点（不等后端，秒出图）
   renderScatter([], me);
@@ -847,7 +861,7 @@ function buildPayloadFromRecord(rec){
     score:(rec.answers && rec.answers[i]!=null) ? Number(rec.answers[i]) : 0
   }));
   return {
-    meta:{test:'中国大学生性别角色量表(CSRI-50)', generatedAt:new Date(rec.ts||Date.now()).toISOString(),
+    meta:{test:'中国大学生性别角色量表(CSRI-50)', generatedAt:new Date(rec.createdAt||Date.now()).toISOString(),
           gender:rec.gender||'unknown', uid:rec.uid},
     scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2),
             threshold:{masculinity:4.8, femininity:5.0}},
