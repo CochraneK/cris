@@ -85,6 +85,7 @@
   #report-card.preview .r-body .r-section:not(#sec-scatter){display:none;}
   #report-card.preview .take-away{display:none;}
   #report-card.preview .acts{display:none;}
+  #report-card.preview .recovery{display:none;}
   .preview-banner{background:#f0f6ff;border:1px dashed #bcd4f5;border-radius:12px;padding:10px 13px;font-size:12.5px;color:#3f6aa8;line-height:1.7;margin:0 0 12px;}
   .preview-banner b{color:#2f5a9a;}
   .opts{display:flex;gap:7px;}
@@ -186,6 +187,10 @@
   .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
   .take-away .prompt-box{border:1px dashed var(--type,#ff5e8a);}
   .take-away .lead{border-left:3px solid var(--type,#ff5e8a);padding-left:12px;}
+  .recovery .qr-wrap{display:flex;justify-content:center;margin:8px 0 2px;}
+  #recovery-qr{width:96px;height:96px;padding:7px;background:#fff;border-radius:12px;box-shadow:var(--shadow);}
+  #recovery-qr img,#recovery-qr canvas{display:block;}
+  .recovery .muted{font-size:11.5px;}
   .result .acts{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px;}
   .result .acts .btn.share{background:linear-gradient(135deg,#5b8def,#3f7fe0);box-shadow:0 12px 26px rgba(63,127,224,.4);}
   .result .acts .btn.again{background:#fff;color:var(--pink);box-shadow:var(--shadow);}
@@ -335,6 +340,12 @@
           <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
           <div class="prompt-box" id="prompt-box"><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button><span id="prompt-text"></span></div>
         </div>
+        <div class="r-section recovery" id="sec-recovery" style="display:none;">
+          <h3>📲 扫码找回你的原始数据</h3>
+          <p class="muted">截屏保存这张图，以后用手机扫这个码，就能回到你的作答数据——不用记任何东西。</p>
+          <div class="qr-wrap"><div id="recovery-qr"></div></div>
+          <p class="muted" id="recovery-fallback" style="display:none;word-break:break-all;"></p>
+        </div>
       </div>
 
       <div class="acts">
@@ -347,6 +358,29 @@
     </div>
   </section>
 
+  <section id="recover" class="screen">
+    <div class="result">
+      <div class="r-head" style="background:linear-gradient(135deg,#a06fe6,#b388ff);">
+        <div class="big">📂</div>
+        <h2>找回你的数据</h2>
+        <div class="quote" id="rec-status">正在取回…</div>
+      </div>
+      <div class="r-body">
+        <div class="r-section">
+          <h3>你的类型与分数</h3>
+          <p id="rec-summary" class="muted">—</p>
+        </div>
+        <div class="r-section">
+          <h3>把数据带走</h3>
+          <p class="muted">这是凭提取码取回的你的原始作答，可下载留存或交给别的 AI 接着聊。</p>
+          <div class="acts">
+            <button class="btn outline" onclick="downloadData(currentRecUid)">📥 下载我的数据</button>
+            <button class="btn again" onclick="restart()">↺ 回到首页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -565,6 +599,7 @@ function renderReport(r){
     document.getElementById('bar-m').style.width = mPct+'%';
     document.getElementById('bar-f').style.width = fPct+'%';
   });
+  ensureRecoveryQR();
 }
 
 /* ============ 流程控制 ============ */
@@ -753,6 +788,8 @@ const API_BASE = 'https://cris-d6gkkzled0d106625-1421328052.ap-shanghai.app.tclo
 let currentResult = null;
 let currentGender = '';
 let myUid = '';   // 匿名码：本人凭它从后台取回自己的明细，随机不可猜
+let currentSource = 'direct'; // 平台来源标记：从 URL ?src= 读取，随提交发送（direct=裸链/未知）
+let currentRecUid = '';       // 数据找回模式下当前正在取回的 uid
 
 async function submitAndLoadPoints(r, opts){
   currentResult = r;
@@ -764,7 +801,8 @@ async function submitAndLoadPoints(r, opts){
     gender:currentGender||'unknown',
     uid: myUid,                 // 匿名码：后台据此存/取本人明细
     answers: answers.map(Number), // 50 题完整作答（1–7；正常流程已校验全答）
-    demo                        // true=演示/合成数据，供后期识别
+    demo,                       // true=演示/合成数据，供后期识别
+    source: currentSource       // 平台来源标记（?src=），用于跨平台对比
   };
   // 先立即画出你自己的点（不等后端，秒出图）
   renderScatter([], me);
@@ -904,9 +942,9 @@ function buildPrompt(r){
 3）有哪些被我忽略、但其实很珍贵的特质。
 谢谢，请多结合我的具体作答来谈。`;
 }
-async function downloadData(){
+async function downloadData(uidArg){
   // 优先从后台取回「本人」数据（凭匿名码，只取回自己的）
-  const uid = myUid || (function(){ try{return localStorage.getItem('cris_uid')||'';}catch(e){return '';} })();
+  const uid = uidArg || myUid || (function(){ try{return localStorage.getItem('cris_uid')||'';}catch(e){return '';} })();
   if(uid){
     try{
       const resp = await fetch(API_BASE+'/api/mine',{headers:{'x-cris-uid':uid},cache:'no-store'});
@@ -916,7 +954,8 @@ async function downloadData(){
         toast('已从后台取回你的数据 💗');
         return;
       }
-    }catch(e){ /* 落到本地兜底 */ }
+      if(uidArg){ toast('取回失败（记录可能已删除）'); return; } // 找回模式下不回退到本地空数据
+    }catch(e){ if(uidArg){ toast('网络异常，取回失败'); return; } }
   }
   // 兜底：本地依据当前作答生成（断网时也能用）
   try{
@@ -967,6 +1006,58 @@ function saveImage(){
     toast('图片生成需要联网，可直接截图保存哦');
   });
 }
+
+/* ============ 数据找回：角落二维码 + ?uid= 恢复页 ============ */
+function ensureQR(){
+  if(window.QRCode) return Promise.resolve();
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    s.onload=res; s.onerror=rej; document.head.appendChild(s);
+  });
+}
+function ensureRecoveryQR(){
+  const sec=document.getElementById('sec-recovery');
+  if(!sec) return;
+  if(!myUid){ sec.style.display='none'; return; }
+  sec.style.display='';
+  const box=document.getElementById('recovery-qr');
+  const fb=document.getElementById('recovery-fallback');
+  if(box) box.innerHTML='';
+  const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(myUid);
+  ensureQR().then(()=>{
+    try{ new QRCode(box,{text:url,width:96,height:96,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
+    catch(e){ showFallback(); }
+  }).catch(showFallback);
+  function showFallback(){ if(fb){ fb.style.display=''; fb.textContent='提取码（手写保存）：'+myUid; } }
+}
+const TYPE_CN={androgynous:'双性化',masculine:'男性化',feminine:'女性化',undifferentiated:'未分化'};
+async function recoverData(uid){
+  currentRecUid = uid;
+  show('recover');
+  const status=document.getElementById('rec-status');
+  const summary=document.getElementById('rec-summary');
+  if(!status) return;
+  status.textContent='正在取回…';
+  try{
+    const resp=await fetch(API_BASE+'/api/mine',{headers:{'x-cris-uid':uid},cache:'no-store'});
+    if(!resp.ok){ status.textContent='未找到该记录（可能已删除，或提取码有误）。'; if(summary) summary.textContent='—'; return; }
+    const rec=await resp.json();
+    status.textContent='已取回 ✅ 这是凭提取码找回的你的作答。';
+    const when=rec.createdAt? new Date(rec.createdAt).toLocaleString('zh-CN'):'';
+    if(summary) summary.innerHTML='类型：<b>'+(TYPE_CN[rec.type]||rec.type)+'</b>　男性化 '+Number(rec.m).toFixed(2)+'　女性化 '+Number(rec.f).toFixed(2)+'<br>提交时间：'+when;
+  }catch(e){ status.textContent='网络异常，取回失败，请稍后重试。'; }
+}
+/* 启动：读取 URL 参数（平台来源 ?src= / 数据找回 ?uid=） */
+(function initFromURL(){
+  try{
+    const p=new URLSearchParams(location.search);
+    const src=(p.get('src')||'direct').toString().slice(0,16);
+    currentSource = /^[A-Za-z0-9_-]+$/.test(src) ? src : 'direct';
+    const uid=p.get('uid');
+    if(uid && /^[A-Za-z0-9_-]{8,64}$/.test(uid)){ recoverData(uid); }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
