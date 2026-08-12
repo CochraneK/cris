@@ -326,11 +326,11 @@
 
           <div class="r-section evidence">
             <h3>这类人的研究证据 📚</h3>
-            <p class="ev-intro">下面是与你这类人相关的研究发现（每条标注出处与年份）。先说明：这些是<b>群体平均趋势</b>，不是对你个人的判定。关于「哪种性别角色最健康」，学界主要有三派：</p>
+            <p class="ev-intro">下面是与你这类人相关的研究发现（每条标注出处与年份）。先说明：这些是<b>群体平均趋势</b>，不是对你个人的判定。关于「哪种性别角色最健康」，学界主要有两派：</p>
             <div class="model-chips">
               <div class="model-chip"><span class="mc-no">①</span><div><b>一致性模型</b>　符合传统性别角色最健康</div></div>
               <div class="model-chip"><span class="mc-no">②</span><div><b>双性化模型</b>　两性特质都高最好</div></div>
-              <div class="model-chip"><span class="mc-no">③</span><div><b>男性化模型</b>　高男性化（独立·果敢）最关乎心理健康，女性化高低影响不大</div></div>            </div>
+            </div>
             <p class="ev-note">你永远是那个具体的、比标签丰富的人 💗</p>
             <div class="ev-grid" id="ev-grid"></div>
           </div>
@@ -661,7 +661,7 @@ function autoAnswerAndSubmit(){
   if(banner) banner.style.display = 'none';
   show('result');
   submitAndLoadPoints(r, {demo:true});
-  toast('已自动作答并提交了一条「演示数据」✨（已标记，不计入真实填写者）');
+  toast('演示模式 · 已生成示例报告（不记录数据）✨');
 }
 /* 拉取群体落点（预览与正式提交共用），me 为 null 时不画自己的点。
    提速策略：用 localStorage 缓存后端返回的真实点；有缓存时立即用缓存秒出图，
@@ -798,8 +798,18 @@ let currentRecUid = '';       // 数据找回模式下当前正在取回的 uid
 
 async function submitAndLoadPoints(r, opts){
   currentResult = r;
-  ensureUid();   // 确保本机有匿名码
-  const demo = !!(opts && opts.demo);   // 隐藏入口自动作答时标记，后端据此识别/排除合成数据
+  const demo = !!(opts && opts.demo);   // 隐藏入口（点2）自动作答标记
+  const noSave = demo || currentSource === 'test'; // 演示/测试流程：不落库，仅本地渲染散点
+  if(noSave){
+    // 测试/演示：不提交后端，仅本地画散点（含自己）供联调预览，绝不记录数据
+    const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:currentGender||'unknown'};
+    renderScatter([], me);
+    const c = document.getElementById('counter');
+    if(c) c.textContent = '演示模式 · 不记录数据 ✨';
+    (async()=>{ try{ await loadCommunityPoints(me); }catch(e){} })();
+    return;
+  }
+  ensureUid();   // 确保本机有匿名码（仅真实提交时）
   const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:currentGender||'unknown'};
   const payload = {
     m:+r.mScore.toFixed(3), f:+r.fScore.toFixed(3), type:r.type,
