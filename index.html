@@ -183,10 +183,12 @@
   .trait-block.masc .tlab{color:var(--masc);}
   .trait-block.fem .tlab{color:var(--fem);}
   .trait-block p{font-size:13.5px;line-height:1.8;color:#4a3b44;margin:0;}
-  .tips{background:linear-gradient(135deg,#fff3f8,#f4eeff);border-radius:16px;padding:16px 18px;margin-top:8px;}
+  .tips{background:linear-gradient(135deg,#fff3f8,#f4eeff);border-radius:16px;padding:16px 18px;margin-top:8px;border-left:4px solid var(--type,#ff5e8a);}
   .tips .t{font-size:14px;line-height:1.85;color:#4a3b44;margin:0 0 8px;padding-left:22px;position:relative;}
   .tips .t:last-child{margin-bottom:0;}
   .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
+  .take-away .prompt-box{border:1px dashed var(--type,#ff5e8a);}
+  .take-away .lead{border-left:3px solid var(--type,#ff5e8a);padding-left:12px;}
   .r-foot{padding:6px 22px 26px;font-size:11.5px;color:#b0a3ab;line-height:1.7;}
   .result .acts{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px;}
   .result .acts .btn.share{background:linear-gradient(135deg,#5b8def,#3f7fe0);box-shadow:0 12px 26px rgba(63,127,224,.4);}
@@ -324,9 +326,7 @@
             <p class="ev-intro">下面是与你这类人相关的研究发现（每条标注出处与年份）。先说明：这些是<b>群体平均趋势</b>，不是对你个人的判定。关于「哪种性别角色最健康」，学界主要有三派：</p>
             <div class="model-chips">
               <div class="model-chip"><b>① 一致性模型</b>　符合传统性别角色最健康</div>
-              <div class="model-chip"><b>② 双性化模型</b>　两性特质都高最好</div>
-              <div class="model-chip"><b>③ 男性化模型</b>　工具性特质是幸福感主预测因子（主流元分析更支持）</div>
-            </div>
+              <div class="model-chip"><b>② 双性化模型</b>　两性特质都高最好</div>            </div>
             <p class="ev-intro" style="margin-top:2px;">你永远是那个具体的、比标签丰富的人 💗</p>
             <div class="ev-grid" id="ev-grid"></div>
           </div>
@@ -539,10 +539,12 @@ const EVIDENCE = {
 
 /* ============ 渲染报告 ============ */
 function renderReport(r){
+  const TYPE_COLOR = {androgynous:'#a06fe6', masculine:'#3f7fe0', feminine:'#ff5e8a', undifferentiated:'#34a97f'};
   const rep = REPORT[r.type];
   document.getElementById('r-emoji').textContent = rep.emoji;
   document.getElementById('r-title').textContent = rep.title;
   document.getElementById('r-head').className = 'r-head t-' + r.type;
+  document.getElementById('report-card').style.setProperty('--type', TYPE_COLOR[r.type]);
   document.getElementById('r-quote').textContent = rep.quote;
   document.getElementById('r-open').innerHTML = rep.open;
   document.getElementById('r-masc').innerHTML = rep.masc;
