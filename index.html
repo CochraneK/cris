@@ -397,6 +397,8 @@
 </div>
 <canvas id="confetti"></canvas>
 
+<script defer src="assets/html2canvas.min.js"></script>
+<script defer src="assets/qrcode.min.js"></script>
 <script>
 /* ============ 题目数据（中国大学生性别角色量表 CSRI-50，刘电芝 2011） ============
    50 题 = 男性化(M)16 + 女性化(F)16 + 中性干扰(N)18，按原量表发表顺序（已混合 M/F/N）。
@@ -987,12 +989,8 @@ function fallbackCopy(text,cb){
 
 /* ============ 保存图片 ============ */
 function ensureH2C(){
-  if(window.html2canvas) return Promise.resolve();
-  return new Promise((res,rej)=>{
-    const s=document.createElement('script');
-    s.src='https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    s.onload=res; s.onerror=rej; document.head.appendChild(s);
-  });
+  // html2canvas 已随页面本地加载（assets/html2canvas.min.js，defer），无需联网
+  return window.html2canvas ? Promise.resolve() : Promise.reject(new Error('html2canvas 未加载'));
 }
 function saveImage(){
   toast('正在生成图片…');
@@ -1006,18 +1004,14 @@ function saveImage(){
     link.click();
     toast('已保存，去发小红书吧 💗');
   }).catch(()=>{
-    toast('图片生成需要联网，可直接截图保存哦');
+    toast('图片生成失败，可直接截图保存哦');
   });
 }
 
 /* ============ 数据找回：角落二维码 + ?uid= 恢复页 ============ */
 function ensureQR(){
-  if(window.QRCode) return Promise.resolve();
-  return new Promise((res,rej)=>{
-    const s=document.createElement('script');
-    s.src='https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-    s.onload=res; s.onerror=rej; document.head.appendChild(s);
-  });
+  // qrcodejs 已随页面本地加载（assets/qrcode.min.js，defer），无需联网
+  return window.QRCode ? Promise.resolve() : Promise.reject(new Error('QRCode 未加载'));
 }
 function ensureRecoveryQR(){
   const sec=document.getElementById('sec-recovery');
