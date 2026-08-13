@@ -135,8 +135,8 @@
   .scatter-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle;}
   .lead{font-size:14px;color:#4a3b44;line-height:1.9;margin:0 0 14px;}
   .lead b{color:var(--type,#ff5e8a);font-weight:700;}
-  .prompt-box{position:relative;display:block;background:#fdf7fb;border:1px solid #f1dce8;border-radius:16px;padding:16px;font-size:13.5px;line-height:1.9;color:#4a3b44;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
-  .copy-mini{display:inline-block;font-size:12px;padding:7px 13px;border-radius:11px;border:none;background:var(--type,#ff5e8a);color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(120,90,110,.2);font-weight:700;line-height:1;transition:transform .12s;}
+  .prompt-box{position:relative;display:block;background:#fdf7fb;border:1px solid #f1dce8;border-radius:16px;padding:16px 16px 52px;font-size:13.5px;line-height:1.9;color:#4a3b44;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
+  .copy-mini{position:absolute;right:12px;bottom:12px;font-size:12px;padding:7px 13px;border-radius:11px;border:none;background:var(--type,#ff5e8a);color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(120,90,110,.2);font-weight:700;line-height:1;transition:transform .12s;}
   .copy-mini:active{transform:scale(.94);}
   .prompt-tip{font-size:13.5px;color:#4a3b44;margin:0 0 8px;line-height:1.7;}
   #prompt-text{display:block;font-size:13.5px;line-height:1.9;color:#4a3b44;}
@@ -150,7 +150,7 @@
   .ev-card.c-feminine::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
   .ev-card.c-undifferentiated::before{background:linear-gradient(#f0c674,#e6b24a);}
   .ev-card h4{font-size:13.5px;margin:0 0 9px;color:var(--type,#ff5e8a);display:flex;align-items:center;gap:5px;}
-  .ev-card .ev-sub{font-size:10.5px;color:var(--type,#ff5e8a);background:#f6eefb;border-radius:8px;padding:1px 7px;margin-left:auto;font-weight:700;}
+  .ev-card .ev-sub{font-size:10.5px;color:var(--type,#ff5e8a);background:#f6eefb;border-radius:8px;padding:1px 7px;font-weight:700;}
   .ev-card p{font-size:13px;color:#4a3b44;line-height:1.8;margin:0 0 7px;}
   .ev-card p:last-child{margin-bottom:0;}
   .ev-warn{background:#fff8ef;border:1px solid #ffe6c2;border-radius:10px;padding:7px 9px;color:#8a6d3b;margin-top:2px;}
@@ -187,7 +187,6 @@
   .tips .t:last-child{margin-bottom:0;}
   .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
   .tips .t b, .tips .t strong{color:var(--type,#ff5e8a);font-weight:700;}
-  .copy-row{text-align:right;margin-top:8px;}
   .result .acts{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px;}
   .result .acts .btn.share{background:linear-gradient(135deg,#5b8def,#3f7fe0);box-shadow:0 12px 26px rgba(63,127,224,.4);}
   .result .acts .btn.again{background:#fff;color:var(--pink);box-shadow:var(--shadow);}
@@ -325,8 +324,8 @@
             <h3>这类人的研究证据 📚</h3>
             <p class="ev-intro">下面是与你这类人相关的研究发现（每条标注出处与年份）。先说明：这些是<b>群体平均趋势</b>，不是对你个人的判定。关于「哪种性别角色最健康」，学界主要有两派：</p>
             <div class="model-chips">
-              <div class="model-chip"><span class="mc-no">①</span><div><b>一致性模型</b>　符合传统性别角色最健康</div></div>
-              <div class="model-chip"><span class="mc-no">②</span><div><b>双性化模型</b>　两性特质都高最好</div></div>
+              <div class="model-chip"><span class="mc-no">1</span><div><b>一致性模型</b>　符合传统性别角色最健康</div></div>
+              <div class="model-chip"><span class="mc-no">2</span><div><b>双性化模型</b>　两性特质都高最好</div></div>
             </div>
             <p class="ev-note">你永远是那个具体的、比标签丰富的人 💗</p>
             <div class="ev-grid" id="ev-grid"></div>
@@ -337,8 +336,7 @@
           <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的<b>温柔</b>，哪些是你一点点练出来的<b>坚韧</b>。<br>所以，把这份数据带走吧。去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更<b>像你</b>的自我介绍。</p>
 
           <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
-          <div class="prompt-box" id="prompt-box"><span id="prompt-text"></span></div>
-          <div class="copy-row"><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button></div>
+          <div class="prompt-box" id="prompt-box"><span id="prompt-text"></span><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button></div>
         </div>
         <div class="r-section savewarn" id="sec-savewarn" style="display:none;">
           <p class="warn">⚠️ 数据尚未保存到云端。你的报告仍可见，但「下载数据」里不会带找回二维码——稍后可点「重新保存」补传。</p>
