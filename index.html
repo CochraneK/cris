@@ -85,7 +85,6 @@
   #report-card.preview .r-body .r-section:not(#sec-scatter){display:none;}
   #report-card.preview .take-away{display:none;}
   #report-card.preview .acts{display:none;}
-  #report-card.preview .recovery{display:none;}
   .preview-banner{background:#f0f6ff;border:1px dashed #bcd4f5;border-radius:12px;padding:10px 13px;font-size:12.5px;color:#3f6aa8;line-height:1.7;margin:0 0 12px;}
   .preview-banner b{color:#2f5a9a;}
   .opts{display:flex;gap:7px;}
@@ -102,7 +101,7 @@
 
   /* ===== 报告 ===== */
   .result{padding:0 0 40px;position:relative;z-index:1;}
-  #report-card{margin:22px 16px 0;background:#fff;border-radius:26px;overflow:hidden;box-shadow:var(--shadow);}
+  #report-card{position:relative;margin:22px 16px 0;background:#fff;border-radius:26px;overflow:hidden;box-shadow:var(--shadow);}
   .r-head{padding:30px 24px 26px;color:#fff;text-align:center;background:linear-gradient(135deg,#ff5e8a,#b388ff);}
   .r-head .big{font-size:60px;line-height:1;margin-bottom:10px;}
   .r-head h2{margin:0 0 8px;font-size:24px;font-weight:800;}
@@ -139,7 +138,7 @@
   .lead{font-size:14px;color:#4a3b44;line-height:1.9;margin:0 0 14px;}
   .lead b{color:var(--type,#ff5e8a);font-weight:700;}
   .prompt-box{position:relative;display:block;background:#fdf7fb;border:1px solid #f1dce8;border-radius:16px;padding:16px;font-size:13.5px;line-height:1.9;color:#4a3b44;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
-  .copy-mini{position:absolute;top:11px;right:11px;font-size:12px;padding:7px 13px;border-radius:11px;border:none;background:var(--type,#ff5e8a);color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(120,90,110,.2);font-weight:700;line-height:1;transition:transform .12s;}
+  .copy-mini{display:inline-block;font-size:12px;padding:7px 13px;border-radius:11px;border:none;background:var(--type,#ff5e8a);color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(120,90,110,.2);font-weight:700;line-height:1;transition:transform .12s;}
   .copy-mini:active{transform:scale(.94);}
   .prompt-tip{font-size:13.5px;color:#4a3b44;margin:0 0 8px;line-height:1.7;}
   #prompt-text{display:block;font-size:13.5px;line-height:1.9;color:#4a3b44;}
@@ -162,7 +161,7 @@
   .cite::before{content:"📑 ";}
   .cite::after{content:"";}
   .muted{color:#9a8aa6;font-size:11.5px;}
-  .take-away{padding:18px;background:#faf6fb;border-radius:20px;margin-top:18px;border-left:4px solid var(--type,#ff5e8a);}
+  .take-away{padding:0;}
   .uid-line{font-size:12.5px;color:var(--ink-soft);background:#f1f6ff;border:1px dashed #cfe0ff;border-radius:12px;padding:11px 13px;margin-top:14px;line-height:1.7;}
   .uid-line code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#fff;color:#3f7fe0;padding:2px 8px;border-radius:7px;font-size:12px;word-break:break-all;}
   .uid-line a{color:var(--type,#ff5e8a);font-weight:700;cursor:pointer;margin-left:6px;}
@@ -190,20 +189,14 @@
   .tips .t:last-child{margin-bottom:0;}
   .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
   .tips .t b, .tips .t strong{color:var(--type,#ff5e8a);font-weight:700;}
-  .take-away .prompt-box{padding-top:46px;}
-  .take-away .lead{border-left:3px solid var(--type,#ff5e8a);padding-left:12px;}
-  .recovery .qr-wrap{display:flex;justify-content:center;margin:10px 0 4px;}
-  #recovery-qr{width:128px;height:128px;padding:10px;background:#fff;border:1px solid #f0e6ec;border-radius:16px;box-shadow:0 6px 18px rgba(120,90,110,.12);}
-  #recovery-qr img,#recovery-qr canvas{display:block;width:100%!important;height:100%!important;}
-  .recovery .muted{font-size:11.5px;line-height:1.7;}
+  .take-away .prompt-box{padding-top:0;}
+  .copy-row{text-align:right;margin-top:8px;}
   .result .acts{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px;}
   .result .acts .btn.share{background:linear-gradient(135deg,#5b8def,#3f7fe0);box-shadow:0 12px 26px rgba(63,127,224,.4);}
   .result .acts .btn.again{background:#fff;color:var(--pink);box-shadow:var(--shadow);}
   .acts-row{display:flex;gap:12px;}
   .acts-row .btn{flex:1;}
   .btn.outline{background:linear-gradient(135deg,#ff8fab,#ff5e8a);color:#fff;box-shadow:0 12px 26px rgba(255,94,138,.4);}
-  .btn.danger{background:#fff;color:#c0463b;border:1px solid #f0c4bf;box-shadow:var(--shadow);}
-  .btn.danger:hover{background:#fff3f1;}
   .savewarn{background:#fff7e9;border:1px solid #ffe2a8;border-radius:14px;padding:14px;margin-top:14px;}
   .savewarn .warn{color:#9a6a16;font-size:14px;line-height:1.7;margin:0 0 10px;}
   .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
@@ -345,18 +338,11 @@
 
         <div class="r-section take-away">
           <h3>把数据带走，去和别的 AI 聊聊 💗</h3>
-          <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的温柔，哪些是你一点点练出来的坚韧。<br>所以，把这份数据带走吧。去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更"像你"的自我介绍。</p>
+          <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的<b>温柔</b>，哪些是你一点点练出来的<b>坚韧</b>。<br>所以，把这份数据带走吧。去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更<b>像你</b>的自我介绍。</p>
 
           <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
-          <div class="prompt-box" id="prompt-box"><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button><span id="prompt-text"></span></div>
-        </div>
-        <div class="r-section recovery" id="sec-recovery" style="display:none;">
-          <h3>📲 扫码找回你的原始数据</h3>
-          <p class="muted">这是你的<strong>私人</strong>找回码：只在<strong>真实提交成功后</strong>才生成，且<strong>不会</strong>进入「保存报告」分享图。截屏把它单独存好，以后用手机扫这个码即可找回作答——请勿公开发布。</p>
-          <div class="qr-wrap"><div id="recovery-qr"></div></div>
-          <p class="muted" id="recovery-fallback" style="display:none;word-break:break-all;"></p>
-          <button class="btn outline" onclick="saveRecoveryCard()" style="margin-top:8px;">📥 保存私人找回码（仅自己）</button>
-          <button class="btn danger" onclick="deleteMyData()" style="margin-top:8px;">🗑 删除我的云端数据</button>
+          <div class="prompt-box" id="prompt-box"><span id="prompt-text"></span></div>
+          <div class="copy-row"><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button></div>
         </div>
         <div class="r-section savewarn" id="sec-savewarn" style="display:none;">
           <p class="warn">⚠️ 数据尚未保存到云端。你的报告仍可见，但找回码不会生成——稍后可点「重新保存」补传。</p>
@@ -812,8 +798,6 @@ let currentRecUid = '';       // 数据找回模式下当前正在取回的 uid
 
 let _lastSavedResult = null;   // 供「重新保存」复用最近一次结果
 
-function showRecovery(){ const s=document.getElementById('sec-recovery'); if(s) s.style.display=''; }
-function hideRecovery(){ const s=document.getElementById('sec-recovery'); if(s) s.style.display='none'; }
 function showSaveWarn(){ const s=document.getElementById('sec-savewarn'); if(s) s.style.display=''; }
 function hideSaveWarn(){ const s=document.getElementById('sec-savewarn'); if(s) s.style.display='none'; }
 
@@ -823,7 +807,6 @@ async function submitAndLoadPoints(r, opts){
   const demo = !!(opts && opts.demo);   // 隐藏入口（点2）自动作答标记
   const noSave = demo || currentSource === 'test'; // 演示/测试流程：不落库
   const demoGender = (opts && opts.gender) || currentGender || 'unknown';
-  hideRecovery();
   hideSaveWarn();
   if(noSave){
     // 测试/演示：不提交后端，仅本地画散点（含自己）供联调预览，绝不记录数据
@@ -864,10 +847,8 @@ async function submitAndLoadPoints(r, opts){
       }catch(e){/* 离线或后端不可用 */}
       clearTimeout(timer);
       if(saved){
-        // 只有真实保存成功，才生成私人恢复码（绝不进分享图）
+        // 真实保存成功：私人恢复码只在「保存报告」截图里低调嵌入，不进页面正文
         hideSaveWarn();
-        showRecovery();
-        ensureRecoveryQR();
       }else{
         // 提交失败：显式提示，不静默
         showSaveWarn();
@@ -882,45 +863,6 @@ async function submitAndLoadPoints(r, opts){
 function retrySave(){
   hideSaveWarn();
   if(_lastSavedResult) submitAndLoadPoints(_lastSavedResult, {});
-}
-
-/* 删除云端本人数据（仅删本人 uid 对应记录） */
-async function deleteMyData(){
-  ensureUid();
-  if(!myUid){ toast('没有可删除的本地记录'); return; }
-  if(!confirm('确定删除你云端保存的作答数据吗？此操作不可恢复。')) return;
-  try{
-    const resp = await fetch(API_BASE+'/api/delete',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({uid:myUid})});
-    const j = await resp.json().catch(()=>null);
-    if(j && j.ok){ toast('已删除你的云端数据 ✅'); hideRecovery(); hideSaveWarn(); }
-    else toast('删除失败，请稍后重试');
-  }catch(e){ toast('网络异常，删除失败'); }
-}
-
-/* 单独导出「私人找回码」卡片（仅自己保存，含二维码，不含任何报告内容） */
-function saveRecoveryCard(){
-  if(!myUid){ toast('还没有生成找回码'); return; }
-  ensureH2C().then(()=>{
-    const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(myUid);
-    const wrap = document.createElement('div');
-    wrap.style.cssText='position:fixed;left:-99999px;top:0;width:320px;padding:24px;background:#fff;color:#2a2230;font-family:sans-serif;border-radius:12px;box-sizing:border-box;';
-    wrap.innerHTML = '<h3 style="margin:0 0 8px;font-size:18px;">📲 我的私人找回码</h3><p style="font-size:13px;color:#7a6a73;margin:0 0 12px;">截屏保存，勿公开。用手机扫此码可找回作答。</p>';
-    const box = document.createElement('div'); wrap.appendChild(box);
-    document.body.appendChild(wrap);
-    return new Promise((resolve)=>{
-      ensureQR().then(()=>{
-        try{ new QRCode(box,{text:url,width:240,height:240,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H}); }catch(e){}
-        setTimeout(resolve, 350);   // 等二维码绘制完
-      }).catch(()=>resolve());
-    }).then(()=> html2canvas(wrap,{scale:2,backgroundColor:'#ffffff',logging:false}))
-      .then(canvas=>{
-        const link=document.createElement('a'); link.download='私人找回码.png'; link.href=canvas.toDataURL('image/png'); link.click();
-        try{document.body.removeChild(wrap);}catch(e){}
-        toast('已保存私人找回码 💗');
-      })
-      .catch(()=>{ try{document.body.removeChild(wrap);}catch(e){} toast('生成失败，可手动截屏找回码'); });
-  });
 }
 
 /* ============ 四象限散点图 ============ */
@@ -1087,51 +1029,48 @@ function ensureH2C(){
 }
 function saveImage(){
   toast('正在生成图片…');
-  // 截图前临时隐藏「私人找回码」与「未保存警示」——分享图绝不携带私人钥匙
-  const rec = document.getElementById('sec-recovery');
+  // 截图前临时隐藏「未保存警示」（私人找回码改为低调嵌入截图，见下）
   const warn = document.getElementById('sec-savewarn');
-  const recDisp = rec ? rec.style.display : '';
   const warnDisp = warn ? warn.style.display : '';
-  if(rec) rec.style.display = 'none';
   if(warn) warn.style.display = 'none';
-  ensureH2C().then(()=>{
-    const card=document.getElementById('report-card');
-    return html2canvas(card,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
-  }).then(canvas=>{
-    if(rec) rec.style.display = recDisp;
-    if(warn) warn.style.display = warnDisp;
-    const link=document.createElement('a');
-    link.download='我的性别角色报告.png';
-    link.href=canvas.toDataURL('image/png');
-    link.click();
-    toast('已保存，去发小红书吧 💗');
-  }).catch(()=>{
-    if(rec) rec.style.display = recDisp;
-    if(warn) warn.style.display = warnDisp;
-    toast('图片生成失败，可直接截图保存哦');
-  });
+  const card = document.getElementById('report-card');
+
+  // 临时的、低调的「找回数据」二维码：仅在保存的截图里出现，不进页面正文
+  let qrHost = null;
+  const cleanup = ()=>{ if(warn) warn.style.display = warnDisp; if(qrHost && qrHost.parentNode) qrHost.parentNode.removeChild(qrHost); };
+  const capture = ()=>{
+    ensureH2C().then(()=> html2canvas(card,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}))
+    .then(canvas=>{
+      cleanup();
+      const link=document.createElement('a');
+      link.download='我的性别角色报告.png';
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+      toast('已保存，去发小红书吧 💗');
+    }).catch(()=>{
+      cleanup();
+      toast('图片生成失败，可直接截图保存哦');
+    });
+  };
+
+  if(myUid && card && window.QRCode){
+    qrHost = document.createElement('div');
+    qrHost.style.cssText='position:absolute;left:12px;bottom:12px;z-index:5;background:rgba(255,255,255,.82);border:1px solid #eadfe6;border-radius:10px;padding:6px 6px 4px;box-shadow:0 2px 8px rgba(120,90,110,.10);';
+    const box = document.createElement('div'); box.style.cssText='width:52px;height:52px;';
+    const cap = document.createElement('div'); cap.style.cssText='font-size:9px;color:#b3a0ab;text-align:center;margin-top:2px;line-height:1.2;letter-spacing:.5px;';
+    cap.textContent='扫码找回数据';
+    qrHost.appendChild(box); qrHost.appendChild(cap);
+    card.appendChild(qrHost);
+    const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(myUid);
+    try{ new QRCode(box,{text:url,width:52,height:52,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
+    catch(e){}
+    setTimeout(capture, 350);   // 等二维码绘制完成再截图
+  }else{
+    capture();
+  }
 }
 
-/* ============ 数据找回：角落二维码 + ?uid= 恢复页 ============ */
-function ensureQR(){
-  // qrcodejs 已随页面本地加载（assets/qrcode.min.js，defer），无需联网
-  return window.QRCode ? Promise.resolve() : Promise.reject(new Error('QRCode 未加载'));
-}
-function ensureRecoveryQR(){
-  const sec=document.getElementById('sec-recovery');
-  if(!sec) return;
-  if(!myUid){ sec.style.display='none'; return; }
-  sec.style.display='';
-  const box=document.getElementById('recovery-qr');
-  const fb=document.getElementById('recovery-fallback');
-  if(box) box.innerHTML='';
-  const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(myUid);
-  ensureQR().then(()=>{
-    try{ new QRCode(box,{text:url,width:128,height:128,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H}); }
-    catch(e){ showFallback(); }
-  }).catch(showFallback);
-  function showFallback(){ if(fb){ fb.style.display=''; fb.textContent='提取码（手写保存）：'+myUid; } }
-}
+/* ============ 数据找回：?uid= 恢复页 ============ */
 const TYPE_CN={androgynous:'双性化',masculine:'男性化',feminine:'女性化',undifferentiated:'未分化'};
 async function recoverData(uid){
   currentRecUid = uid;
