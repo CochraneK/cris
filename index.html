@@ -101,7 +101,7 @@
 
   /* ===== 报告 ===== */
   .result{padding:0 0 40px;position:relative;z-index:1;}
-  #report-card{position:relative;margin:22px 16px 0;background:#fff;border-radius:26px;overflow:hidden;box-shadow:var(--shadow);}
+  #report-card{margin:22px 16px 0;background:#fff;border-radius:26px;overflow:hidden;box-shadow:var(--shadow);}
   .r-head{padding:30px 24px 26px;color:#fff;text-align:center;background:linear-gradient(135deg,#ff5e8a,#b388ff);}
   .r-head .big{font-size:60px;line-height:1;margin-bottom:10px;}
   .r-head h2{margin:0 0 8px;font-size:24px;font-weight:800;}
@@ -345,7 +345,7 @@
           <div class="copy-row"><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button></div>
         </div>
         <div class="r-section savewarn" id="sec-savewarn" style="display:none;">
-          <p class="warn">⚠️ 数据尚未保存到云端。你的报告仍可见，但找回码不会生成——稍后可点「重新保存」补传。</p>
+          <p class="warn">⚠️ 数据尚未保存到云端。你的报告仍可见，但「下载数据」里不会带找回二维码——稍后可点「重新保存」补传。</p>
           <button class="btn outline" onclick="retrySave()">🔄 重新保存</button>
         </div>
       </div>
@@ -985,24 +985,52 @@ function buildPrompt(r){
 async function downloadData(uidArg){
   // 优先从后台取回「本人」数据（凭匿名码，只取回自己的）
   const uid = uidArg || myUid || (function(){ try{return localStorage.getItem('cris_uid')||'';}catch(e){return '';} })();
+  let downloaded = false;
   if(uid){
     try{
       const resp = await fetch(API_BASE+'/api/mine',{headers:{'x-cris-uid':uid},cache:'no-store'});
       if(resp.ok){
         const rec = await resp.json();
         triggerDownload(buildPayloadFromRecord(rec), '我的性别角色数据.json');
+        downloaded = true;
         toast('已从后台取回你的数据 💗');
-        return;
-      }
-      if(uidArg){ toast('取回失败（记录可能已删除）'); return; } // 找回模式下不回退到本地空数据
+      }else if(uidArg){ toast('取回失败（记录可能已删除）'); return; } // 找回模式下不回退到本地空数据
     }catch(e){ if(uidArg){ toast('网络异常，取回失败'); return; } }
   }
   // 兜底：本地依据当前作答生成（断网时也能用）
-  try{
-    const r = currentResult || compute();
-    triggerDownload(buildPayload(r), '我的性别角色数据.json');
-    toast('已下载（本地生成，未连后台）💗');
-  }catch(e){ toast('下载失败，请重试'); }
+  if(!downloaded){
+    try{
+      const r = currentResult || compute();
+      triggerDownload(buildPayload(r), '我的性别角色数据.json');
+      toast('已下载（本地生成，未连后台）💗');
+    }catch(e){ toast('下载失败，请重试'); return; }
+  }
+  // 同时下载「找回数据」二维码（带字段提示），与 JSON 一起落到本地
+  if(uid){ downloadRecoveryQR(uid); }
+}
+
+/* 单独下载「找回数据」二维码 PNG（含字段提示「扫码找回数据」），供本地留存 */
+function downloadRecoveryQR(uid){
+  if(!window.QRCode){ toast('二维码库未加载，跳过找回码'); return; }
+  const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(uid);
+  const box = document.createElement('div');
+  try{ new QRCode(box,{text:url,width:200,height:200,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
+  catch(e){ return; }
+  // QRCode 渲染完内部是 <canvas>（或 <img>）；直接合成带标题的 PNG，不依赖 html2canvas
+  setTimeout(()=>{
+    const W=240, H=284, c=document.createElement('canvas'); c.width=W; c.height=H;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#7a6a73'; ctx.font='14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('扫码找回数据', W/2, 24);
+    const src = box.querySelector('canvas') || box.querySelector('img');
+    if(src){ try{ ctx.drawImage(src, 20, 36, 200, 200); }catch(e){} }
+    const link=document.createElement('a');
+    link.download='找回数据二维码.png';
+    link.href=c.toDataURL('image/png');
+    link.click();
+    toast('已同时下载找回二维码 💗');
+  }, 80);
 }
 function copyPrompt(){
   const r = currentResult || compute();
@@ -1029,45 +1057,23 @@ function ensureH2C(){
 }
 function saveImage(){
   toast('正在生成图片…');
-  // 截图前临时隐藏「未保存警示」（私人找回码改为低调嵌入截图，见下）
+  // 截图前临时隐藏「未保存警示」（找回二维码已改到「下载数据」里，截图保持干净）
   const warn = document.getElementById('sec-savewarn');
   const warnDisp = warn ? warn.style.display : '';
   if(warn) warn.style.display = 'none';
   const card = document.getElementById('report-card');
-
-  // 临时的、低调的「找回数据」二维码：仅在保存的截图里出现，不进页面正文
-  let qrHost = null;
-  const cleanup = ()=>{ if(warn) warn.style.display = warnDisp; if(qrHost && qrHost.parentNode) qrHost.parentNode.removeChild(qrHost); };
-  const capture = ()=>{
-    ensureH2C().then(()=> html2canvas(card,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}))
-    .then(canvas=>{
-      cleanup();
-      const link=document.createElement('a');
-      link.download='我的性别角色报告.png';
-      link.href=canvas.toDataURL('image/png');
-      link.click();
-      toast('已保存，去发小红书吧 💗');
-    }).catch(()=>{
-      cleanup();
-      toast('图片生成失败，可直接截图保存哦');
-    });
-  };
-
-  if(myUid && card && window.QRCode){
-    qrHost = document.createElement('div');
-    qrHost.style.cssText='position:absolute;left:12px;bottom:12px;z-index:5;background:rgba(255,255,255,.82);border:1px solid #eadfe6;border-radius:10px;padding:6px 6px 4px;box-shadow:0 2px 8px rgba(120,90,110,.10);';
-    const box = document.createElement('div'); box.style.cssText='width:52px;height:52px;';
-    const cap = document.createElement('div'); cap.style.cssText='font-size:9px;color:#b3a0ab;text-align:center;margin-top:2px;line-height:1.2;letter-spacing:.5px;';
-    cap.textContent='扫码找回数据';
-    qrHost.appendChild(box); qrHost.appendChild(cap);
-    card.appendChild(qrHost);
-    const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(myUid);
-    try{ new QRCode(box,{text:url,width:52,height:52,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
-    catch(e){}
-    setTimeout(capture, 350);   // 等二维码绘制完成再截图
-  }else{
-    capture();
-  }
+  ensureH2C().then(()=> html2canvas(card,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}))
+  .then(canvas=>{
+    if(warn) warn.style.display = warnDisp;
+    const link=document.createElement('a');
+    link.download='我的性别角色报告.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    toast('已保存，去发小红书吧 💗');
+  }).catch(()=>{
+    if(warn) warn.style.display = warnDisp;
+    toast('图片生成失败，可直接截图保存哦');
+  });
 }
 
 /* ============ 数据找回：?uid= 恢复页 ============ */
