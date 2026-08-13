@@ -77,14 +77,8 @@
   .q-card .q-top{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
   .q-card .num{font-size:13px;font-weight:700;color:var(--pink);background:var(--pink-bg);border-radius:8px;padding:2px 8px;flex:none;}
   .q-card .word{font-size:17px;font-weight:700;}
-  .q-card .num.jump,.q-card .num.jump2{cursor:pointer;transition:background .12s,color .12s;}
-  .q-card .num.jump:hover,.q-card .num.jump2:hover{background:var(--pink);color:#fff;}
-  /* 预览模式（点第1题序号进入）：只展示群体分布，隐藏一切个人报告板块 */
-  #report-card.preview .r-head{display:none;}
-  #report-card.preview .score-box{display:none;}
-  #report-card.preview .r-body .r-section:not(#sec-scatter){display:none;}
-  .preview-banner{background:#f0f6ff;border:1px dashed #bcd4f5;border-radius:12px;padding:10px 13px;font-size:12.5px;color:#3f6aa8;line-height:1.7;margin:0 0 12px;}
-  .preview-banner b{color:#2f5a9a;}
+  .q-card .num.jump{cursor:pointer;transition:background .12s,color .12s;}
+  .q-card .num.jump:hover{background:var(--pink);color:#fff;}
   .opts{display:flex;gap:7px;}
   .opt{flex:1;min-height:48px;border:2px solid #ffe0ea;border-radius:13px;background:#fffdfe;
     display:flex;align-items:center;justify-content:center;cursor:pointer;
@@ -292,7 +286,6 @@
   <section id="result" class="screen">
     <div class="result">
       <div id="report-card">
-        <div class="preview-banner" id="preview-banner" style="display:none;">👀 你正以<b>预览模式</b>查看——这里只展示大家累计的落点分布（目前还没有你的作答）。想看自己的类型，从首页开始测一遍就好～</div>
         <div class="r-head" id="r-head">
           <div class="big" id="r-emoji">🌟</div>
           <h2 id="r-title">你的类型</h2>
@@ -474,7 +467,7 @@ function renderQuiz(){
       opts += `<div class="opt" data-q="${idx}" data-v="${v}">${v}</div>`;
     }
     card.innerHTML = `
-      <div class="q-top"><span class="num${idx===0?' jump':''}${idx===1?' jump2':''}"${idx===0?' title="悄悄点一下，直接看看大家的位置（预览）"':''}${idx===1?' title="悄悄点一下，自动作答并生成一份数据"':''}>${idx+1}</span><span class="word">${q.word}</span></div>
+      <div class="q-top"><span class="num${idx===0?' jump':''}"${idx===0?' title="悄悄点一下，自动作答并生成一份示例数据"':''}>${idx+1}</span><span class="word">${q.word}</span></div>
       <div class="opts">${opts}</div>
       <div class="scale-tip"><span>很不符合</span><span>很符合</span></div>`;
     box.appendChild(card);
@@ -489,12 +482,9 @@ function renderQuiz(){
       updateProgress();
     });
   });
-  // 隐藏入口：点第 1 题的序号「1」直接进结果页，只看群体累计分布（无个人作答）
+  // 隐藏入口：点第 1 题的序号「1」自动作答一份示例数据（不落库，仅本地演示）
   const num1 = box.querySelector('.num.jump');
-  if(num1) num1.addEventListener('click', enterPreview);
-  // 隐藏入口：点第 2 题的序号「2」自动作答并生成（提交）一份数据
-  const num2 = box.querySelector('.num.jump2');
-  if(num2) num2.addEventListener('click', autoAnswerAndSubmit);
+  if(num1) num1.addEventListener('click', autoAnswerAndSubmit);
 }
 
 /* 鼓励特效：累计填完 17 题（≈1/3）、33 题（≈2/3）时各弹一次（50 题下的约数） */
@@ -656,7 +646,6 @@ function startQuiz(){
     return;
   }
   renderQuiz(); updateProgress();
-  exitPreview();
   show('quiz');
 }
 function pickGender(g){
@@ -668,19 +657,7 @@ function pickGender(g){
     b.classList.toggle('female', on && g==='female');
   });
 }
-/* 隐藏入口：点第 1 题序号「1」进入——只看群体累计分布，无个人作答。
-   不提交、不算分、不显示任何个人报告板块；点「再测一次」/ 回首页即退出预览。 */
-function enterPreview(){
-  const card = document.getElementById('report-card');
-  card.classList.add('preview');
-  document.getElementById('preview-banner').style.display = 'block';
-  document.getElementById('counter').textContent = '正在加载大家的位置…';
-  // 单点（me=null）只画群体；后端拉取逻辑复用，但不传 me、不提交
-  loadCommunityPoints(null);
-  show('result');
-}
-/* 隐藏入口：点第 2 题序号「2」——自动作答一份随机但合理的问卷，并作为一条真实记录提交到后端，
-   用于演示端到端流程 / 为群体分布贡献数据。不要求真人作答，故性别随机取男/女以让散点有颜色。 */
+/* 隐藏入口：点第 1 题序号「1」——自动作答一份随机但合理的问卷，生成示例报告（不落库）。 */
 function autoAnswerAndSubmit(){
   // 1) 生成 50 题随机作答（1–7 均匀），覆盖四种类型，使群体分布有意义
   for(let i=0;i<50;i++){ answers[i] = 1 + Math.floor(Math.random()*7); }
@@ -689,11 +666,6 @@ function autoAnswerAndSubmit(){
   const demoGender = Math.random()<0.5 ? 'male' : 'female';   // 仅用于演示散点着色，不污染真人已选的 currentGender
   ensureUid();
   renderReport(r);
-  // 退出预览态（若此前点过「1」），避免横幅干扰
-  const card = document.getElementById('report-card');
-  if(card) card.classList.remove('preview');
-  const banner = document.getElementById('preview-banner');
-  if(banner) banner.style.display = 'none';
   show('result');
   submitAndLoadPoints(r, {demo:true, gender:demoGender});
   toast('演示模式 · 已生成示例报告（不记录数据）✨');
@@ -763,15 +735,7 @@ function restart(){
   answers.fill(0);
   pickGender(null);            // 清空性别选择（含 UI 高亮），避免污染下次重测
   _milestoneShown = {17:false, 33:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
-  exitPreview();
   show('cover');
-}
-/* 退出预览模式：清 preview 类与横幅 */
-function exitPreview(){
-  const card = document.getElementById('report-card');
-  if(card) card.classList.remove('preview');
-  const b = document.getElementById('preview-banner');
-  if(b) b.style.display = 'none';
 }
 function toast(msg){
   const t=document.getElementById('toast');
