@@ -100,10 +100,10 @@
   .r-head .quote{font-size:14px;opacity:.95;line-height:1.7;max-width:300px;margin:0 auto;}
   .r-head .type-tag{display:inline-block;margin-top:11px;font-size:12px;font-weight:600;padding:4px 13px;border-radius:20px;background:rgba(255,255,255,.24);color:#fff;letter-spacing:.5px;}
   /* 头图按类型着色（不再千篇一律粉紫） */
-  .r-head.t-androgynous{background:linear-gradient(135deg,#a06fe6,#b388ff);}
-  .r-head.t-masculine{background:linear-gradient(135deg,#5b8def,#3f7fe0);}
+  .r-head.t-androgynous{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
+  .r-head.t-masculine{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
   .r-head.t-feminine{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
-  .r-head.t-undifferentiated{background:linear-gradient(135deg,#56c596,#34a97f);}
+  .r-head.t-undifferentiated{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
   .r-body{padding:22px 22px 8px;}
   .score-box{display:flex;gap:14px;margin-bottom:6px;}
   .score{flex:1;border-radius:14px;padding:14px 14px 12px;border:1px solid transparent;}
@@ -143,10 +143,10 @@
   .ev-grid{display:grid;grid-template-columns:1fr;gap:11px;}
   .ev-card{position:relative;background:#fff;border:1px solid #efe6ec;border-radius:14px;padding:13px 14px 13px 16px;overflow:hidden;box-shadow:0 2px 10px rgba(120,90,110,.05);}
   .ev-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;}
-  .ev-card.c-androgynous::before{background:linear-gradient(#b98cf0,#a06fe6);}
-  .ev-card.c-masculine::before{background:linear-gradient(#6aa0f0,#3f7fe0);}
+  .ev-card.c-androgynous::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
+  .ev-card.c-masculine::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
   .ev-card.c-feminine::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
-  .ev-card.c-undifferentiated::before{background:linear-gradient(#f0c674,#e6b24a);}
+  .ev-card.c-undifferentiated::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
   .ev-card h4{font-size:13.5px;margin:0 0 9px;color:var(--type,#ff5e8a);display:flex;align-items:center;gap:5px;}
   .ev-card .ev-sub{font-size:10.5px;color:var(--type,#ff5e8a);background:#f6eefb;border-radius:8px;padding:1px 7px;font-weight:700;}
   .ev-card p{font-size:13.5px;color:#4a3b44;line-height:1.8;margin:0 0 7px;}
@@ -598,7 +598,7 @@ const EVIDENCE = {
 
 /* ============ 渲染报告 ============ */
 function renderReport(r){
-  const TYPE_COLOR = {androgynous:'#a06fe6', masculine:'#3f7fe0', feminine:'#ff5e8a', undifferentiated:'#34a97f'};
+  const TYPE_COLOR = {androgynous:'#ff5e8a', masculine:'#ff5e8a', feminine:'#ff5e8a', undifferentiated:'#ff5e8a'};
   const rep = REPORT[r.type];
   document.getElementById('r-emoji').textContent = rep.emoji;
   document.getElementById('r-title').textContent = rep.title;
