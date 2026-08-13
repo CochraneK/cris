@@ -199,6 +199,10 @@
   .acts-row{display:flex;gap:12px;}
   .acts-row .btn{flex:1;}
   .btn.outline{background:linear-gradient(135deg,#ff8fab,#ff5e8a);color:#fff;box-shadow:0 12px 26px rgba(255,94,138,.4);}
+  .btn.danger{background:#fff;color:#c0463b;border:1px solid #f0c4bf;box-shadow:var(--shadow);}
+  .btn.danger:hover{background:#fff3f1;}
+  .savewarn{background:#fff7e9;border:1px solid #ffe2a8;border-radius:14px;padding:14px;margin-top:14px;}
+  .savewarn .warn{color:#9a6a16;font-size:14px;line-height:1.7;margin:0 0 10px;}
   .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
     background:rgba(58,42,51,.92);color:#fff;font-size:13px;padding:11px 18px;border-radius:14px;
     opacity:0;transition:.3s;z-index:30;pointer-events:none;}
@@ -345,9 +349,15 @@
         </div>
         <div class="r-section recovery" id="sec-recovery" style="display:none;">
           <h3>📲 扫码找回你的原始数据</h3>
-          <p class="muted">截屏保存这张图，以后用手机扫这个码，就能回到你的作答数据——不用记任何东西。</p>
+          <p class="muted">这是你的<strong>私人</strong>找回码：只在<strong>真实提交成功后</strong>才生成，且<strong>不会</strong>进入「保存报告」分享图。截屏把它单独存好，以后用手机扫这个码即可找回作答——请勿公开发布。</p>
           <div class="qr-wrap"><div id="recovery-qr"></div></div>
           <p class="muted" id="recovery-fallback" style="display:none;word-break:break-all;"></p>
+          <button class="btn outline" onclick="saveRecoveryCard()" style="margin-top:8px;">📥 保存私人找回码（仅自己）</button>
+          <button class="btn danger" onclick="deleteMyData()" style="margin-top:8px;">🗑 删除我的云端数据</button>
+        </div>
+        <div class="r-section savewarn" id="sec-savewarn" style="display:none;">
+          <p class="warn">⚠️ 数据尚未保存到云端。你的报告仍可见，但找回码不会生成——稍后可点「重新保存」补传。</p>
+          <button class="btn outline" onclick="retrySave()">🔄 重新保存</button>
         </div>
       </div>
 
@@ -538,7 +548,7 @@ const EVIDENCE = {
     emoji:'🌟', label:'双性化 · 刚柔并济', sub:'男女特质都高',
     points:[
       '主观幸福感与自我价值感<b>最高</b>，被多项研究视为最理想的性别角色类型（Whitley 1983；Bassoff &amp; Glass 1982）。',
-      '抑郁风险<b>最低</b>：涵盖 58 项研究（1978–2021）的元分析发现，男女特质都高的人最不容易陷入抑郁（Li et al. 2021）。',
+      '在既往研究中，平均报告的抑郁症状水平<b>最低</b>：涵盖 58 项研究（1978–2021）的元分析发现，男女特质都高的人最不容易陷入抑郁（Lin et al., 2021）。',
       '行为更<b>灵活</b>，刚强与温柔都能按需调用，压力情境下应对更具适应性（Bem &amp; Lewis 1975；Bem et al. 1976）。',
       '中老年人的自评健康、生活满意度也更高（Gale-Ross et al. 2009；Lefkowitz &amp; Zeldow 2006）。'
     ]
@@ -547,7 +557,7 @@ const EVIDENCE = {
     emoji:'💪', label:'男性化 · 坚定的力量型', sub:'男高 · 女低',
     points:[
       '自尊的<b>最强预测因子</b>：35 项研究的元分析显示，男性化特质对自我价值感的解释力远超其他（Whitley 1983）。',
-      '与抑郁呈<b>稳健负相关</b>：无论男女，男性化特质越高，抑郁症状越少（Li et al. 2021；Whitley 1985）。',
+      '与抑郁呈<b>稳健负相关</b>：无论男女，男性化特质越高，抑郁症状越少（Lin et al., 2021；Whitley 1985）。',
       '独立、果敢、有掌控感，心理健康水平与双性化接近，明显优于女性化与未分化（Bassoff &amp; Glass 1982）。',
       '提醒：这份"保护力"来自自信与主动，而非压抑情绪——长期情感压抑反而会削弱韧性（Gonzalez et al. 2012）。'
     ]
@@ -555,7 +565,7 @@ const EVIDENCE = {
   feminine:{
     emoji:'🌸', label:'女性化 · 温柔而有力量', sub:'男低 · 女高',
     points:[
-      '共情、人际温暖突出；善于建立并维持<b>支持性的社会关系</b>，而社会支持本身是心理健康的重要保护因子（Matud 2019；Li et al. 2021）。',
+      '共情、人际温暖突出；善于建立并维持<b>支持性的社会关系</b>，而社会支持本身是心理健康的重要保护因子（Matud 2019；Lin et al., 2021）。',
       '在亲密关系里，"温柔体贴"的伴侣往往让关系更幸福（Antill 1983）。',
       '对青少年而言，女性化（表达性）特质与更积极的人际关系、健康结果相关，有时比男性化更关键（Helgeson &amp; Palladino 2012）。',
       '提醒：单纯女性化者在自尊/心理健康上平均偏弱，但<b>温柔本身极珍贵</b>，且高社会支持可弥补（Bassoff &amp; Glass 1982）。'
@@ -604,7 +614,7 @@ function renderReport(r){
     document.getElementById('bar-m').style.width = mPct+'%';
     document.getElementById('bar-f').style.width = fPct+'%';
   });
-  ensureRecoveryQR();
+  /* 恢复二维码不在渲染报告时生成——只在真实提交成功后由 submitAndLoadPoints 调用，避免私人钥匙随分享图泄露 */
 }
 
 /* ============ 流程控制 ============ */
@@ -651,7 +661,7 @@ function autoAnswerAndSubmit(){
   for(let i=0;i<50;i++){ answers[i] = 1 + Math.floor(Math.random()*7); }
   // 2) 计分 + 渲染报告 + 进入结果页（与正常完成共用整套逻辑）
   const r = compute();
-  currentGender = Math.random()<0.5 ? 'male' : 'female';   // 合成数据随机性别，便于散点着色
+  const demoGender = Math.random()<0.5 ? 'male' : 'female';   // 仅用于演示散点着色，不污染真人已选的 currentGender
   ensureUid();
   renderReport(r);
   // 退出预览态（若此前点过「1」），避免横幅干扰
@@ -660,7 +670,7 @@ function autoAnswerAndSubmit(){
   const banner = document.getElementById('preview-banner');
   if(banner) banner.style.display = 'none';
   show('result');
-  submitAndLoadPoints(r, {demo:true});
+  submitAndLoadPoints(r, {demo:true, gender:demoGender});
   toast('演示模式 · 已生成示例报告（不记录数据）✨');
 }
 /* 拉取群体落点（预览与正式提交共用），me 为 null 时不画自己的点。
@@ -675,7 +685,7 @@ function readCachedPoints(){
 function writeCachedPoints(pts){
   try{ localStorage.setItem(PTS_CACHE_KEY, JSON.stringify(pts)); }catch(e){}
 }
-function pointsSignature(pts){ return (pts||[]).map(p=>p.uid||(p.m+','+p.f)).join('|'); }
+function pointsSignature(pts){ return (pts||[]).map(p=>(p.m+','+p.f+','+(p.gender||'')+','+(p.source||''))).join('|'); }
 async function loadCommunityPoints(me){
   // 1) 立即用本地缓存秒出（无网络等待），哪怕后端还没回
   const cached = readCachedPoints();
@@ -726,6 +736,7 @@ function finishQuiz(){
 }
 function restart(){
   answers.fill(0);
+  pickGender(null);            // 清空性别选择（含 UI 高亮），避免污染下次重测
   _milestoneShown = {17:false, 33:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
   exitPreview();
   show('cover');
@@ -796,13 +807,24 @@ let myUid = '';   // 匿名码：本人凭它从后台取回自己的明细，�
 let currentSource = 'direct'; // 平台来源标记：从 URL ?src= 读取，随提交发送（direct=裸链/未知）
 let currentRecUid = '';       // 数据找回模式下当前正在取回的 uid
 
+let _lastSavedResult = null;   // 供「重新保存」复用最近一次结果
+
+function showRecovery(){ const s=document.getElementById('sec-recovery'); if(s) s.style.display=''; }
+function hideRecovery(){ const s=document.getElementById('sec-recovery'); if(s) s.style.display='none'; }
+function showSaveWarn(){ const s=document.getElementById('sec-savewarn'); if(s) s.style.display=''; }
+function hideSaveWarn(){ const s=document.getElementById('sec-savewarn'); if(s) s.style.display='none'; }
+
 async function submitAndLoadPoints(r, opts){
   currentResult = r;
+  _lastSavedResult = r;
   const demo = !!(opts && opts.demo);   // 隐藏入口（点2）自动作答标记
-  const noSave = demo || currentSource === 'test'; // 演示/测试流程：不落库，仅本地渲染散点
+  const noSave = demo || currentSource === 'test'; // 演示/测试流程：不落库
+  const demoGender = (opts && opts.gender) || currentGender || 'unknown';
+  hideRecovery();
+  hideSaveWarn();
   if(noSave){
     // 测试/演示：不提交后端，仅本地画散点（含自己）供联调预览，绝不记录数据
-    const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:currentGender||'unknown'};
+    const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:demoGender};
     renderScatter([], me);
     const c = document.getElementById('counter');
     if(c) c.textContent = '演示模式 · 不记录数据 ✨';
@@ -826,18 +848,76 @@ async function submitAndLoadPoints(r, opts){
   (async()=>{
     try{
       const ctl = new AbortController();
-      const timer = setTimeout(()=>ctl.abort(), 3000);
+      const timer = setTimeout(()=>ctl.abort(), 5000);
+      let saved = false;
       try{
         const resp = await fetch(API_BASE+'/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify(payload),signal:ctl.signal});
-        const j = await resp.json().catch(()=>null);
-        if(j && j.uid){ myUid = j.uid; try{localStorage.setItem('cris_uid', j.uid);}catch(e){} } // 回存，保持前后端一致
-      }catch(e){/* 离线或后端不可用，忽略 */}
+        if(resp.ok){
+          const j = await resp.json().catch(()=>null);
+          if(j && j.uid){ myUid = j.uid; try{localStorage.setItem('cris_uid', j.uid);}catch(e){} } // 回存，保持前后端一致
+          saved = true;
+        }
+      }catch(e){/* 离线或后端不可用 */}
       clearTimeout(timer);
+      if(saved){
+        // 只有真实保存成功，才生成私人恢复码（绝不进分享图）
+        hideSaveWarn();
+        showRecovery();
+        ensureRecoveryQR();
+      }else{
+        // 提交失败：显式提示，不静默
+        showSaveWarn();
+      }
       // 复用群体拉取逻辑（提交后再拉一次，保证含自己；有缓存先秒出，再增量更新）
       await loadCommunityPoints(me);
     }catch(e){}
   })();
+}
+
+/* 提交失败后「重新保存」：复用最近一次结果重试真实提交 */
+function retrySave(){
+  hideSaveWarn();
+  if(_lastSavedResult) submitAndLoadPoints(_lastSavedResult, {});
+}
+
+/* 删除云端本人数据（仅删本人 uid 对应记录） */
+async function deleteMyData(){
+  ensureUid();
+  if(!myUid){ toast('没有可删除的本地记录'); return; }
+  if(!confirm('确定删除你云端保存的作答数据吗？此操作不可恢复。')) return;
+  try{
+    const resp = await fetch(API_BASE+'/api/delete',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:myUid})});
+    const j = await resp.json().catch(()=>null);
+    if(j && j.ok){ toast('已删除你的云端数据 ✅'); hideRecovery(); hideSaveWarn(); }
+    else toast('删除失败，请稍后重试');
+  }catch(e){ toast('网络异常，删除失败'); }
+}
+
+/* 单独导出「私人找回码」卡片（仅自己保存，含二维码，不含任何报告内容） */
+function saveRecoveryCard(){
+  if(!myUid){ toast('还没有生成找回码'); return; }
+  ensureH2C().then(()=>{
+    const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(myUid);
+    const wrap = document.createElement('div');
+    wrap.style.cssText='position:fixed;left:-99999px;top:0;width:320px;padding:24px;background:#fff;color:#2a2230;font-family:sans-serif;border-radius:12px;box-sizing:border-box;';
+    wrap.innerHTML = '<h3 style="margin:0 0 8px;font-size:18px;">📲 我的私人找回码</h3><p style="font-size:13px;color:#7a6a73;margin:0 0 12px;">截屏保存，勿公开。用手机扫此码可找回作答。</p>';
+    const box = document.createElement('div'); wrap.appendChild(box);
+    document.body.appendChild(wrap);
+    return new Promise((resolve)=>{
+      ensureQR().then(()=>{
+        try{ new QRCode(box,{text:url,width:240,height:240,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H}); }catch(e){}
+        setTimeout(resolve, 350);   // 等二维码绘制完
+      }).catch(()=>resolve());
+    }).then(()=> html2canvas(wrap,{scale:2,backgroundColor:'#ffffff',logging:false}))
+      .then(canvas=>{
+        const link=document.createElement('a'); link.download='私人找回码.png'; link.href=canvas.toDataURL('image/png'); link.click();
+        try{document.body.removeChild(wrap);}catch(e){}
+        toast('已保存私人找回码 💗');
+      })
+      .catch(()=>{ try{document.body.removeChild(wrap);}catch(e){} toast('生成失败，可手动截屏找回码'); });
+  });
 }
 
 /* ============ 四象限散点图 ============ */
@@ -1004,16 +1084,27 @@ function ensureH2C(){
 }
 function saveImage(){
   toast('正在生成图片…');
+  // 截图前临时隐藏「私人找回码」与「未保存警示」——分享图绝不携带私人钥匙
+  const rec = document.getElementById('sec-recovery');
+  const warn = document.getElementById('sec-savewarn');
+  const recDisp = rec ? rec.style.display : '';
+  const warnDisp = warn ? warn.style.display : '';
+  if(rec) rec.style.display = 'none';
+  if(warn) warn.style.display = 'none';
   ensureH2C().then(()=>{
     const card=document.getElementById('report-card');
     return html2canvas(card,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
   }).then(canvas=>{
+    if(rec) rec.style.display = recDisp;
+    if(warn) warn.style.display = warnDisp;
     const link=document.createElement('a');
     link.download='我的性别角色报告.png';
     link.href=canvas.toDataURL('image/png');
     link.click();
     toast('已保存，去发小红书吧 💗');
   }).catch(()=>{
+    if(rec) rec.style.display = recDisp;
+    if(warn) warn.style.display = warnDisp;
     toast('图片生成失败，可直接截图保存哦');
   });
 }
