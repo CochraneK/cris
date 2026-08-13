@@ -1,7 +1,7 @@
 # CRIS 后端部署手册（腾讯云开发 CloudBase）
 
 ## 为什么用 CloudBase
-- **大陆可达、免费额度、无需信用卡**。对比 Cloudflare Worker（`workers.dev`）在大陆常被墙，CloudBase 让没有外网权限的用户也能**直接上传、直接读取**群体分布。
+- **大陆可达、免费额度、无需信用卡**：CloudBase 让没有外网权限的用户也能**直接上传、直接读取**群体分布。
 - 前端继续用 **GitHub Pages**（`github.io`，你的用户能打开），只把后端搬过来即可。
 
 ## 前置条件
@@ -31,14 +31,15 @@ ENV_ID=你的环境ID bash deploy_cloudbase.sh
 
 ### 3. 开 HTTP 触发 / 云接入（让前端能跨域调用）
 - 云函数 → `crisApi` → **触发管理** → 创建 **HTTP 触发**，触发路径填 `/`。
-  - 触发后访问域名形如：`https://<ENV_ID>.<地域>.app.tcloudbase.com/crisApi`
+  - 触发后访问域名形如：`https://<ENV_ID>-<APP_ID>.<地域>.app.tcloudbase.com/crisApi`
+  （`<APP_ID>` 是腾讯云账号 appid，**必须带**，否则域名 404；以控制台「访问服务 / 网关」显示的**完整**域名为准）
 - 或者开启 **云接入**（环境 → 云接入 → 新建路由 `/crisApi` → 指向 `crisApi`），并在「跨域配置」白名单加入 `https://cochranek.github.io`。
 - ⚠️ 无论哪种，都必须允许来源 `https://cochranek.github.io`。云函数代码里 CORS 已写死该域名；若以后换前端域名，记得同步改 `index.js` 的 `ALLOWED_ORIGIN`。
 
 ### 4. 填入前端地址
 - 打开 `index.html`，把第 727 行附近的
   ```js
-  const API_BASE = 'https://<ENV_ID>.ap-shanghai.app.tcloudbase.com/crisApi';
+  const API_BASE = 'https://<ENV_ID>-<APP_ID>.ap-shanghai.app.tcloudbase.com/crisApi';
   ```
   中的 `<ENV_ID>` 与地域后缀换成控制台显示的**真实域名**（地域后缀按你环境实际地域，如 `ap-guangzhou`）。
 - 推送到 GitHub（`main` 分支），GitHub Pages 自动重建（约 1 分钟）。
@@ -56,5 +57,5 @@ ENV_ID=你的环境ID bash deploy_cloudbase.sh
 - 免费版 / 基础版1 含一定云函数调用次数与 1 GB 云数据库存储，小型匿名测验足够；超量再考虑升级。
 
 ## 备注
-- 旧的 Cloudflare Worker 后端（`worker.js` / `cf_deploy.sh`）可保留作备份，亦可删除；前端已切到 CloudBase。
 - 隐私：后端只存 `uid / gender / 50 题 answers / m / f / type / createdAt`，**不存姓名、微信、IP**。
+- 🔧 免 `tcb login` 反复扫码的替代部署：用 CloudBase MCP（stdio 旁路，`~/.workbuddy/skills/cloudbase-stdio-bypass`）直接调 `tcb fn deploy` 等工具，登录态写盘复用、不会每次重新授权。适合在 WorkBuddy 沙箱/无头环境重部署。
