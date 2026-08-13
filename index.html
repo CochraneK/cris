@@ -133,11 +133,16 @@
   .scatter-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle;}
   .lead{font-size:14px;color:#4a3b44;line-height:1.9;margin:0 0 14px;}
   .lead b{color:#3f7fe0;font-weight:700;}
-  .prompt-box{position:relative;display:block;background:#fdf7fb;border:1px solid #f1dce8;border-radius:14px;padding:16px 16px 52px;font-size:13.5px;line-height:1.9;color:#4a3b44;white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
-  .copy-mini{position:absolute;right:12px;bottom:40px;font-size:12px;padding:7px 13px;border-radius:11px;border:none;background:var(--type,#ff5e8a);color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(120,90,110,.2);font-weight:700;line-height:1;transition:transform .12s;}
-  .copy-mini:active{transform:scale(.94);}
+  .prompt-box{position:relative;display:block;background:#fdf7fb;border:1px solid #f1dce8;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.7;color:#4a3b44;margin-bottom:14px;}
+  .copy-mini{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;padding:7px 13px;border-radius:11px;border:none;background:var(--type,#ff5e8a);color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(120,90,110,.2);font-weight:700;line-height:1;transition:transform .12s;}
+  .copy-mini:active{transform:translateY(-50%) scale(.94);}
   .prompt-tip{font-size:13.5px;color:#4a3b44;margin:0 0 8px;line-height:1.7;}
-  #prompt-text{display:block;font-size:13.5px;line-height:1.9;color:#4a3b44;}
+  #prompt-text{display:block;font-size:13px;line-height:1.7;color:#4a3b44;white-space:nowrap;overflow-x:auto;padding-right:66px;scrollbar-width:thin;}
+  #prompt-text .pp-gender{color:#4a3b44;font-weight:700;}
+  #prompt-text .pp-masc{color:#3f7fe0;font-weight:700;}
+  #prompt-text .pp-fem{color:#ff5e8a;font-weight:700;}
+  #prompt-text .pp-type{color:var(--type,#ff5e8a);font-weight:700;}
+  #prompt-text .pp-num{color:var(--type,#ff5e8a);font-weight:700;}
   .evidence .ev-intro{font-size:14px;color:#4a3b44;line-height:1.9;margin:0 0 12px;}
   .evidence .ev-intro b{color:#3f7fe0;font-weight:700;}
   .ev-grid{display:grid;grid-template-columns:1fr;gap:11px;}
@@ -602,7 +607,7 @@ function renderReport(r){
   document.getElementById('r-masc').innerHTML = rep.masc;
   document.getElementById('r-fem').innerHTML = rep.fem;
   document.getElementById('r-tips').innerHTML = rep.tips.map(t=>`<p class="t">${t}</p>`).join('');
-  document.getElementById('prompt-text').textContent = buildPrompt(r);
+  document.getElementById('prompt-text').innerHTML = buildPromptHTML(r);
   /* 证据区：只渲染用户所属类型的卡片（按类型组织，避免 2×2 拥挤） */
   const ev = EVIDENCE[r.type];
   const evBox = document.getElementById('ev-grid');
@@ -983,7 +988,13 @@ function buildPrompt(r){
 1）这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战；
 2）在团队合作和职业选择里，我更适合扮演什么角色；
 3）有哪些被我忽略、但其实很珍贵的特质。
-谢谢，请多结合我的具体作答来谈。`;
+ 谢谢，请多结合我的具体作答来谈。`;
+}
+function buildPromptHTML(r){
+  const rep = REPORT[r.type];
+  const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
+  const m = r.mScore.toFixed(1), f = r.fScore.toFixed(1);
+  return `我刚做完一份「中国大学生性别角色量表（CSRI-50）」小测验。 我的性别：<b class="pp-gender">${g}</b>；得分：<span class="pp-masc">男性化特质 ${m}/7</span>，<span class="pp-fem">女性化特质 ${f}/7</span>；在本站男性化 4.8 / 女性化 5.0 常模分界下归为「<span class="pp-type">${rep.title}</span>」。 附件 JSON 是我 50 道题的具体作答（含每题类别 M/F/中性 与我的打分）。 请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊： <span class="pp-num">1）</span>这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战； <span class="pp-num">2）</span>在团队合作和职业选择里，我更适合扮演什么角色； <span class="pp-num">3）</span>有哪些被我忽略、但其实很珍贵的特质。 谢谢，请多结合我的具体作答来谈。`;
 }
 async function downloadData(uidArg){
   // 优先从后台取回「本人」数据（凭匿名码，只取回自己的）
