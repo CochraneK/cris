@@ -83,8 +83,6 @@
   #report-card.preview .r-head{display:none;}
   #report-card.preview .score-box{display:none;}
   #report-card.preview .r-body .r-section:not(#sec-scatter){display:none;}
-  #report-card.preview .take-away{display:none;}
-  #report-card.preview .acts{display:none;}
   .preview-banner{background:#f0f6ff;border:1px dashed #bcd4f5;border-radius:12px;padding:10px 13px;font-size:12.5px;color:#3f6aa8;line-height:1.7;margin:0 0 12px;}
   .preview-banner b{color:#2f5a9a;}
   .opts{display:flex;gap:7px;}
@@ -189,7 +187,6 @@
   .tips .t:last-child{margin-bottom:0;}
   .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
   .tips .t b, .tips .t strong{color:var(--type,#ff5e8a);font-weight:700;}
-  .take-away .prompt-box{padding-top:0;}
   .copy-row{text-align:right;margin-top:8px;}
   .result .acts{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px;}
   .result .acts .btn.share{background:linear-gradient(135deg,#5b8def,#3f7fe0);box-shadow:0 12px 26px rgba(63,127,224,.4);}
@@ -334,7 +331,6 @@
             <p class="ev-note">你永远是那个具体的、比标签丰富的人 💗</p>
             <div class="ev-grid" id="ev-grid"></div>
           </div>
-        </div>
 
         <div class="r-section take-away">
           <h3>把数据带走，去和别的 AI 聊聊 💗</h3>
@@ -347,6 +343,7 @@
         <div class="r-section savewarn" id="sec-savewarn" style="display:none;">
           <p class="warn">⚠️ 数据尚未保存到云端。你的报告仍可见，但「下载数据」里不会带找回二维码——稍后可点「重新保存」补传。</p>
           <button class="btn outline" onclick="retrySave()">🔄 重新保存</button>
+        </div>
         </div>
       </div>
 
@@ -603,7 +600,7 @@ function renderReport(r){
     document.getElementById('bar-m').style.width = mPct+'%';
     document.getElementById('bar-f').style.width = fPct+'%';
   });
-  /* 恢复二维码不在渲染报告时生成——只在真实提交成功后由 submitAndLoadPoints 调用，避免私人钥匙随分享图泄露 */
+  /* 找回二维码不在此生成——现在由「下载数据」时随 JSON 一并下载，避免私人钥匙进入分享图 */
 }
 
 /* ============ 流程控制 ============ */
