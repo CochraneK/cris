@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
-# CRIS 后端部署到腾讯云开发 CloudBase（需先：npm i -g @cloudbase/cli && tcb login）
-# 用法：
-#   ENV_ID=你的环境ID ./cloudbase/deploy_cloudbase.sh
-set -e
-ENV_ID="${ENV_ID:?请先设置 ENV_ID（云开发环境 ID，形如 cris-1gabcde1234）}"
-FUNC=crisApi
+set -euo pipefail
+
+ENV_ID="${ENV_ID:?请先设置 ENV_ID，例如 cris-xxxx}"
+FUNC="crisApi"
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
-echo "==> 1/2 部署云函数 $FUNC -> 环境 $ENV_ID"
+echo "==> 部署 $FUNC 到 $ENV_ID"
 tcb fn deploy "$FUNC" --envId "$ENV_ID" --name "$FUNC" --entry "index.js" --path "$ROOT/crisApi"
 
-echo "==> 2/2 完成"
-echo "请在 CloudBase 控制台为该云函数创建【HTTP 触发】（触发路径 /），"
-echo "或使用【云接入】把路由（如 /crisApi）指向此函数，并在跨域白名单加入："
-echo "    https://cochranek.github.io"
-echo ""
-echo "部署后前端 API_BASE 应设为（地域后缀按控制台实际域名调整）："
-echo "    https://$ENV_ID.ap-shanghai.app.tcloudbase.com/$FUNC"
+echo
+echo "✅ 云函数部署完成"
+echo "下一步："
+echo "1. 在 CloudBase 控制台创建 community_bins / backups（以及需要兼容旧数据时的 responses）"
+echo "2. 所有集合权限设为【仅管理员可读写】"
+echo "3. 创建 HTTP 触发 / 云接入"
+echo "4. 从控制台复制【完整访问 URL】到 index.html 的 API_BASE"
+echo "   不要根据 ENV_ID 手工猜域名；不同环境的 APP_ID / 地域格式可能不同。"
