@@ -1,11 +1,9 @@
 {
-  "name": "cris-api",
-  "version": "2.0.0",
-  "private": true,
-  "description": "CRIS privacy-hardened CloudBase API",
+  "name": "crisApi",
+  "version": "1.0.0",
+  "description": "CRIS 性别角色测验后端云函数（腾讯云开发 CloudBase）",
   "main": "index.js",
-  "engines": {"node": ">=20"},
   "dependencies": {
-    "@cloudbase/node-sdk": "2.6.0"
+    "@cloudbase/node-sdk": "^2.6.0"
   }
 }

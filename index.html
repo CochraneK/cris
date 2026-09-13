@@ -2,168 +2,1122 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="referrer" content="no-referrer" />
-<title>性别角色探索 · CSRI-50</title>
-<meta name="description" content="基于 CSRI-50 的性别角色特质自我探索：查看男性化 / 女性化两个独立维度与四象限位置。" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>性别角色心理测验 · CSRI-50 中文版</title>
+<meta name="description" content="基于中国大学生性别角色量表（CSRI-50，刘电芝 2011）的自我探索测验，看你的「坚韧果断」与「温柔共情」两种特质，并在四象限里看见自己与大家的位置。" />
 <style>
-:root{
-  --pink:#ff5e8a;--pink2:#ff8fab;--blue:#4f86e8;--purple:#8659e6;--teal:#42a69a;
-  --ink:#342832;--muted:#756873;--card:#fff;--line:#eadfe6;--bg:#fff7fb;
-  --shadow:0 12px 34px rgba(94,65,85,.12);--radius:22px;--type:#8659e6;
-}
-*{box-sizing:border-box}html,body{margin:0;padding:0}html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:linear-gradient(155deg,#ffe9f0,#f4ecff 58%,#eaf6ff);min-height:100vh}
-button,input{font:inherit}.app{width:min(100%,520px);margin:auto;min-height:100vh;position:relative}.screen{display:none}.screen.active{display:block}
-.hero{padding:56px 22px 40px}.hero-mark{font-size:38px;text-align:center;margin-bottom:12px}.hero h1{font-size:29px;line-height:1.35;text-align:center;margin:0;background:linear-gradient(120deg,var(--pink),var(--purple));background-clip:text;-webkit-background-clip:text;color:transparent}.hero .sub{text-align:center;color:var(--muted);font-size:14px;line-height:1.8;margin:14px auto 26px;max-width:390px}
-.card{background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.65);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:14px 0}.card h2,.card h3{margin:0 0 10px}.note{font-size:13px;line-height:1.85;color:var(--muted)}.note b{color:var(--ink)}
-.choice-row{display:flex;gap:9px;flex-wrap:wrap}.choice{flex:1;min-width:95px;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:11px 8px;color:var(--muted);cursor:pointer}.choice[aria-pressed="true"]{border-color:var(--pink);background:#fff3f7;color:var(--pink);font-weight:700}
-.toggle{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.65;color:var(--muted);cursor:pointer}.toggle input{margin-top:4px;accent-color:var(--pink)}
-.btn{border:0;border-radius:17px;padding:15px 18px;font-weight:800;cursor:pointer;width:100%;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;box-shadow:0 10px 24px rgba(255,94,138,.25)}.btn.secondary{background:#fff;color:var(--type);box-shadow:none;border:1.5px solid #e1d5e7}.btn.danger{background:#fff4f4;color:#bc3f4c;box-shadow:none;border:1px solid #ffd5da}.btn:disabled{opacity:.55;cursor:not-allowed}.actions{display:grid;gap:10px}.actions.two{grid-template-columns:1fr 1fr}
-.disclaimer{text-align:center;color:#9b8d96;font-size:11px;line-height:1.65;margin:14px 8px 0}
-.quiz-head{position:sticky;top:0;z-index:9;padding:12px 16px 11px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;box-shadow:0 4px 18px rgba(92,62,120,.2)}.quiz-head .row{display:flex;justify-content:space-between;align-items:center;font-size:13px}.progress{height:7px;border-radius:8px;background:rgba(255,255,255,.3);margin-top:9px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:#fff;transition:width .2s}.quiz-list{padding:14px 14px 110px}.q-card{background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:15px;margin-bottom:12px}.q-title{font-size:16px;font-weight:750;margin:0 0 12px}.q-title small{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:24px;padding:0 7px;border-radius:9px;background:#fff0f5;color:var(--pink);font-size:12px;margin-right:7px}.opts{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.opt{min-width:0;min-height:45px;border:1.5px solid #f1dbe4;border-radius:11px;background:#fff;color:var(--muted);font-weight:800;cursor:pointer}.opt[aria-checked="true"]{background:linear-gradient(135deg,var(--pink),var(--pink2));border-color:transparent;color:#fff;transform:translateY(-1px)}.scale{display:flex;justify-content:space-between;color:#ae9fa8;font-size:10.5px;margin-top:8px}.quiz-foot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,520px);padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#fff 72%,rgba(255,255,255,0));z-index:10}
-.result{padding:18px 14px 38px}.report{background:#fff;border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}.result-head{padding:28px 22px;color:#fff;text-align:center;background:linear-gradient(135deg,var(--purple),#b388ff)}.result-head.t-androgynous{background:linear-gradient(135deg,#7049d7,#a77cf3)}.result-head.t-masculine{background:linear-gradient(135deg,#3675dc,#71a1f2)}.result-head.t-feminine{background:linear-gradient(135deg,#f05287,#ff95b9)}.result-head.t-undifferentiated{background:linear-gradient(135deg,#278f84,#68bcb2)}.result-head .emoji{font-size:50px}.result-head h2{margin:8px 0 5px;font-size:24px}.result-head p{margin:0;font-size:13px;line-height:1.7;opacity:.94}.report-body{padding:18px}.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.score{border-radius:15px;padding:13px;background:#f8f5f7}.score.m{background:#f1f6ff}.score.f{background:#fff3f8}.score .lab{font-size:12px;color:var(--muted)}.score strong{display:block;font-size:28px;margin-top:6px}.score.m strong{color:var(--blue)}.score.f strong{color:var(--pink)}.boundary{margin-top:12px;border-radius:12px;padding:11px 12px;background:#fff8e9;color:#795d25;font-size:12.5px;line-height:1.7}.section{margin-top:22px}.section h3{font-size:16px;margin:0 0 9px}.section p,.section li{font-size:13.5px;line-height:1.85;color:#4b3d47}.section ul{padding-left:20px;margin:8px 0}.research{background:#faf7fb;border:1px solid #efe5eb;border-radius:14px;padding:13px}.research + .research{margin-top:9px}.research b{font-size:13px}.research p{margin:5px 0 0;font-size:12.5px;line-height:1.75;color:var(--muted)}
-.community-wrap{background:#faf8fb;border-radius:15px;padding:10px}.community-wrap canvas{display:block;width:100%;height:auto;border-radius:10px}.community-meta{font-size:12px;color:var(--muted);line-height:1.6;margin:8px 2px 0}.cloud-box{border:1px solid #e9dfeb;background:#fcf9fd;border-radius:15px;padding:13px}.cloud-status{font-size:12.5px;color:var(--muted);line-height:1.7;margin-bottom:10px}.prompt{background:#f8f4fa;border-radius:13px;padding:12px;font-size:12.5px;line-height:1.75;color:#594a54;white-space:pre-wrap}.muted{color:var(--muted)!important}.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,16px);opacity:0;pointer-events:none;background:rgba(43,34,40,.94);color:#fff;padding:10px 15px;border-radius:13px;font-size:12.5px;transition:.2s;z-index:80;max-width:86%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
-.recover{padding:24px 14px}.recover .result-head{border-radius:22px 22px 0 0}.recover .report-body{background:#fff;border-radius:0 0 22px 22px;box-shadow:var(--shadow)}
-@media(max-width:390px){.opts{gap:4px}.opt{min-height:42px}.actions.two{grid-template-columns:1fr}.hero{padding-left:16px;padding-right:16px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+  :root{
+    --pink:#ff5e8a;
+    --pink-soft:#ff8fab;
+    --pink-bg:#ffe3ec;
+    --purple:#b388ff;
+    --ink:#3a2a33;
+    --ink-soft:#7a6a73;
+    --card:#ffffff;
+    --masc:#5b8def;     /* 男性化 蓝 */
+    --fem:#ff7eb3;      /* 女性化 粉 */
+    --shadow:0 10px 30px rgba(255,94,138,.18);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;
+    color:var(--ink);
+    background:linear-gradient(165deg,#ffe3ec 0%,#ffd6e8 35%,#f3e6ff 70%,#e6f0ff 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    display:flex;justify-content:center;
+  }
+  .app{width:100%;max-width:480px;min-height:100vh;position:relative;padding:0 0 0;}
+
+  /* 漂浮装饰 */
+  .blob{position:fixed;border-radius:50%;filter:blur(40px);opacity:.5;z-index:0;pointer-events:none;}
+  .b1{width:200px;height:200px;background:#ffb3d1;top:-40px;left:-50px;animation:float 9s ease-in-out infinite;}
+  .b2{width:160px;height:160px;background:#c9b3ff;bottom:40px;right:-40px;animation:float 11s ease-in-out infinite reverse;}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(22px)}}
+
+  .screen{display:none;animation:fade .45s ease;}
+  .screen.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ===== 封面 ===== */
+  .cover{padding:64px 26px 40px;text-align:center;position:relative;z-index:1;}
+  .cover .emoji-row{font-size:38px;letter-spacing:8px;margin-bottom:18px;}
+  .cover h1{font-size:27px;line-height:1.45;margin:0 0 14px;font-weight:800;
+    background:linear-gradient(120deg,#ff5e8a,#b388ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .cover .sub{font-size:15px;color:var(--ink-soft);line-height:1.8;margin:0 auto 26px;max-width:320px;}
+  .tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:34px;}
+  .tag{font-size:12px;background:#fff;color:var(--pink);padding:6px 13px;border-radius:20px;box-shadow:var(--shadow);}
+  .card-note{background:#fff;border-radius:22px;padding:18px 20px;box-shadow:var(--shadow);text-align:left;font-size:13.5px;color:var(--ink-soft);line-height:1.85;margin-bottom:30px;}
+  .card-note b{color:var(--ink);}
+  .card-note .note-sep{margin-top:13px;padding-top:13px;border-top:1px dashed #e7dce6;font-size:12.5px;color:#6a5a64;line-height:1.85;}
+  .card-note .note-sep b{color:var(--ink);}
+  .btn{
+    display:inline-block;width:100%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#ff5e8a,#ff8fab);
+    color:#fff;font-size:17px;font-weight:700;padding:16px;border-radius:18px;
+    box-shadow:0 12px 26px rgba(255,94,138,.4);transition:transform .15s;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn.ghost{background:#fff;color:var(--pink);box-shadow:var(--shadow);margin-top:12px;}
+  .disclaimer{font-size:11px;color:#b0a3ab;margin-top:18px;line-height:1.6;}
+  .privacy-note{font-size:12.5px;color:#6a5a64;line-height:1.85;background:#f3f8ff;border:1px solid #dce9ff;border-radius:14px;padding:12px 14px;margin:0 0 18px;}
+  .privacy-note b{color:#3a2d34;}
+
+  /* ===== 答题 ===== */
+  .quiz-head{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#ff5e8a,#b388ff);
+    color:#fff;padding:14px 18px 12px;box-shadow:0 4px 14px rgba(179,136,255,.3);}
+  .quiz-head .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px;}
+  .head-right{display:flex;gap:12px;align-items:center;}
+  .progress{height:7px;background:rgba(255,255,255,.35);border-radius:10px;overflow:hidden;}
+  .q-hint{font-size:12px;line-height:1.5;color:rgba(255,255,255,.92);margin:9px 2px 0;}
+  .progress > i{display:block;height:100%;width:0;background:#fff;border-radius:10px;transition:width .3s;}
+  .q-list{padding:16px 16px 110px;}
+  .q-card{background:#fff;border-radius:20px;padding:16px 16px 14px;margin-bottom:14px;box-shadow:var(--shadow);}
+  .q-card .q-top{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+  .q-card .num{font-size:13px;font-weight:700;color:var(--pink);background:var(--pink-bg);border-radius:8px;padding:2px 8px;flex:none;}
+  .q-card .word{font-size:17px;font-weight:700;}
+  .q-card .num.jump{cursor:pointer;transition:background .12s,color .12s;}
+  .q-card .num.jump:hover{background:var(--pink);color:#fff;}
+  .opts{display:flex;gap:7px;}
+  .opt{flex:1;min-height:48px;border:2px solid #ffe0ea;border-radius:13px;background:#fffdfe;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    font-size:18px;font-weight:800;color:var(--ink-soft);transition:.15s;user-select:none;}
+  .opt.on{background:linear-gradient(135deg,#ff5e8a,#ff8fab);color:#fff;border-color:transparent;transform:translateY(-3px);box-shadow:0 8px 16px rgba(255,94,138,.35);}
+  .scale-tip{display:flex;justify-content:space-between;font-size:11px;color:#c2b5bd;margin-top:9px;}
+  .scale-tip span{padding:0 4px;background:rgba(255,255,255,.5);border-radius:6px;}
+
+  .quiz-foot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#fff 70%,rgba(255,255,255,0));z-index:6;}
+  .quiz-foot .btn{padding:14px;font-size:16px;}
+
+  /* ===== 报告 ===== */
+  .result{padding:0 0 40px;position:relative;z-index:1;}
+  #report-card{margin:22px 16px 0;background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);}
+  .r-head{padding:30px 24px 26px;color:#fff;text-align:center;background:linear-gradient(135deg,#ff5e8a,#b388ff);}
+  .r-head .big{font-size:60px;line-height:1;margin-bottom:10px;}
+  .r-head h2{margin:0 0 8px;font-size:24px;font-weight:800;}
+  .r-head .quote{font-size:14px;opacity:.95;line-height:1.7;max-width:300px;margin:0 auto;}
+  .r-head .type-tag{display:inline-block;margin-top:11px;font-size:12px;font-weight:600;padding:4px 13px;border-radius:20px;background:rgba(255,255,255,.24);color:#fff;letter-spacing:.5px;}
+  /* 头图按类型着色（不再千篇一律粉紫） */
+  .r-head.t-androgynous{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
+  .r-head.t-masculine{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
+  .r-head.t-feminine{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
+  .r-head.t-undifferentiated{background:linear-gradient(135deg,#ff8fab,#ff5e8a);}
+  .r-body{padding:22px 22px 8px;}
+  .score-box{display:flex;gap:14px;margin-bottom:6px;}
+  .score{flex:1;border-radius:14px;padding:14px 14px 12px;border:1px solid transparent;}
+  .score.m{background:#f5f9ff;border-color:#dbe7ff;}      /* 男性化 浅蓝 */
+  .score.f{background:#fff5f9;border-color:#ffdbe7;}      /* 女性化 浅粉 */
+  .score .lab{font-size:12px;color:var(--ink-soft);margin-bottom:10px;}
+  .score .lab b{color:var(--ink);}
+  .bar{height:8px;border-radius:8px;background:#eee3;overflow:hidden;margin-top:9px;}
+  .bar > i{display:block;height:100%;border-radius:8px;width:0;transition:width .9s ease;}
+  .bar.m > i{background:linear-gradient(90deg,#7aa0ff,#5b8def);}
+  .bar.f > i{background:linear-gradient(90deg,#ff9ec7,#ff7eb3);}
+  .score .val{font-size:30px;font-weight:800;line-height:1;margin-top:2px;}
+  .score .val .unit{font-size:12px;color:var(--ink-soft);font-weight:500;}
+  .score .val.m{color:var(--masc);} .score .val.f{color:var(--fem);}
+  .counter{font-size:13px;color:var(--type,#ff5e8a);font-weight:600;margin:0 0 24px;}
+  .gender-pick{background:#fff;border-radius:22px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:24px;}
+  .gp-title{font-size:14px;color:var(--ink);margin:0 0 13px;font-weight:600;}
+  .gp-opts{display:flex;gap:12px;}
+  .gp{flex:1;border:2px solid #ffe0ea;background:#fffdfe;border-radius:16px;padding:14px 0;font-size:16px;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent;}
+  .gp[data-g="male"]{border-color:#cfe0ff;color:#3f7fe0;background:#f5f9ff;}      /* 男生=蓝 */
+  .gp[data-g="female"]{border-color:#ffd6e4;color:#ff5e8a;background:#fff5f9;}    /* 女生=粉 */
+  .gp.on.male{background:linear-gradient(135deg,#5b8def,#3f7fe0);color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 16px rgba(63,127,224,.35);}
+  .gp.on.female{background:linear-gradient(135deg,#ff8fab,#ff5e8a);color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 16px rgba(255,94,138,.35);}
+  .scatter-wrap{margin-top:4px;background:#faf6fb;border-radius:14px;padding:10px;}
+  .scatter-wrap canvas{width:100%;height:auto;display:block;border-radius:12px;}
+  .scatter-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--ink-soft);}
+  .scatter-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+  .lead{font-size:14px;color:#4a3b44;line-height:1.9;margin:0 0 14px;}
+  .lead b{color:#3f7fe0;font-weight:700;}
+  .prompt-box{position:relative;display:block;background:#fdf7fb;border:1px solid #f1dce8;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.7;color:#4a3b44;margin-bottom:14px;}
+  .copy-mini{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;padding:7px 13px;border-radius:11px;border:none;background:var(--type,#ff5e8a);color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(120,90,110,.2);font-weight:700;line-height:1;transition:transform .12s;}
+  .copy-mini:active{transform:translateY(-50%) scale(.94);}
+  .prompt-tip{font-size:13.5px;color:#4a3b44;margin:0 0 8px;line-height:1.7;}
+  #prompt-text{display:block;font-size:13px;line-height:1.7;color:#4a3b44;white-space:nowrap;overflow-x:auto;padding-right:66px;scrollbar-width:thin;}
+  #prompt-text .pp-gender{color:#4a3b44;font-weight:700;}
+  #prompt-text .pp-masc{color:#3f7fe0;font-weight:700;}
+  #prompt-text .pp-fem{color:#ff5e8a;font-weight:700;}
+  #prompt-text .pp-type{color:var(--type,#ff5e8a);font-weight:700;}
+  #prompt-text .pp-num{color:var(--type,#ff5e8a);font-weight:700;}
+  .evidence .ev-intro{font-size:14px;color:#4a3b44;line-height:1.9;margin:0 0 12px;}
+  .evidence .ev-intro b{color:#3f7fe0;font-weight:700;}
+  .ev-grid{display:grid;grid-template-columns:1fr;gap:11px;}
+  .ev-card{position:relative;background:#fff;border:1px solid #efe6ec;border-radius:14px;padding:13px 14px 13px 16px;overflow:hidden;box-shadow:0 2px 10px rgba(120,90,110,.05);}
+  .ev-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;}
+  .ev-card.c-androgynous::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
+  .ev-card.c-masculine::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
+  .ev-card.c-feminine::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
+  .ev-card.c-undifferentiated::before{background:linear-gradient(#ff8fb4,#ff5e8a);}
+  .ev-card h4{font-size:13.5px;margin:0 0 9px;color:var(--type,#ff5e8a);display:flex;align-items:center;gap:5px;}
+  .ev-card .ev-sub{font-size:10.5px;color:var(--type,#ff5e8a);background:#f6eefb;border-radius:8px;padding:1px 7px;font-weight:700;}
+  .ev-card p{font-size:13.5px;color:#4a3b44;line-height:1.8;margin:0 0 7px;}
+  .ev-card p:last-child{margin-bottom:0;}
+  .ev-warn{background:#fff8ef;border:1px solid #ffe6c2;border-radius:10px;padding:7px 9px;color:#8a6d3b;margin-top:2px;}
+  .ev-warn b{color:#7a5a25;}
+  .cite{display:inline-block;font-size:10px;color:#9a6fb0;background:#f6eefb;border:1px solid #ecdcf6;border-radius:20px;padding:1px 8px;margin-left:4px;white-space:nowrap;font-weight:600;}
+  .cite::before{content:"📑 ";}
+  .cite::after{content:"";}
+  .muted{color:#9a8aa6;font-size:11.5px;}
+  .take-away{padding:0;}
+  .uid-line{font-size:12.5px;color:var(--ink-soft);background:#f1f6ff;border:1px dashed #cfe0ff;border-radius:12px;padding:11px 13px;margin-top:14px;line-height:1.7;}
+  .uid-line code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#fff;color:#3f7fe0;padding:2px 8px;border-radius:7px;font-size:12px;word-break:break-all;}
+  .uid-line a{color:var(--type,#ff5e8a);font-weight:700;cursor:pointer;margin-left:6px;}
+  .r-section{margin-top:22px;}
+  .r-section h3{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:7px;color:var(--type,#ff5e8a);}
+  .r-section h3::before{content:"";width:5px;height:16px;border-radius:4px;background:var(--type,#ff5e8a);}
+  .r-section p{font-size:14.5px;line-height:1.95;color:#4a3b44;margin:0 0 12px;}
+  .r-section p .hl{color:#3f7fe0;font-weight:700;}
+  .r-section p b, .r-section p strong{color:#3f7fe0;font-weight:700;}
+  /* 三模型：可扫读的小卡片，替代括号长句 */
+  .model-chips{display:flex;flex-direction:column;gap:9px;margin:2px 0 14px;}
+  .model-chip{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid #efe6ec;border-left:4px solid var(--type,#ff5e8a);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.65;color:#5a4a54;box-shadow:0 2px 8px rgba(120,90,110,.05);}
+  .model-chip .mc-no{flex:0 0 auto;width:20px;height:20px;margin-top:1px;border-radius:50%;background:var(--type,#ff5e8a);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .model-chip b{color:var(--type,#ff5e8a);}
+  .ev-note{background:#faf5fb;border-left:3px solid var(--type,#ff5e8a);border-radius:0 12px 12px 0;padding:11px 14px;font-size:13px;line-height:1.8;color:#4a3b44;margin:0 0 14px;}
+  /* 坚韧/温柔：合并为「你身上的两面」两栏 */
+  .trait-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .trait-block{flex:1;min-width:148px;background:#faf6fb;border-radius:14px;padding:13px 14px;}
+  .trait-block .tlab{display:block;font-size:13px;font-weight:800;margin-bottom:7px;}
+  .trait-block.masc .tlab{color:var(--masc);}
+  .trait-block.fem .tlab{color:var(--fem);}
+  .trait-block p{font-size:13.5px;line-height:1.8;color:#4a3b44;margin:0;}
+  .trait-block.masc p .hl, .trait-block.masc p b{color:#3f7fe0;}
+  .trait-block.fem p .hl, .trait-block.fem p b{color:#ff5e8a;}
+  .tips{background:#faf6fb;border-radius:14px;padding:16px 18px;margin-top:8px;border-left:4px solid var(--type,#ff5e8a);}
+  .tips .t{font-size:14px;line-height:1.85;color:#4a3b44;margin:0 0 8px;padding-left:22px;position:relative;}
+  .tips .t:last-child{margin-bottom:0;}
+  .tips .t::before{content:"💡";position:absolute;left:0;top:1px;font-size:13px;}
+  .tips .t b, .tips .t strong{color:#3f7fe0;font-weight:700;}
+  /* 为什么这版不一样：独特点 + 阈值依据 + 迭代时间线 */
+  .about-scale{background:#faf6fb;border-radius:14px;padding:16px 18px;border-left:4px solid var(--type,#ff5e8a);}
+  .thresh-note{background:#fff5ef;border:1px solid #ffdccb;border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.85;color:#5a4a54;margin-bottom:14px;}
+  .thresh-note b{color:var(--type,#ff5e8a);}
+  .scale-timeline{margin-top:2px;}
+  .tl-item{display:flex;gap:12px;position:relative;padding-bottom:15px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{content:"";position:absolute;left:22px;top:24px;bottom:0;width:2px;background:#e6d9ed;}
+  .tl-item:last-child::before{display:none;}
+  .tl-year{flex:none;width:46px;height:22px;margin-top:1px;background:var(--type,#ff5e8a);color:#fff;font-size:11px;font-weight:800;border-radius:11px;display:flex;align-items:center;justify-content:center;}
+  .tl-item b{font-size:13.5px;color:var(--ink);}
+  .tl-item p{font-size:12.5px;color:#5a4a54;line-height:1.6;margin:2px 0 0;}
+  .result .acts{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px;}
+  .result .acts .btn.share{background:linear-gradient(135deg,#5b8def,#3f7fe0);box-shadow:0 12px 26px rgba(63,127,224,.4);}
+  .result .acts .btn.again{background:#fff;color:var(--pink);box-shadow:var(--shadow);}
+  .acts-row{display:flex;gap:12px;}
+  .acts-row .btn{flex:1;}
+  .btn.outline{background:linear-gradient(135deg,#ff8fab,#ff5e8a);color:#fff;box-shadow:0 12px 26px rgba(255,94,138,.4);}
+  .savewarn{background:#fff7e9;border:1px solid #ffe2a8;border-radius:14px;padding:14px;margin-top:14px;}
+  .savewarn .warn{color:#9a6a16;font-size:14px;line-height:1.7;margin:0 0 10px;}
+  .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+    background:rgba(58,42,51,.92);color:#fff;font-size:13px;padding:11px 18px;border-radius:14px;
+    opacity:0;transition:.3s;z-index:30;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .hidden{display:none!important;}
+
+  /* ===== 鼓励弹层 + 撒花 ===== */
+  #cheer{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+    background:rgba(20,14,22,.4);opacity:0;pointer-events:none;transition:opacity .25s;}
+  #cheer.show{opacity:1;pointer-events:auto;}
+  .cheer-card{background:#fff;border-radius:26px;padding:30px 32px;max-width:82%;text-align:center;
+    box-shadow:0 24px 70px rgba(0,0,0,.3);transform:scale(.82);transition:transform .32s cubic-bezier(.2,1.35,.4,1);}
+  #cheer.show .cheer-card{transform:scale(1);}
+  .cheer-emoji{font-size:52px;line-height:1;margin-bottom:12px;animation:cheerPop .55s ease;}
+  .cheer-msg{font-size:16px;font-weight:800;color:#3a2d34;line-height:1.75;white-space:pre-line;}
+  @keyframes cheerPop{0%{transform:scale(0) rotate(-15deg)}60%{transform:scale(1.25) rotate(6deg)}100%{transform:scale(1)}}
+  #confetti{position:fixed;inset:0;z-index:60;pointer-events:none;}
 </style>
 </head>
 <body>
-<main class="app">
-<section id="cover" class="screen active">
-  <div class="hero">
-    <div class="hero-mark">🌸 ✨ 🌿</div>
-    <h1>你身上，藏着怎样的自己？</h1>
-    <p class="sub">用 50 个自评词项，看见「男性化 / 女性化」两个独立维度。四象限只是传统分类方式，连续分数比标签更重要。</p>
-    <div class="card">
-      <h3>开始前</h3>
-      <p class="note"><b>CSRI-50</b> 发布于 2011 年，分类分界来自当时中国大学生样本（M=4.80、F=5.00）。这不是 2026 年一般人群常模，也不用于心理诊断。</p>
-      <p class="note">性别仅用于你的个人记录，<b>不参与计分</b>，可以不填。</p>
-      <div class="choice-row" id="gender-row" aria-label="性别（可选）">
-        <button class="choice" type="button" data-g="male" aria-pressed="false">男生</button>
-        <button class="choice" type="button" data-g="female" aria-pressed="false">女生</button>
-        <button class="choice" type="button" data-g="other" aria-pressed="false">其他</button>
-        <button class="choice" type="button" data-g="unknown" aria-pressed="true">不填写</button>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="app">
+
+  <!-- 封面 -->
+  <section id="cover" class="screen active">
+    <div class="cover">
+      <div class="emoji-row">🌸 ✨ 🔥</div>
+      <h1>你身上，<br>藏着怎样的自己？</h1>
+      <p class="sub">有人说温柔是女生的样子，坚强是男生的样子。<br>可你，也许比这些标签更丰富。</p>
+      <div class="tags">
+        <span class="tag">🌟 50 题</span>
+        <span class="tag">⏱ 约 3 分钟</span>
+        <span class="tag">💗 暖心解读</span>
       </div>
-    </div>
-    <div class="card">
-      <label class="toggle"><input id="community-opt" type="checkbox" checked><span><b>匿名加入群体密度图</b><br>服务器只保留分箱后的计数，不保存你的逐人精确落点或 50 题原始答案。原始答案只在本次请求中用于服务端复核计分与作答质量。</span></label>
-      <p class="note" style="margin-bottom:0">应用数据库不保存 IP；为了防滥用，云函数会在内存中短暂处理来源 IP 做基础限流，云平台自身也可能产生基础访问日志。</p>
-    </div>
-    <button class="btn" type="button" onclick="startQuiz()">开始探索 →</button>
-    <p class="disclaimer">仅供自我探索与心理学科普。不要依据本结果判断职业适配、性别认同、性取向或临床状况。</p>
-  </div>
-</section>
-
-<section id="quiz" class="screen">
-  <header class="quiz-head"><div class="row"><span>按第一感觉作答即可</span><span id="prog-text">0 / 50</span></div><div class="progress"><i id="prog-bar"></i></div></header>
-  <div id="quiz-list" class="quiz-list"></div>
-  <div class="quiz-foot"><button class="btn" id="finish-btn" type="button" onclick="finishQuiz()">查看结果</button></div>
-</section>
-
-<section id="result" class="screen">
-  <div class="result">
-    <article id="report-card" class="report">
-      <header id="result-head" class="result-head"><div id="r-emoji" class="emoji">✨</div><h2 id="r-title">你的结果</h2><p id="r-quote"></p></header>
-      <div class="report-body">
-        <div class="score-grid">
-          <div class="score m"><div class="lab">男性化特质</div><strong id="m-score">0.00</strong><div class="lab">参考分界 4.80</div></div>
-          <div class="score f"><div class="lab">女性化特质</div><strong id="f-score">0.00</strong><div class="lab">参考分界 5.00</div></div>
+      <div class="card-note">
+        💌 这是一份基于<b>中国大学生性别角色量表（CSRI-50）</b>的小测验。<br>
+        它会看看你身上「坚韧果断」与「温柔共情」这两种特质各自有多浓，
+        然后告诉你——<b>你，是哪一种独特的存在</b>。
+        <div class="note-sep">
+          🔒 <b>你的作答会被匿名保存</b>，<b>不含姓名、微信、手机号、IP</b>。
+          保存是为了方便你随时下载自己的数据，也让你和朋友一起看到「自己和大家的位置」🌟
         </div>
-        <div id="boundary-note" class="boundary" hidden></div>
-        <section class="section"><h3>如何理解</h3><p id="r-open"></p><ul id="r-tips"></ul></section>
-        <section class="section"><h3>群体密度图</h3><div class="community-wrap"><canvas id="community-canvas" width="680" height="620" role="img" aria-label="匿名聚合的 CSRI-50 群体密度图"></canvas></div><p id="community-meta" class="community-meta">正在读取匿名聚合统计…</p></section>
-        <section class="section"><h3>研究背景</h3>
-          <div class="research"><b>CSRI-50（刘电芝等，2011）</b><p>原研究报告男性化、女性化分量表具有较好的内部一致性与重测信度。本站沿用论文所报告的大学生样本中位数分界。</p></div>
-          <div class="research"><b>后续性别角色研究</b><p>不同研究使用 BSRI、PAQ、CSRI 等不同量表；群体层面的关联不能直接预测个人。2021 年关于性别角色与抑郁的元分析发现，双性化组平均抑郁水平较低，同时男性化特质也表现出保护性关联。</p></div>
-          <p class="note">因此，这里不会把“某一类型最好”当作个人结论，也不会把未分化解释为“更自由”或“更差”。</p>
-        </section>
-        <section class="section"><h3>把结果交给 AI 继续聊</h3><div id="ai-prompt" class="prompt"></div><div style="margin-top:9px"><button class="btn secondary" type="button" onclick="copyPrompt()">复制谨慎版开场白</button></div></section>
-        <section class="section"><h3>你的数据</h3>
-          <div class="cloud-box"><div id="cloud-status" class="cloud-status">默认不保存可恢复的 50 题原始作答。需要跨设备找回时，可以主动创建一份私人云备份。</div>
-            <div class="actions"><button id="backup-btn" class="btn secondary" type="button" onclick="savePrivateBackup()">🔐 创建私人云备份 + 恢复码</button><button id="delete-btn" class="btn danger" type="button" onclick="deletePrivateBackup()" hidden>删除我的可恢复云备份</button></div>
-          </div>
-          <p class="note">私人恢复码只用于读取/删除你的备份，不会写入分享 JSON，也不会进入报告截图。匿名群体统计是不可逆分箱计数，不含可回溯到你的逐人记录。</p>
-        </section>
       </div>
-    </article>
-    <div class="actions two" style="margin-top:12px"><button class="btn" type="button" onclick="saveImage()">📷 保存报告</button><button class="btn secondary" type="button" onclick="downloadData()">📥 下载 JSON</button></div>
-    <div class="actions" style="margin-top:10px"><button class="btn secondary" type="button" onclick="restart()">↺ 再测一次</button></div>
-  </div>
-</section>
 
-<section id="recover" class="screen">
-  <div class="recover">
-    <header class="result-head t-androgynous"><div class="emoji">📂</div><h2>找回私人备份</h2><p id="recover-status">正在验证恢复码…</p></header>
-    <div class="report-body">
-      <div class="card" style="box-shadow:none;margin:0 0 12px"><h3>备份摘要</h3><p id="recover-summary" class="note">—</p></div>
-      <div class="actions"><button id="recover-download" class="btn secondary" type="button" onclick="downloadRecovered()" disabled>下载备份 JSON</button><button id="recover-delete" class="btn danger" type="button" onclick="deletePrivateBackup()" disabled>删除这份云备份</button><button class="btn secondary" type="button" onclick="restart()">回到首页</button></div>
+      <div class="gender-pick">
+        <p class="gp-title">先悄悄告诉我，你是 👦 还是 👧？</p>
+        <div class="gp-opts">
+          <button type="button" class="gp" data-g="male" onclick="pickGender('male')">👦 男生</button>
+          <button type="button" class="gp" data-g="female" onclick="pickGender('female')">👧 女生</button>
+        </div>
+      </div>
+
+      <button class="btn" onclick="startQuiz()">开始认识自己 →</button>
+      <p class="disclaimer">本测验仅供自我探索与娱乐参考，不构成任何心理诊断。</p>
     </div>
+  </section>
+
+  <!-- 答题 -->
+  <section id="quiz" class="screen">
+    <div class="quiz-head">
+      <div class="row"><span>🌸 一点点看清自己</span><span class="head-right"><span id="prog-text">0 / 50</span></span></div>
+      <div class="progress"><i id="prog-bar"></i></div>
+      <p class="q-hint">请为下面每句话与自己的符合程度打分（1 = 很不符合，7 = 很符合）。</p>
+    </div>
+    <div class="q-list" id="q-list"></div>
+    <div class="quiz-foot">
+      <button class="btn" id="submit-btn" onclick="finishQuiz()">查看我的结果 ✨</button>
+    </div>
+  </section>
+
+  <!-- 报告 -->
+  <section id="result" class="screen">
+    <div class="result">
+      <div id="report-card">
+        <div class="r-head" id="r-head">
+          <div class="big" id="r-emoji">🌟</div>
+          <h2 id="r-title">你的类型</h2>
+          <div><span class="type-tag" id="r-tag"></span></div>
+          <div class="quote" id="r-quote"></div>
+        </div>
+        <div class="r-body">
+          <div class="score-box">
+            <div class="score m">
+              <div class="lab"><b>男性化特质</b><br>坚韧 · 果断 · 行动</div>
+              <div class="val m" id="val-m">0.0</div>
+              <div class="bar m"><i id="bar-m"></i></div>
+            </div>
+            <div class="score f">
+              <div class="lab"><b>女性化特质</b><br>温柔 · 共情 · 细腻</div>
+              <div class="val f" id="val-f">0.0</div>
+              <div class="bar f"><i id="bar-f"></i></div>
+            </div>
+          </div>
+
+          <div class="r-section" id="sec-scatter">
+            <h3>你在所有填写者中的位置</h3>
+            <p class="counter" id="counter">正在绘制落点图…</p>
+            <div class="scatter-wrap">
+              <canvas id="scatter" width="640" height="640"></canvas>
+            </div>
+            <div class="scatter-legend">
+              <span><i style="background:#3f7fe0"></i>男生落点</span>
+              <span><i style="background:#ff5e8a"></i>女生落点</span>
+              <span><i id="legend-me" style="background:#3f7fe0;border:3px solid #fff;box-shadow:0 0 0 2px #3f7fe0"></i>你（高亮）</span>
+            </div>
+          </div>
+
+          <div class="r-section">
+            <h3>关于你，想先说一句</h3>
+            <p id="r-open"></p>
+          </div>
+          <div class="r-section">
+            <h3>你身上的两面</h3>
+            <div class="trait-row">
+              <div class="trait-block masc"><span class="tlab">🔥 坚韧</span><p id="r-masc"></p></div>
+              <div class="trait-block fem"><span class="tlab">🌸 温柔</span><p id="r-fem"></p></div>
+            </div>
+          </div>
+          <div class="r-section">
+            <h3>给独一无二的你</h3>
+            <div class="tips" id="r-tips"></div>
+          </div>
+
+          <div class="r-section evidence">
+            <h3>这类人的研究证据 📚</h3>
+            <p class="ev-intro">下面是与你这类人相关的研究发现（每条标注出处与年份）。先说明：这些是<b>群体平均趋势</b>，不是对你个人的判定。关于「哪种性别角色最健康」，学界主要有两派：</p>
+            <div class="model-chips">
+              <div class="model-chip"><span class="mc-no">1</span><div><b>一致性模型</b>　符合传统性别角色最健康</div></div>
+              <div class="model-chip"><span class="mc-no">2</span><div><b>双性化模型</b>　两性特质都高最好</div></div>
+            </div>
+            <p class="ev-note">你永远是那个具体的、比标签丰富的人 💗</p>
+            <div class="ev-grid" id="ev-grid"></div>
+          </div>
+
+          <div class="r-section about-scale">
+            <h3>关于测验</h3>
+            <div class="thresh-note">
+              <b>📏 你的类型，是怎么分出来的？</b><br>
+              不是随便划条线哦——用的是全国 27 所高校 <b>5008</b> 名大学生的真实数据：男性化得分中位数 <b>4.8</b>、女性化中位数 <b>5.0</b>，各切一半，交叉出来就是你的类型。
+            </div>
+            <div class="scale-timeline">
+              <div class="tl-item"><span class="tl-year">1974</span><div><b>Bem BSRI</b><p>美国心理学家第一次提出「双性化」：人不必非做「纯爷们」或「纯温柔」</p></div></div>
+              <div class="tl-item"><span class="tl-year">2000</span><div><b>中国本土化</b><p>钱铭怡、张光健团队把它翻译成中文版，用更贴我们的词重新打磨</p></div></div>
+              <div class="tl-item"><span class="tl-year">2011</span><div><b>CSRI-50 · 最新</b><p>刘电芝团队做出最新版，全国 5008 人常模——你现在做的，就是这一版</p></div></div>
+            </div>
+          </div>
+
+        <div class="r-section take-away">
+          <h3>把数据带走，去和别的 AI 聊聊 💗</h3>
+          <p class="lead">这份测验，不止想给你贴一个标签。它悄悄记下的是——你眼里的自己：哪些是天生就有的<b>温柔</b>，哪些是你一点点练出来的<b>坚韧</b>。<br>所以，把这份数据带走吧。去和任何你信任的 AI 接着聊：让它顺着你的特质，谈谈亲密关系里的相处、工作里更适合扮演的角色，甚至帮你写一封更<b>像你</b>的自我介绍。</p>
+
+          <p class="prompt-tip">👇 下面这段开场白，直接复制粘贴给任意 AI，它就能顺着你的特质接着聊：</p>
+          <div class="prompt-box" id="prompt-box"><span id="prompt-text"></span><button class="copy-mini" onclick="copyPrompt()" aria-label="复制开场白">📋 复制</button></div>
+        </div>
+        <div class="r-section savewarn" id="sec-savewarn" style="display:none;">
+          <p class="warn">⚠️ 数据尚未保存到云端。你的报告仍可见，但「下载数据」里不会带找回二维码——稍后可点「重新保存」补传。</p>
+          <button class="btn outline" onclick="retrySave()">🔄 重新保存</button>
+        </div>
+        </div>
+      </div>
+
+      <div class="acts">
+        <div class="acts-row">
+          <button class="btn share" onclick="saveImage()">📷 保存报告</button>
+          <button class="btn outline" onclick="downloadData()">📥 下载数据</button>
+        </div>
+        <button class="btn again" onclick="restart()">↺ 再测一次</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="recover" class="screen">
+    <div class="result">
+      <div class="r-head" style="background:linear-gradient(135deg,#a06fe6,#b388ff);">
+        <div class="big">📂</div>
+        <h2>找回你的数据</h2>
+        <div class="quote" id="rec-status">正在取回…</div>
+      </div>
+      <div class="r-body">
+        <div class="r-section">
+          <h3>你的类型与分数</h3>
+          <p id="rec-summary" class="muted">—</p>
+        </div>
+        <div class="r-section">
+          <h3>把数据带走</h3>
+          <p class="muted">这是凭提取码取回的你的原始作答，可下载留存或交给别的 AI 接着聊。</p>
+          <div class="acts">
+            <button class="btn outline" onclick="downloadData(currentRecUid)">📥 下载我的数据</button>
+            <button class="btn again" onclick="restart()">↺ 回到首页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 鼓励弹层（1/3、2/3 时动态居中 + 撒花） -->
+<div id="cheer">
+  <div class="cheer-card">
+    <div class="cheer-emoji">🎉</div>
+    <div class="cheer-msg" id="cheer-msg"></div>
   </div>
-</section>
-</main>
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
+</div>
+<canvas id="confetti"></canvas>
+
 <script defer src="assets/html2canvas.min.js"></script>
 <script defer src="assets/qrcode.min.js"></script>
 <script>
+/* ============ 题目数据（中国大学生性别角色量表 CSRI-50，刘电芝 2011） ============
+   50 题 = 男性化(M)16 + 女性化(F)16 + 中性干扰(N)18，按原量表发表顺序（已混合 M/F/N）。
+   计分仅取 M、F 各 16 题均值；N 18 题作干扰，不计入得分。词表源自 xinlixue.cn 逐题公布版。 */
 const ITEMS = [
- {cat:'F',word:'有亲和力的'},{cat:'M',word:'乐于冒险的'},{cat:'F',word:'节俭的'},{cat:'N',word:'懈怠的'},{cat:'M',word:'有领导风范的'},
- {cat:'M',word:'大度的'},{cat:'F',word:'文静的'},{cat:'N',word:'认真的'},{cat:'N',word:'真诚的'},{cat:'N',word:'自以为是的'},
- {cat:'M',word:'冷静的'},{cat:'N',word:'孝顺的'},{cat:'N',word:'谦虚的'},{cat:'F',word:'善于倾听的'},{cat:'M',word:'沉稳的'},
- {cat:'F',word:'心细的'},{cat:'N',word:'得过且过的'},{cat:'N',word:'乐群的'},{cat:'F',word:'能体谅人的'},{cat:'F',word:'语调柔和的'},
- {cat:'N',word:'愉快的'},{cat:'M',word:'有判断力的'},{cat:'N',word:'傲慢的'},{cat:'M',word:'心胸开阔的'},{cat:'N',word:'推诿责任的'},
- {cat:'M',word:'理性的'},{cat:'F',word:'勤俭的'},{cat:'F',word:'富有同情心的'},{cat:'N',word:'消极的'},{cat:'M',word:'男子气的'},
- {cat:'F',word:'有爱心的'},{cat:'M',word:'慷慨的'},{cat:'M',word:'有组织能力的'},{cat:'F',word:'乐于安慰人的'},{cat:'M',word:'胆大的'},
- {cat:'N',word:'不卑不亢的'},{cat:'M',word:'豪放的'},{cat:'N',word:'乐于助人的'},{cat:'F',word:'女子气的'},{cat:'F',word:'文雅的'},
- {cat:'N',word:'投其所好的'},{cat:'M',word:'有领导能力的'},{cat:'F',word:'温柔的'},{cat:'M',word:'勇敢的'},{cat:'N',word:'墨守成规的'},
- {cat:'N',word:'诚实的'},{cat:'M',word:'有支配力的'},{cat:'F',word:'温顺的'},{cat:'N',word:'不合群的'},{cat:'F',word:'善解人意的'}
+ {cat:'F',word:'有亲和力的'},{cat:'M',word:'乐于冒险的'},{cat:'F',word:'节俭的'},
+ {cat:'N',word:'懈怠的'},{cat:'M',word:'有领导风范的'},{cat:'M',word:'大度的'},
+ {cat:'F',word:'文静的'},{cat:'N',word:'认真的'},{cat:'N',word:'真诚的'},
+ {cat:'N',word:'自以为是的'},{cat:'M',word:'冷静的'},{cat:'N',word:'孝顺的'},
+ {cat:'N',word:'谦虚的'},{cat:'F',word:'善于倾听的'},{cat:'M',word:'沉稳的'},
+ {cat:'F',word:'心细的'},{cat:'N',word:'得过且过的'},{cat:'N',word:'乐群的'},
+ {cat:'F',word:'能体谅人的'},{cat:'F',word:'语调柔和的'},{cat:'N',word:'愉快的'},
+ {cat:'M',word:'有判断力的'},{cat:'N',word:'傲慢的'},{cat:'M',word:'心胸开阔的'},
+ {cat:'N',word:'推诿责任的'},{cat:'M',word:'理性的'},{cat:'F',word:'勤俭的'},
+ {cat:'F',word:'富有同情心的'},{cat:'N',word:'消极的'},{cat:'M',word:'男子气的'},
+ {cat:'F',word:'有爱心的'},{cat:'M',word:'慷慨的'},{cat:'M',word:'有组织能力的'},
+ {cat:'F',word:'乐于安慰人的'},{cat:'M',word:'胆大的'},{cat:'N',word:'不卑不亢的'},
+ {cat:'M',word:'豪放的'},{cat:'N',word:'乐于助人的'},{cat:'F',word:'女子气的'},
+ {cat:'F',word:'文雅的'},{cat:'N',word:'投其所好的'},{cat:'M',word:'有领导能力的'},
+ {cat:'F',word:'温柔的'},{cat:'M',word:'勇敢的'},{cat:'N',word:'墨守成规的'},
+ {cat:'N',word:'诚实的'},{cat:'M',word:'有支配力的'},{cat:'F',word:'温顺的'},
+ {cat:'N',word:'不合群的'},{cat:'F',word:'善解人意的'}
 ];
-const M_THRESHOLD=4.8,F_THRESHOLD=5.0;
-const API_BASE='https://cris-d6gkkzled0d106625-1421328052.ap-shanghai.app.tcloudbase.com/crisApi';
-const answers=new Array(50).fill(0);
-let currentGender='unknown', currentResult=null, quizStartedAt=0, currentRecoveryToken='', recoveredRecord=null, demoMode=false;
-const REPORT={
- androgynous:{emoji:'🌟',title:'双性化 · 两类特质都较高',quote:'传统四象限里，你落在两个维度都较高的区域。',open:'这表示你在这份量表所列的两组性别角色特质上都给了相对较高的自评。经典理论会把这种组合视为拥有更丰富的行为资源，但本量表并不直接测量“灵活性”或适应能力。',tips:['把两个连续分数放在类型标签之前看。','在不同情境中，你可以观察哪些具体特质真正帮助了自己。','不要把“两个维度都高”理解成必须同时强大和温柔。']},
- masculine:{emoji:'🔥',title:'男性化 · 男性化维度较高',quote:'你的男性化特质分数跨过了参考分界。',open:'这表示你在领导、理性、果敢、大度等男性化分量表词项上的平均自评较高，而女性化维度没有跨过本站采用的参考分界。它不等于“更像男性”，也不决定你的性别认同。',tips:['关注高分来自哪些具体词项，而不是只看标签。','果断和共情并不是互斥能力，分数较低的一侧也不是缺点清单。','把这些结果当作自我观察线索，而不是角色要求。']},
- feminine:{emoji:'🌸',title:'女性化 · 女性化维度较高',quote:'你的女性化特质分数跨过了参考分界。',open:'这表示你在共情、温柔、勤俭心细等女性化分量表词项上的平均自评较高，而男性化维度没有跨过本站采用的参考分界。它不等于“更像女性”，也不决定你的性别认同。',tips:['可以回看哪些词项最符合你，它们比类型名更具体。','温柔、共情与边界感可以同时存在。','不要从这一维度推断职业能力或亲密关系结局。']},
- undifferentiated:{emoji:'🌿',title:'未分化 · 两个维度都在分界下',quote:'“未分化”只是传统分类术语，不是人格评价。',open:'你的两个分量表均值都落在参考分界以下。这个结果不能说明你“没有特点”，也不能说明你更自由或更受传统性别角色影响；量表没有测量这些结论。',tips:['优先查看两个连续分数和具体题目。','分界来自 2011 年大学生样本，与你的年龄与背景未必完全匹配。','如果分数靠近分界，更不宜把四象限标签看得太重。']}
+const questions = ITEMS.map(it=>({cat:it.cat, word:it.word}));
+
+const SCALE = ["很不符合","基本不是","比较不符合","说不清","较符合","基本符合","很符合"];
+const answers = new Array(50).fill(0);
+let _milestoneShown = {17:false, 33:false}; // 1/3、2/3 鼓励提示只弹一次（50 题下的约数）
+
+/* ============ 渲染答题 ============ */
+function renderQuiz(){
+  const box = document.getElementById('q-list');
+  box.innerHTML = '';
+  questions.forEach((q,idx)=>{
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    let opts = '';
+    for(let v=1;v<=7;v++){
+      opts += `<div class="opt" data-q="${idx}" data-v="${v}">${v}</div>`;
+    }
+    card.innerHTML = `
+      <div class="q-top"><span class="num${idx===0?' jump':''}"${idx===0?' title="悄悄点一下，自动作答并生成一份示例数据"':''}>${idx+1}</span><span class="word">${q.word}</span></div>
+      <div class="opts">${opts}</div>
+      <div class="scale-tip"><span>很不符合</span><span>很符合</span></div>`;
+    box.appendChild(card);
+  });
+  box.querySelectorAll('.opt').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const q = +el.dataset.q, v = +el.dataset.v;
+      answers[q] = v;
+      const siblings = box.querySelectorAll(`.opt[data-q="${q}"]`);
+      siblings.forEach(s=>s.classList.remove('on'));
+      el.classList.add('on');
+      updateProgress();
+    });
+  });
+  // 隐藏入口：点第 1 题的序号「1」自动作答一份示例数据（不落库，仅本地演示）
+  const num1 = box.querySelector('.num.jump');
+  if(num1) num1.addEventListener('click', autoAnswerAndSubmit);
+}
+
+/* 鼓励特效：累计填完 17 题（≈1/3）、33 题（≈2/3）时各弹一次（50 题下的约数） */
+function updateProgress(){
+  const done = answers.filter(a=>a>0).length;
+  document.getElementById('prog-text').textContent = done + ' / 50';
+  document.getElementById('prog-bar').style.width = (done/50*100)+'%';
+  if(done===17 && !_milestoneShown[17]){
+    _milestoneShown[17]=true;
+    cheer('已完成 1/3 啦 🌟\n慢慢来，你愿意花时间看看自己，就很了不起');
+  }
+  if(done===33 && !_milestoneShown[33]){
+    _milestoneShown[33]=true;
+    cheer('完成 2/3 了 💪\n再坚持一下，你离「看清自己」更近一步');
+  }
+}
+
+/* ============ 计分 & 分类（分界 = CSRI-50 常模中位数：男性化 4.8 / 女性化 5.0） ============ */
+const M_THRESHOLD = 4.8; // CSRI-50 男性化分量表常模中位数（刘电芝 2011，全国 5008 名大学生复测）
+const F_THRESHOLD = 5.0; // CSRI-50 女性化分量表常模中位数
+function compute(){
+  let sumM=0,nM=0,sumF=0,nF=0;
+  questions.forEach((q,i)=>{
+    if(q.cat==='M'){sumM+=answers[i];nM++;}
+    if(q.cat==='F'){sumF+=answers[i];nF++;}
+  });
+  const mScore = sumM/nM, fScore = sumF/nF;
+  let type;
+  if(mScore>=M_THRESHOLD && fScore>=F_THRESHOLD) type='androgynous';
+  else if(mScore>=M_THRESHOLD && fScore<F_THRESHOLD) type='masculine';
+  else if(mScore<M_THRESHOLD && fScore>=F_THRESHOLD) type='feminine';
+  else type='undifferentiated';
+  return {mScore,fScore,type};
+}
+
+/* ============ 报告文案（暖心 · 启发 · 客观谨慎） ============ */
+const REPORT = {
+  androgynous:{
+    emoji:'🌟', title:'双性化 · 刚柔并济的你',
+    quote:'你不必二选一，温柔与锋芒，你都拥有。',
+    open:'先给你一个大大的拥抱 🤗。你的结果里，<span class="hl">「坚韧」和「温柔」两个维度都很高</span>——这在心理学里有个很美的名字，叫「双性化」（androgyny）。它不代表「不分男女」，而是代表你没有被任何标签框住：该勇敢时有力量，该柔软时有温度。',
+    masc:'在需要的时候，你<span class="hl">靠得住、有主见、敢担当</span>。你不一定非要逞强，但你知道自己要什么，也愿意为想要的东西去争取。这种「能扛事」的底气，是很多人偷偷羡慕你的地方。',
+    fem:'而转身面对在意的人，你又<span class="hl">细腻、共情、懂得照顾情绪</span>。你能察觉到别人没说出口的难过，也愿意把温柔给出去。这让你既独立，又不孤单——因为你也擅长把关系经营得暖暖的。',
+    tips:['你最大的天赋，是「灵活」：场景需要什么，你就能长出什么样子，别被"男生该怎样/女生该怎样"束缚。','偶尔也会累，刚强和温柔都用多了会耗神，记得留一点给自己。','不必为了合群而藏起某一面——你本来就比标签丰富得多。']
+  },
+  masculine:{
+    emoji:'🔥', title:'男性化 · 坚定的力量型',
+    quote:'你身上的光，是一种让人安心的坚定。',
+    open:'想先说：你的<span class="hl">「坚韧果断」维度很高</span>，而温柔那一面相对没那么外放。这没什么不好——你身上有一种很珍贵的「行动力与担当」，是那种天塌下来也有人顶着的感觉。',
+    masc:'你<span class="hl">独立、果敢、有掌控感</span>。遇到事情你倾向于先解决，而不是先emo；你相信自己的判断，也愿意为选择负责。这种「稳得住」的气场，会让身边人不自觉地信任你、依赖你。',
+    fem:'你的温柔可能不是挂在嘴边的那种，但<span class="hl">它藏在行动里</span>——也许是你默默把事办好，也许是你不善表达却始终在。如果偶尔也想被照顾、想示弱，那完全 OK，刚强的人也可以有软肋。',
+    tips:['你的「先解决、再情绪」是天赋，但偶尔把"为什么"说出口，会让合作的人更懂你。','习惯当顶梁柱没错，但让在意的人也来照顾你，关系反而更平衡、更长久。','果断和掌控感天然适合牵头——别因为怕显得"强势"而退到后面，该上时得上。']
+  },
+  feminine:{
+    emoji:'🌸', title:'女性化 · 温柔而有力量',
+    quote:'你温柔，却有着千钧之力。',
+    open:'想轻轻抱抱你 🌷。你的<span class="hl">「温柔共情」维度很高</span>，而锋芒那一面相对内敛。你身上有一种很治愈的气息——不是软弱，是「把别人放在心上」的能力，这其实特别了不起。',
+    fem:'你<span class="hl">善解人意、细腻、懂得照顾人</span>。你能接住别人的情绪，也愿意付出耐心与体贴。在关系里，你常常是那个让气氛变暖、让彼此靠得更近的人。这份温柔，是很多人的避风港。',
+    masc:'而你的坚定，可能更多是「默默坚持」的那种——<span class="hl">为了在意的人，你可以很有韧性</span>。你不必时刻锋利，但当底线被触碰，你心里那杆秤一直都在。',
+    tips:['你的温柔很珍贵，但请先温柔地对待自己。','别总把别人放前面——你的需要同样重要。','学会说"不"，温柔的人也要有边界，那不是冷漠，是自爱。']
+  },
+  undifferentiated:{
+    emoji:'🌿', title:'未分化 · 自由不被定义',
+    quote:'你自由，不被任何框框装下。',
+    open:'想告诉你：你的结果里，<span class="hl">「坚韧」和「温柔」两个维度都不算高</span>，这在量表里叫「未分化」。但请别误会——这绝不等于「没特点」。它更像是：你<span class="hl">不被传统的性别角色绑架</span>，活得比较自在、随性，按自己的节奏来。',
+    masc:'你不一定追求「强势」或「掌控」，<span class="hl">更在意舒服自在</span>。该出手时你也会出手，只是不想为了符合期待而硬撑某种姿态。这种「不勉强自己」其实挺通透的。',
+    fem:'你也不刻意扮演「温柔体贴」的角色，<span class="hl">对人对己都挺松弛</span>。你更像是：谁靠近我，我就自然相处；标签贴不上你，因为你本就不打算被定义。',
+    tips:['不被定义不是空白，是你的自由，请好好享受它。','如果某天想长出某面特质，也完全可以，慢慢来。','顺着自己的节奏生活，比活成别人期待的样子更值得。']
+  }
 };
 
-function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'auto'});}
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2400);}
-function sanitizeGender(g){return ['male','female','other','unknown'].includes(g)?g:'unknown';}
-function renderQuiz(){const box=document.getElementById('quiz-list');box.innerHTML='';ITEMS.forEach((q,i)=>{const card=document.createElement('section');card.className='q-card';const title=document.createElement('p');title.className='q-title';title.innerHTML=`<small>${i+1}</small>${q.word}`;card.appendChild(title);const opts=document.createElement('div');opts.className='opts';opts.setAttribute('role','radiogroup');opts.setAttribute('aria-label',`${i+1}. ${q.word}`);for(let v=1;v<=7;v++){const b=document.createElement('button');b.type='button';b.className='opt';b.textContent=String(v);b.dataset.q=String(i);b.dataset.v=String(v);b.setAttribute('role','radio');b.setAttribute('aria-checked',answers[i]===v?'true':'false');b.addEventListener('click',()=>choose(i,v,opts));opts.appendChild(b);}card.appendChild(opts);const scale=document.createElement('div');scale.className='scale';scale.innerHTML='<span>1 很不符合</span><span>7 很符合</span>';card.appendChild(scale);box.appendChild(card);});updateProgress();}
-function choose(i,v,group){answers[i]=v;group.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-checked',Number(x.dataset.v)===v?'true':'false'));saveDraft();updateProgress();}
-function updateProgress(){const n=answers.filter(Boolean).length;document.getElementById('prog-text').textContent=`${n} / 50`;document.getElementById('prog-bar').style.width=`${n/50*100}%`;}
-function saveDraft(){try{sessionStorage.setItem('cris_draft_v2',JSON.stringify({answers,gender:currentGender,community:document.getElementById('community-opt')?.checked,startedAt:quizStartedAt}))}catch{}}
-function restoreDraft(){try{const d=JSON.parse(sessionStorage.getItem('cris_draft_v2')||'null');if(!d||!Array.isArray(d.answers)||d.answers.length!==50)return;d.answers.forEach((v,i)=>{if(Number.isInteger(v)&&v>=0&&v<=7)answers[i]=v});currentGender=sanitizeGender(d.gender);quizStartedAt=Number(d.startedAt)||0;if(typeof d.community==='boolean')document.getElementById('community-opt').checked=d.community;syncGenderButtons();}catch{}}
-function syncGenderButtons(){document.querySelectorAll('#gender-row .choice').forEach(b=>b.setAttribute('aria-pressed',b.dataset.g===currentGender?'true':'false'));}
-function startQuiz(){if(!quizStartedAt)quizStartedAt=Date.now();renderQuiz();show('quiz');saveDraft();}
-function compute(){let sm=0,sf=0,nm=0,nf=0;ITEMS.forEach((q,i)=>{if(q.cat==='M'){sm+=answers[i];nm++}else if(q.cat==='F'){sf+=answers[i];nf++}});const mScore=sm/nm,fScore=sf/nf;let type='undifferentiated';if(mScore>=M_THRESHOLD&&fScore>=F_THRESHOLD)type='androgynous';else if(mScore>=M_THRESHOLD)type='masculine';else if(fScore>=F_THRESHOLD)type='feminine';return{mScore,fScore,type};}
-async function finishQuiz(){const missing=answers.findIndex(v=>!v);if(missing>=0){toast(`还有第 ${missing+1} 题未作答`);document.querySelectorAll('.q-card')[missing]?.scrollIntoView({behavior:'smooth',block:'center'});return}currentResult=compute();renderResult(currentResult);show('result');try{sessionStorage.removeItem('cris_draft_v2')}catch{}if(!demoMode&&document.getElementById('community-opt').checked)await submitCommunity();else{drawCommunity([],currentResult);document.getElementById('community-meta').textContent=demoMode?'演示模式：不提交群体统计。':'你选择了不加入群体统计。';}loadCommunity();}
-function renderResult(r){const rep=REPORT[r.type];document.documentElement.style.setProperty('--type',r.type==='masculine'?'#4f86e8':r.type==='feminine'?'#ff5e8a':r.type==='undifferentiated'?'#42a69a':'#8659e6');const head=document.getElementById('result-head');head.className=`result-head t-${r.type}`;document.getElementById('r-emoji').textContent=rep.emoji;document.getElementById('r-title').textContent=rep.title;document.getElementById('r-quote').textContent=rep.quote;document.getElementById('m-score').textContent=r.mScore.toFixed(2);document.getElementById('f-score').textContent=r.fScore.toFixed(2);document.getElementById('r-open').textContent=rep.open;const ul=document.getElementById('r-tips');ul.innerHTML='';rep.tips.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li)});const near=[];if(Math.abs(r.mScore-M_THRESHOLD)<.2)near.push(`男性化 ${r.mScore.toFixed(2)} 接近 4.80`);if(Math.abs(r.fScore-F_THRESHOLD)<.2)near.push(`女性化 ${r.fScore.toFixed(2)} 接近 5.00`);const bn=document.getElementById('boundary-note');if(near.length){bn.hidden=false;bn.textContent=`接近分界：${near.join('；')}。±0.20 只是本站的阅读提醒，不是量表官方置信区间；这种情况下尤其建议把连续分数放在四象限标签之前。`;}else bn.hidden=true;document.getElementById('ai-prompt').textContent=buildPrompt(r);drawCommunity([],r);}
-function buildPrompt(r){return `我刚完成 CSRI-50 性别角色特质自评。男性化维度 ${r.mScore.toFixed(2)}/7，女性化维度 ${r.fScore.toFixed(2)}/7；按 2011 年大学生样本分界（4.80 / 5.00）属于“${REPORT[r.type].title}”。\n\n请把它当作两个连续的自评维度，而不是人格定论。结合我随后提供的具体题目作答，讨论这些特质可能怎样影响我的沟通、决策、协作与边界表达。请区分“量表直接测到的内容”和“理论上的可能解释”，不要据此判断我适合什么职业，不推断性别认同或性取向，不做心理诊断。`;}
-function copyPrompt(){navigator.clipboard?.writeText(buildPrompt(currentResult||compute())).then(()=>toast('已复制')).catch(()=>toast('复制失败，请手动复制'));}
-function qualityPayload(){return{answers:answers.map(Number),durationMs:Math.max(0,Date.now()-(quizStartedAt||Date.now())),source:getSource()};}
-function getSource(){try{const s=(new URLSearchParams(location.search).get('src')||'direct').slice(0,16);return /^[A-Za-z0-9_-]+$/.test(s)?s:'direct'}catch{return'direct'}}
-async function submitCommunity(){const meta=document.getElementById('community-meta');meta.textContent='正在匿名加入群体统计…';try{const r=await fetch(`${API_BASE}/api/community/submit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(qualityPayload())});const j=await r.json();if(!r.ok)throw new Error(j.error||'submit failed');meta.textContent=j.included?'本次作答已加入匿名分箱统计。':'你的个人结果正常生成；本次作答未进入群体统计（作答质量规则未通过）。';}catch{meta.textContent='群体统计暂时无法连接；你的个人结果不受影响。';}}
-async function loadCommunity(){try{const r=await fetch(`${API_BASE}/api/community`,{cache:'no-store'});if(!r.ok)throw new Error('community');const j=await r.json();drawCommunity(Array.isArray(j.bins)?j.bins:[],currentResult);const extra=j.total?`当前匿名有效作答 ${j.total} 份。只展示服务器端聚合后的密度，不提供逐人落点。`:'暂无足够的群体统计。';document.getElementById('community-meta').textContent=extra;}catch{if(currentResult)drawCommunity([],currentResult);}}
-function drawCommunity(bins,me){const cv=document.getElementById('community-canvas'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height,pad=58;ctx.clearRect(0,0,W,H);const x=v=>pad+(v-1)/6*(W-2*pad),y=v=>H-pad-(v-1)/6*(H-2*pad);const mx=x(F_THRESHOLD),my=y(M_THRESHOLD);ctx.fillStyle='#eef4ff';ctx.fillRect(pad,pad,mx-pad,my-pad);ctx.fillStyle='#f1ebff';ctx.fillRect(mx,pad,W-pad-mx,my-pad);ctx.fillStyle='#eef9f7';ctx.fillRect(pad,my,mx-pad,H-pad-my);ctx.fillStyle='#fff0f6';ctx.fillRect(mx,my,W-pad-mx,H-pad-my);ctx.strokeStyle='#ded4da';ctx.lineWidth=1;for(let v=1;v<=7;v++){ctx.beginPath();ctx.moveTo(x(v),pad);ctx.lineTo(x(v),H-pad);ctx.stroke();ctx.beginPath();ctx.moveTo(pad,y(v));ctx.lineTo(W-pad,y(v));ctx.stroke();}ctx.setLineDash([7,6]);ctx.strokeStyle='#9e8f98';ctx.beginPath();ctx.moveTo(mx,pad);ctx.lineTo(mx,H-pad);ctx.stroke();ctx.beginPath();ctx.moveTo(pad,my);ctx.lineTo(W-pad,my);ctx.stroke();ctx.setLineDash([]);const max=Math.max(1,...bins.map(b=>Number(b.count)||0));bins.forEach(b=>{const count=Number(b.count)||0;if(!count)return;const a=.12+.58*Math.log1p(count)/Math.log1p(max);ctx.fillStyle=`rgba(121,84,201,${a.toFixed(3)})`;const bw=Math.max(9,(W-2*pad)/24*.8),bh=Math.max(9,(H-2*pad)/24*.8);ctx.fillRect(x(Number(b.fBin))-bw/2,y(Number(b.mBin))-bh/2,bw,bh)});if(me){ctx.beginPath();ctx.arc(x(me.fScore),y(me.mScore),11,0,Math.PI*2);ctx.fillStyle='#2e2530';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='#fff';ctx.stroke();}ctx.fillStyle='#6e6069';ctx.font='16px sans-serif';ctx.textAlign='center';ctx.fillText('女性化 →',W/2,H-18);ctx.save();ctx.translate(18,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('男性化 →',0,0);ctx.restore();}
-function randomToken(){if(!globalThis.crypto||!crypto.getRandomValues)throw new Error('secure random unavailable');const b=new Uint8Array(32);crypto.getRandomValues(b);let s='';b.forEach(v=>s+=String.fromCharCode(v));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
-async function savePrivateBackup(){if(!currentResult)return;const btn=document.getElementById('backup-btn');btn.disabled=true;document.getElementById('cloud-status').textContent='正在创建私人备份…';try{if(!currentRecoveryToken)currentRecoveryToken=randomToken();const body={...qualityPayload(),token:currentRecoveryToken,gender:currentGender};const r=await fetch(`${API_BASE}/api/backup`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw new Error(j.error||'backup failed');document.getElementById('cloud-status').textContent='私人备份已创建。恢复密钥只保存在你当前页面和即将下载的恢复二维码中；分享 JSON 不含密钥。';document.getElementById('delete-btn').hidden=false;downloadRecoveryQR(currentRecoveryToken);toast('私人备份已保存');}catch(e){currentRecoveryToken='';document.getElementById('cloud-status').textContent='备份失败。未生成恢复码；你的本地报告仍可正常使用。';toast('备份失败');}finally{btn.disabled=false;}}
-function downloadRecoveryQR(token){if(!window.QRCode){toast('二维码组件未加载，可稍后再试');return}const url=`${location.origin}${location.pathname}#recover=${encodeURIComponent(token)}`;const holder=document.createElement('div');new QRCode(holder,{text:url,width:220,height:220,colorDark:'#2d2330',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});setTimeout(()=>{const src=holder.querySelector('canvas')||holder.querySelector('img');if(!src)return;const c=document.createElement('canvas');c.width=280;c.height=310;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.fillStyle='#342832';x.font='bold 16px sans-serif';x.textAlign='center';x.fillText('CRIS 私人恢复码',140,25);x.font='12px sans-serif';x.fillStyle='#756873';x.fillText('请勿分享：持有码者可读取或删除你的备份',140,47);x.drawImage(src,30,62,220,220);const a=document.createElement('a');a.download='CRIS-私人恢复码.png';a.href=c.toDataURL('image/png');a.click();},120);}
-async function deletePrivateBackup(){if(!currentRecoveryToken){toast('当前页面没有可删除的恢复凭证');return}if(!confirm('确定删除可恢复的 50 题云备份吗？删除后恢复码将失效。匿名群体分箱计数不包含可关联到你的个人记录，因此不会随备份删除而反向调整。'))return;try{const r=await fetch(`${API_BASE}/api/delete`,{method:'POST',headers:{'Content-Type':'application/json','x-cris-token':currentRecoveryToken},body:JSON.stringify({token:currentRecoveryToken})});if(!r.ok)throw new Error('delete');currentRecoveryToken='';recoveredRecord=null;document.getElementById('delete-btn').hidden=true;document.getElementById('cloud-status').textContent='私人云备份已删除。';const rs=document.getElementById('recover-status');if(rs)rs.textContent='这份私人备份已删除。';document.getElementById('recover-download').disabled=true;document.getElementById('recover-delete').disabled=true;toast('已删除私人云备份');}catch{toast('删除失败，请重试');}}
-function exportPayload(rec){const r=rec?{mScore:Number(rec.m),fScore:Number(rec.f),type:rec.type}:currentResult;const a=rec?.answers||answers;return{meta:{test:'CSRI-50',scaleVersion:'Liu-2011',schemaVersion:2,generatedAt:new Date().toISOString(),gender:rec?.gender||currentGender||'unknown',note:'恢复密钥未包含在此文件中'},scores:{masculinity:Number(r.mScore).toFixed(2),femininity:Number(r.fScore).toFixed(2),threshold:{masculinity:4.8,femininity:5.0}},type:r.type,answers:ITEMS.map((q,i)=>({no:i+1,word:q.word,category:q.cat,score:Number(a[i])}))};}
-function triggerDownload(obj,name){const b=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500);}
-function downloadData(){if(!currentResult){toast('请先完成测验');return}triggerDownload(exportPayload(null),'我的CSRI-50数据.json');}
-function downloadRecovered(){if(!recoveredRecord)return;triggerDownload(exportPayload(recoveredRecord),'找回的CSRI-50数据.json');}
-async function recoverData(token){currentRecoveryToken=token;show('recover');history.replaceState(null,'',location.pathname+location.search.replace(/([?&])uid=[^&]*&?/,'$1').replace(/[?&]$/,''));try{const r=await fetch(`${API_BASE}/api/mine`,{headers:{'x-cris-token':token},cache:'no-store'});const j=await r.json();if(!r.ok)throw new Error(j.error||'not found');recoveredRecord=j;document.getElementById('recover-status').textContent='已验证恢复码。';document.getElementById('recover-summary').textContent=`${REPORT[j.type]?.title||j.type}｜男性化 ${Number(j.m).toFixed(2)}｜女性化 ${Number(j.f).toFixed(2)}｜保存时间 ${j.createdAt?new Date(j.createdAt).toLocaleString('zh-CN'):'—'}`;document.getElementById('recover-download').disabled=false;document.getElementById('recover-delete').disabled=false;}catch{currentRecoveryToken='';document.getElementById('recover-status').textContent='未找到可恢复的备份，恢复码可能无效或记录已删除。';document.getElementById('recover-summary').textContent='—';}}
-function saveImage(){if(!window.html2canvas){toast('截图组件尚未加载');return}html2canvas(document.getElementById('report-card'),{scale:2,backgroundColor:'#fff',logging:false}).then(c=>{const a=document.createElement('a');a.download='我的CSRI-50报告.png';a.href=c.toDataURL('image/png');a.click();}).catch(()=>toast('生成图片失败'));}
-function restart(){answers.fill(0);currentResult=null;currentRecoveryToken='';recoveredRecord=null;quizStartedAt=0;demoMode=false;try{sessionStorage.removeItem('cris_draft_v2')}catch{}show('cover');}
-function initDemo(){const p=new URLSearchParams(location.search);if(p.get('demo')!=='1')return false;demoMode=true;currentGender='unknown';for(let i=0;i<50;i++)answers[i]=3+(i*7%5);quizStartedAt=Date.now()-180000;currentResult=compute();renderResult(currentResult);show('result');document.getElementById('community-meta').textContent='演示模式：不提交任何数据。';return true;}
-document.querySelectorAll('#gender-row .choice').forEach(b=>b.addEventListener('click',()=>{currentGender=sanitizeGender(b.dataset.g);syncGenderButtons();saveDraft();}));
-(function init(){restoreDraft();syncGenderButtons();try{const hash=new URLSearchParams(location.hash.slice(1));const t=hash.get('recover');const legacy=new URLSearchParams(location.search).get('uid');if(t){history.replaceState(null,'',location.pathname+location.search);recoverData(t);return}if(legacy&&/^[A-Za-z0-9_-]{8,128}$/.test(legacy)){recoverData(legacy);return}}catch{}if(initDemo())return;if(answers.some(Boolean)){renderQuiz();show('quiz');}})();
+/* ============ 证据区（按类型组织，renderReport 时只渲染用户所属类型） ============ */
+const EVIDENCE = {
+  androgynous:{
+    emoji:'🌟', label:'双性化 · 刚柔并济', sub:'男女特质都高',
+    points:[
+      '主观幸福感与自我价值感<b>最高</b>，被多项研究视为最理想的性别角色类型（Whitley 1983；Bassoff &amp; Glass 1982）。',
+      '在既往研究中，平均报告的抑郁症状水平<b>最低</b>：涵盖 58 项研究（1978–2021）的元分析发现，男女特质都高的人最不容易陷入抑郁（Lin et al., 2021）。',
+      '行为更<b>灵活</b>，刚强与温柔都能按需调用，压力情境下应对更具适应性（Bem &amp; Lewis 1975；Bem et al. 1976）。',
+      '中老年人的自评健康、生活满意度也更高（Gale-Ross et al. 2009；Lefkowitz &amp; Zeldow 2006）。'
+    ]
+  },
+  masculine:{
+    emoji:'💪', label:'男性化 · 坚定的力量型', sub:'男高 · 女低',
+    points:[
+      '自尊的<b>最强预测因子</b>：35 项研究的元分析显示，男性化特质对自我价值感的解释力远超其他（Whitley 1983）。',
+      '与抑郁呈<b>稳健负相关</b>：无论男女，男性化特质越高，抑郁症状越少（Lin et al., 2021；Whitley 1985）。',
+      '独立、果敢、有掌控感，心理健康水平与双性化接近，明显优于女性化与未分化（Bassoff &amp; Glass 1982）。',
+      '提醒：这份"保护力"来自自信与主动，而非压抑情绪——长期情感压抑反而会削弱韧性（Gonzalez et al. 2012）。'
+    ]
+  },
+  feminine:{
+    emoji:'🌸', label:'女性化 · 温柔而有力量', sub:'男低 · 女高',
+    points:[
+      '共情、人际温暖突出；善于建立并维持<b>支持性的社会关系</b>，而社会支持本身是心理健康的重要保护因子（Matud 2019；Lin et al., 2021）。',
+      '在亲密关系里，"温柔体贴"的伴侣往往让关系更幸福（Antill 1983）。',
+      '对青少年而言，女性化（表达性）特质与更积极的人际关系、健康结果相关，有时比男性化更关键（Helgeson &amp; Palladino 2012）。',
+      '提醒：单纯女性化者在自尊/心理健康上平均偏弱，但<b>温柔本身极珍贵</b>，且高社会支持可弥补（Bassoff &amp; Glass 1982）。'
+    ]
+  },
+  undifferentiated:{
+    emoji:'🌿', label:'未分化 · 自由不被定义', sub:'男女都低',
+    points:[
+      '在不少研究中，未分化者的平均自我价值感、自信<b>最低</b>，青少年阶段适应也偏弱（Wells 1994；Napholz 1995）。',
+      '但结论<b>并非绝对</b>：有研究指出，未分化是否"更差"取决于具体指标与性别，不能一概而论（Matud et al. 西班牙普通人群研究）。',
+      '优势：往往更<b>松弛、不被性别框住</b>，活得自在随性——本工具也以此视角解读你。',
+      '很多创造力强、独立思考者本就不贴传统标签；量表只测"传统男女特质高低"，未分化 ≠ 没特点、≠ 能力差（Bem 1974）。'
+    ]
+  }
+};
+
+/* ============ 渲染报告 ============ */
+function renderReport(r){
+  const TYPE_COLOR = {androgynous:'#ff5e8a', masculine:'#ff5e8a', feminine:'#ff5e8a', undifferentiated:'#ff5e8a'};
+  const rep = REPORT[r.type];
+  document.getElementById('r-emoji').textContent = rep.emoji;
+  document.getElementById('r-title').textContent = rep.title;
+  document.getElementById('r-head').className = 'r-head t-' + r.type;
+  document.getElementById('report-card').style.setProperty('--type', TYPE_COLOR[r.type]);
+  document.getElementById('r-quote').textContent = rep.quote;
+  document.getElementById('r-tag').textContent = (EVIDENCE[r.type] && EVIDENCE[r.type].sub) || '';
+  document.getElementById('r-open').innerHTML = rep.open;
+  document.getElementById('r-masc').innerHTML = rep.masc;
+  document.getElementById('r-fem').innerHTML = rep.fem;
+  document.getElementById('r-tips').innerHTML = rep.tips.map(t=>`<p class="t">${t}</p>`).join('');
+  document.getElementById('prompt-text').innerHTML = buildPromptHTML(r);
+  /* 证据区：只渲染用户所属类型的卡片（按类型组织，避免 2×2 拥挤） */
+  const ev = EVIDENCE[r.type];
+  const evBox = document.getElementById('ev-grid');
+  if(ev && evBox){
+    evBox.innerHTML = `<div class="ev-card c-${r.type}">
+      <h4>${ev.emoji}<span class="ev-sub">${ev.sub}</span></h4>
+      ${ev.points.map(p=>`<p>${p}</p>`).join('')}
+    </div>`;
+  }
+  /* 分数条 */
+  const mPct = Math.min(100, r.mScore/7*100);
+  const fPct = Math.min(100, r.fScore/7*100);
+  document.getElementById('val-m').innerHTML = r.mScore.toFixed(1) + '<span class="unit"> / 7</span>';
+  document.getElementById('val-f').innerHTML = r.fScore.toFixed(1) + '<span class="unit"> / 7</span>';
+  requestAnimationFrame(()=>{
+    document.getElementById('bar-m').style.width = mPct+'%';
+    document.getElementById('bar-f').style.width = fPct+'%';
+  });
+  /* 找回二维码不在此生成——现在由「下载数据」时随 JSON 一并下载，避免私人钥匙进入分享图 */
+}
+
+/* ============ 流程控制 ============ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function startQuiz(){
+  if(!currentGender){
+    toast('先悄悄选一下性别哦～ 👦👧');
+    const gp=document.querySelector('.gender-pick');
+    if(gp) gp.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  renderQuiz(); updateProgress();
+  show('quiz');
+}
+function pickGender(g){
+  currentGender = g;
+  document.querySelectorAll('.gp').forEach(b=>{
+    const on = b.dataset.g===g;
+    b.classList.toggle('on', on);
+    b.classList.toggle('male', on && g==='male');
+    b.classList.toggle('female', on && g==='female');
+  });
+}
+/* 隐藏入口：点第 1 题序号「1」——自动作答一份随机但合理的问卷，生成示例报告（不落库）。 */
+function autoAnswerAndSubmit(){
+  // 1) 生成 50 题随机作答（1–7 均匀），覆盖四种类型，使群体分布有意义
+  for(let i=0;i<50;i++){ answers[i] = 1 + Math.floor(Math.random()*7); }
+  // 2) 计分 + 渲染报告 + 进入结果页（与正常完成共用整套逻辑）
+  const r = compute();
+  const demoGender = Math.random()<0.5 ? 'male' : 'female';   // 仅用于演示散点着色，不污染真人已选的 currentGender
+  ensureUid();
+  renderReport(r);
+  show('result');
+  submitAndLoadPoints(r, {demo:true, gender:demoGender});
+  toast('演示模式 · 已生成示例报告（不记录数据）✨');
+}
+/* 拉取群体落点（预览与正式提交共用），me 为 null 时不画自己的点。
+   提速策略：用 localStorage 缓存后端返回的真实点；有缓存时立即用缓存秒出图，
+   再后台拿最新数据——若与缓存不同则只更新缓存并重画（增量式，无需整页重算）。 */
+const PTS_CACHE_KEY = 'cris_pts_v1';   // 群体落点缓存（真实作答记录）
+let _lastCommunityPoints = [];
+function readCachedPoints(){
+  try{ const s = localStorage.getItem(PTS_CACHE_KEY); if(s){ const a = JSON.parse(s); return Array.isArray(a)?a:[]; } }catch(e){}
+  return [];
+}
+function writeCachedPoints(pts){
+  try{ localStorage.setItem(PTS_CACHE_KEY, JSON.stringify(pts)); }catch(e){}
+}
+function pointsSignature(pts){ return (pts||[]).map(p=>(p.m+','+p.f+','+(p.gender||'')+','+(p.source||''))).join('|'); }
+async function loadCommunityPoints(me){
+  // 1) 立即用本地缓存秒出（无网络等待），哪怕后端还没回
+  const cached = readCachedPoints();
+  if(cached.length){
+    _lastCommunityPoints = cached;
+    document.getElementById('counter').textContent = `已经有 ${cached.length} 位真实填写者的位置（本地缓存，正在刷新…）✨`;
+    renderScatter(cached, me || null);
+  }else{
+    document.getElementById('counter').textContent = '正在加载大家的位置…';
+    renderScatter([], me || null);
+  }
+  // 2) 后台拉真实数据（不阻塞首屏）
+  try{
+    const resp = await fetch(API_BASE+'/api/points',{cache:'no-store'});
+    const data = await resp.json();
+    const realPoints = data.points || [];
+    // 仅当数据有变化才重画（增量），避免无谓重绘
+    if(pointsSignature(realPoints) !== pointsSignature(_lastCommunityPoints)){
+      _lastCommunityPoints = realPoints;
+      writeCachedPoints(realPoints);
+    }
+    document.getElementById('counter').textContent = realPoints.length
+      ? `已经有 ${realPoints.length} 位真实填写者的位置，下面是大家 ✨`
+      : `真实数据收集中～你是较早填写的人之一，来当第 1 位吧 🌟`;
+    renderScatter(realPoints, me || null);
+  }catch(e){
+    // 后端不可达：保留缓存（若有），否则提示
+    if(!cached.length){
+      document.getElementById('counter').textContent = '暂时连不上数据服务（网络问题）——先看看你自己的位置吧，稍后再试 ✨';
+    }
+  }
+}
+function lastPoints(){ return _lastCommunityPoints; }
+function finishQuiz(){
+  const done = answers.filter(a=>a>0).length;
+  if(done<50){
+    toast(`还差 ${50-done} 题哦，先填完再揭晓 ✨`);
+    const first = answers.findIndex(a=>a===0);
+    const el = document.querySelector(`.opt[data-q="${first}"]`);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const r = compute();
+  ensureUid();              // 生成/取回本机匿名码（仅作后端主键去重用，不展示）
+  renderReport(r);
+  show('result');
+  submitAndLoadPoints(r);
+}
+function restart(){
+  answers.fill(0);
+  pickGender(null);            // 清空性别选择（含 UI 高亮），避免污染下次重测
+  _milestoneShown = {17:false, 33:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
+  show('cover');
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ============ 动态居中鼓励弹层 + 撒花 ============ */
+function launchConfetti(){
+  const c=document.getElementById('confetti'); if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width=window.innerWidth, H=c.height=window.innerHeight;
+  const colors=['#ff5e8a','#3f7fe0','#b388ff','#ffd166','#06d6a0','#ff8fab'];
+  const N=160, parts=[];
+  for(let i=0;i<N;i++){
+    parts.push({x:Math.random()*W, y:-20-Math.random()*H*0.4,
+      vx:(Math.random()-0.5)*5, vy:2+Math.random()*4.5,
+      s:6+Math.random()*9, rot:Math.random()*6.28, vr:(Math.random()-0.5)*0.35,
+      color:colors[i%colors.length], shape:Math.random()<0.5?0:1});
+  }
+  const t0=performance.now();
+  (function frame(t){
+    ctx.clearRect(0,0,W,H);
+    let alive=false;
+    for(const p of parts){
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.045; p.rot+=p.vr;
+      if(p.y < H+30){
+        alive=true;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        ctx.fillStyle=p.color;
+        if(p.shape===0) ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);
+        else { ctx.beginPath(); ctx.arc(0,0,p.s/2,0,6.28); ctx.fill(); }
+        ctx.restore();
+      }
+    }
+    if(alive && t-t0<2800) requestAnimationFrame(frame);
+    else ctx.clearRect(0,0,W,H);
+  })(t0);
+}
+function cheer(msg){
+  const el=document.getElementById('cheer');
+  document.getElementById('cheer-msg').textContent=msg;
+  el.classList.add('show');
+  launchConfetti();
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'),2800);
+  el.onclick=()=>el.classList.remove('show');   // 点一下提前关闭
+}
+
+/* ============ 后端 API（共存模式：有后端用真实数据，无后端回退内置样本） ============ */
+// 真实落点后端：腾讯云开发 CloudBase（大陆可达 · 免费额度）。
+// 环境 cris-d6gkkzled0d106625（地域 ap-shanghai），已部署云函数 crisApi（Event 函数）+ HTTP 网关路由 /crisApi。
+// 前端仅 fetch 该网关，不暴露任何密钥；跨域白名单已写死 https://cochranek.github.io。
+const API_BASE = 'https://cris-d6gkkzled0d106625-1421328052.ap-shanghai.app.tcloudbase.com/crisApi';
+let currentResult = null;
+let currentGender = '';
+let myUid = '';   // 匿名码：本人凭它从后台取回自己的明细，随机不可猜
+let currentSource = 'direct'; // 平台来源标记：从 URL ?src= 读取，随提交发送（direct=裸链/未知）
+let currentRecUid = '';       // 数据找回模式下当前正在取回的 uid
+
+let _lastSavedResult = null;   // 供「重新保存」复用最近一次结果
+
+function showSaveWarn(){ const s=document.getElementById('sec-savewarn'); if(s) s.style.display=''; }
+function hideSaveWarn(){ const s=document.getElementById('sec-savewarn'); if(s) s.style.display='none'; }
+
+async function submitAndLoadPoints(r, opts){
+  currentResult = r;
+  _lastSavedResult = r;
+  const demo = !!(opts && opts.demo);   // 隐藏入口（点2）自动作答标记
+  const noSave = demo || currentSource === 'test'; // 演示/测试流程：不落库
+  const demoGender = (opts && opts.gender) || currentGender || 'unknown';
+  hideSaveWarn();
+  if(noSave){
+    // 测试/演示：不提交后端，仅本地画散点（含自己）供联调预览，绝不记录数据
+    const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:demoGender};
+    renderScatter([], me);
+    const c = document.getElementById('counter');
+    if(c) c.textContent = '演示模式 · 不记录数据 ✨';
+    (async()=>{ try{ await loadCommunityPoints(me); }catch(e){} })();
+    return;
+  }
+  ensureUid();   // 确保本机有匿名码（仅真实提交时）
+  const me = {mScore:r.mScore, fScore:r.fScore, type:r.type, gender:currentGender||'unknown'};
+  const payload = {
+    m:+r.mScore.toFixed(3), f:+r.fScore.toFixed(3), type:r.type,
+    gender:currentGender||'unknown',
+    uid: myUid,                 // 匿名码：后台据此存/取本人明细
+    answers: answers.map(Number), // 50 题完整作答（1–7；正常流程已校验全答）
+    demo,                       // true=演示/合成数据，供后期识别
+    source: currentSource       // 平台来源标记（?src=），用于跨平台对比
+  };
+  // 先立即画出你自己的点（不等后端，秒出图）
+  renderScatter([], me);
+  document.getElementById('counter').textContent = '正在绘制落点图…';
+  // 后台异步：提交 + 拉取真实全体落点（不阻塞渲染，复用缓存逻辑）
+  (async()=>{
+    try{
+      const ctl = new AbortController();
+      const timer = setTimeout(()=>ctl.abort(), 5000);
+      let saved = false;
+      try{
+        const resp = await fetch(API_BASE+'/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload),signal:ctl.signal});
+        if(resp.ok){
+          const j = await resp.json().catch(()=>null);
+          if(j && j.uid){ myUid = j.uid; try{localStorage.setItem('cris_uid', j.uid);}catch(e){} } // 回存，保持前后端一致
+          saved = true;
+        }
+      }catch(e){/* 离线或后端不可用 */}
+      clearTimeout(timer);
+      if(saved){
+        // 真实保存成功：私人恢复码只在「保存报告」截图里低调嵌入，不进页面正文
+        hideSaveWarn();
+      }else{
+        // 提交失败：显式提示，不静默
+        showSaveWarn();
+      }
+      // 复用群体拉取逻辑（提交后再拉一次，保证含自己；有缓存先秒出，再增量更新）
+      await loadCommunityPoints(me);
+    }catch(e){}
+  })();
+}
+
+/* 提交失败后「重新保存」：复用最近一次结果重试真实提交 */
+function retrySave(){
+  hideSaveWarn();
+  if(_lastSavedResult) submitAndLoadPoints(_lastSavedResult, {});
+}
+
+/* ============ 四象限散点图 ============ */
+function genderColor(g){
+  return {male:'#3f7fe0', female:'#ff5e8a'}[g] || '#b9aeb6';   // 男=蓝 女=粉
+}
+function renderScatter(realPoints, me){
+  const cv = document.getElementById('scatter');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height, pad = 56;
+  const x0 = pad, x1 = W - pad, y0 = pad, y1 = H - pad;   // 画布内边距
+  const MIN=1, MAX=7;
+  const toX = v => x0 + (v-MIN)/(MAX-MIN)*(x1-x0);
+  const toY = v => y1 - (v-MIN)/(MAX-MIN)*(y1-y0);  // 男性化在上（Y 轴=男性化）
+  ctx.clearRect(0,0,W,H);
+  // 背景四区淡色：按 CSRI-50 常模中位数切分（X=女性化@5.0，Y=男性化@4.8，两轴分界不同，故色块非正方形），与本站分类规则一致
+  const midX = toX(5.0), midY = toY(4.8);   // 女性化 5.0 / 男性化 4.8 常模中位数分界
+  ctx.fillStyle = '#eef4ff'; ctx.fillRect(x0,y0,midX-x0,midY-y0);                     // 左上 男性化（蓝）
+  ctx.fillStyle = '#f0eaff'; ctx.fillRect(midX,y0,x1-midX,midY-y0);                   // 右上 双性化（紫）
+  ctx.fillStyle = '#fff7e9'; ctx.fillRect(x0,midY,x1-x0,y1-midY);                     // 左下 未分化（黄）
+  ctx.fillStyle = '#fff0f6'; ctx.fillRect(midX,midY,x1-midX,y1-midY);                 // 右下 女性化（粉）
+  // 网格 + 坐标轴
+  ctx.strokeStyle='#e3d8df'; ctx.lineWidth=1;
+  ctx.font='20px -apple-system,"PingFang SC",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  for(let v=1;v<=7;v+=1){
+    const gx=toX(v), gy=toY(v);
+    ctx.beginPath();ctx.moveTo(gx,y0);ctx.lineTo(gx,y1);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x0,gy);ctx.lineTo(x1,gy);ctx.stroke();
+  }
+  // 轴标题
+  ctx.fillStyle='#7a6a73'; ctx.font='bold 22px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillText('女性化 →', (x0+x1)/2, y1+34);
+  ctx.save();ctx.translate(x0-34,(y0+y1)/2);ctx.rotate(-Math.PI/2);ctx.fillText('男性化 →',0,0);ctx.restore();
+  // 象限标签（居中于各自 CSRI-50 色块）
+  ctx.font='bold 19px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillStyle='#9a8aa6';
+  ctx.fillText('男性化', (x0+midX)/2, y0+22);
+  ctx.fillText('双性化', (midX+x1)/2, y0+22);
+  ctx.fillText('未分化', (x0+midX)/2, y1-22);
+  ctx.fillText('女性化', (midX+x1)/2, y1-22);
+  // 分界线（常模中位数）：女性化 5.0 竖虚线 / 男性化 4.8 横虚线，并标数字
+  ctx.save();
+  ctx.setLineDash([6,5]); ctx.lineWidth=1.6; ctx.strokeStyle='#b7a6ad';
+  ctx.beginPath(); ctx.moveTo(midX,y0); ctx.lineTo(midX,y1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0,midY); ctx.lineTo(x1,midY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='bold 13px -apple-system,"PingFang SC",sans-serif'; ctx.fillStyle='#8a7a83'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('5.0', midX, y0-16);
+  ctx.fillText('4.8', x0-18, midY);
+  ctx.restore();
+  // 真实全体落点（按性别上色：男蓝 女粉）
+  (realPoints||[]).forEach(p=>{
+    const c = genderColor(p.gender || 'unknown');
+    ctx.beginPath();
+    ctx.fillStyle = c + 'b0';   // 约 69% 透明
+    ctx.arc(toX(p.f), toY(p.m), 6.5, 0, Math.PI*2); ctx.fill();   // X=女性化 Y=男性化
+  });
+  // 自己的点（按性别高亮 + 白圈）
+  if(me){
+    const cx=toX(me.fScore), cy=toY(me.mScore);   // X=女性化 Y=男性化
+    const mc = genderColor(me.gender);
+    ctx.beginPath(); ctx.fillStyle = mc + '33'; ctx.arc(cx,cy,26,0,Math.PI*2); ctx.fill();        // 光晕
+    ctx.beginPath(); ctx.arc(cx,cy,16,0,Math.PI*2); ctx.lineWidth=2; ctx.strokeStyle=mc+'66'; ctx.stroke();  // 中环
+    ctx.beginPath(); ctx.fillStyle = mc; ctx.arc(cx,cy,10,0,Math.PI*2); ctx.fill();               // 实心点
+    ctx.lineWidth=3.5; ctx.strokeStyle='#fff'; ctx.stroke();
+    // 图例「你（高亮）」跟随性别变色：男蓝 女粉
+    const lm = document.getElementById('legend-me');
+    if(lm){ lm.style.background = mc; lm.style.boxShadow = '0 0 0 2px ' + mc; }
+  }
+}
+
+/* ============ 导出数据 & 复用引导 ============ */
+// 确保本机有匿名码（存入 localStorage，同一浏览器再次访问可用；不依赖账号）
+function ensureUid(){
+  let u = '';
+  try { u = localStorage.getItem('cris_uid') || ''; } catch(e){}
+  if(!/^[A-Za-z0-9_-]{8,64}$/.test(u)){
+    u = (crypto && crypto.randomUUID) ? crypto.randomUUID()
+        : 'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+    try { localStorage.setItem('cris_uid', u); } catch(e){}
+  }
+  myUid = u;
+  return u;
+}
+// 把结构化对象触发为文件下载
+function triggerDownload(obj, filename){
+  const blob = new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+// 由后台明细记录还原成与 buildPayload 同构的导出对象
+function buildPayloadFromRecord(rec){
+  const ans = questions.map((q,i)=>({
+    no:i+1, word:q.word, category:q.cat,
+    score:(rec.answers && rec.answers[i]!=null) ? Number(rec.answers[i]) : 0
+  }));
+  return {
+    meta:{test:'中国大学生性别角色量表(CSRI-50)', generatedAt:new Date(rec.createdAt||Date.now()).toISOString(),
+          gender:rec.gender||'unknown', uid:rec.uid},
+    scores:{masculinity:+Number(rec.m).toFixed(2), femininity:+Number(rec.f).toFixed(2),
+            threshold:{masculinity:4.8, femininity:5.0}},
+    type:rec.type, typeLabel:REPORT[rec.type]?REPORT[rec.type].title:rec.type,
+    answers:ans
+  };
+}
+function buildPayload(r){
+  const ans = questions.map((q,i)=>({no:i+1, word:q.word, category:q.cat, score:answers[i]}));
+  return {
+    meta:{test:'中国大学生性别角色量表(CSRI-50)', generatedAt:new Date().toISOString(), gender:currentGender||'unknown'},
+    scores:{masculinity:+r.mScore.toFixed(2), femininity:+r.fScore.toFixed(2),
+            threshold:{masculinity:4.8, femininity:5.0}},
+    type:r.type, typeLabel:REPORT[r.type].title,
+    answers:ans
+  };
+}
+function buildPrompt(r){
+  const rep = REPORT[r.type];
+  const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
+  return `我刚做完一份「中国大学生性别角色量表（CSRI-50）」小测验。
+我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；在本站男性化 4.8 / 女性化 5.0 常模分界下归为「${rep.title}」。
+附件 JSON 是我 50 道题的具体作答（含每题类别 M/F/中性 与我的打分）。
+请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊：
+1）这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战；
+2）在团队合作和职业选择里，我更适合扮演什么角色；
+3）有哪些被我忽略、但其实很珍贵的特质。
+ 谢谢，请多结合我的具体作答来谈。`;
+}
+function buildPromptHTML(r){
+  const rep = REPORT[r.type];
+  const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
+  const m = r.mScore.toFixed(1), f = r.fScore.toFixed(1);
+  return `我刚做完一份「中国大学生性别角色量表（CSRI-50）」小测验。 我的性别：<b class="pp-gender">${g}</b>；得分：<span class="pp-masc">男性化特质 ${m}/7</span>，<span class="pp-fem">女性化特质 ${f}/7</span>；在本站男性化 4.8 / 女性化 5.0 常模分界下归为「<span class="pp-type">${rep.title}</span>」。 附件 JSON 是我 50 道题的具体作答（含每题类别 M/F/中性 与我的打分）。 请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊： <span class="pp-num">1）</span>这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战； <span class="pp-num">2）</span>在团队合作和职业选择里，我更适合扮演什么角色； <span class="pp-num">3）</span>有哪些被我忽略、但其实很珍贵的特质。 谢谢，请多结合我的具体作答来谈。`;
+}
+async function downloadData(uidArg){
+  // 优先从后台取回「本人」数据（凭匿名码，只取回自己的）
+  const uid = uidArg || myUid || (function(){ try{return localStorage.getItem('cris_uid')||'';}catch(e){return '';} })();
+  let downloaded = false;
+  if(uid){
+    try{
+      const resp = await fetch(API_BASE+'/api/mine',{headers:{'x-cris-uid':uid},cache:'no-store'});
+      if(resp.ok){
+        const rec = await resp.json();
+        triggerDownload(buildPayloadFromRecord(rec), '我的性别角色数据.json');
+        downloaded = true;
+        toast('已从后台取回你的数据 💗');
+      }else if(uidArg){ toast('取回失败（记录可能已删除）'); return; } // 找回模式下不回退到本地空数据
+    }catch(e){ if(uidArg){ toast('网络异常，取回失败'); return; } }
+  }
+  // 兜底：本地依据当前作答生成（断网时也能用）
+  if(!downloaded){
+    try{
+      const r = currentResult || compute();
+      triggerDownload(buildPayload(r), '我的性别角色数据.json');
+      toast('已下载（本地生成，未连后台）💗');
+    }catch(e){ toast('下载失败，请重试'); return; }
+  }
+  // 同时下载「找回数据」二维码（带字段提示），与 JSON 一起落到本地
+  if(uid){ downloadRecoveryQR(uid); }
+}
+
+/* 单独下载「找回数据」二维码 PNG（含字段提示「扫码找回数据」），供本地留存 */
+function downloadRecoveryQR(uid){
+  if(!window.QRCode){ toast('二维码库未加载，跳过找回码'); return; }
+  const url = location.origin + location.pathname + '?uid=' + encodeURIComponent(uid);
+  const box = document.createElement('div');
+  try{ new QRCode(box,{text:url,width:200,height:200,colorDark:'#2a2230',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
+  catch(e){ return; }
+  // QRCode 渲染完内部是 <canvas>（或 <img>）；直接合成带标题的 PNG，不依赖 html2canvas
+  setTimeout(()=>{
+    const W=240, H=284, c=document.createElement('canvas'); c.width=W; c.height=H;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#7a6a73'; ctx.font='14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('扫码找回数据', W/2, 24);
+    const src = box.querySelector('canvas') || box.querySelector('img');
+    if(src){ try{ ctx.drawImage(src, 20, 36, 200, 200); }catch(e){} }
+    const link=document.createElement('a');
+    link.download='找回数据二维码.png';
+    link.href=c.toDataURL('image/png');
+    link.click();
+    toast('已同时下载找回二维码 💗');
+  }, 80);
+}
+function copyPrompt(){
+  const r = currentResult || compute();
+  const text = buildPrompt(r);
+  // 开场白已常驻展示在 prompt-text 里（prompt-box 内嵌「复制」小按钮）
+  const ok = ()=>toast('开场白已复制，去粘贴给别的 AI 吧 📋');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok).catch(()=>fallbackCopy(text,ok));
+  }else fallbackCopy(text,ok);
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; ta.style.top='0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try{ document.execCommand('copy'); cb(); }
+  catch(e){ toast('复制失败，可长按上方文字手动复制'); }
+  document.body.removeChild(ta);
+}
+
+/* ============ 保存图片 ============ */
+function ensureH2C(){
+  // html2canvas 已随页面本地加载（assets/html2canvas.min.js，defer），无需联网
+  return window.html2canvas ? Promise.resolve() : Promise.reject(new Error('html2canvas 未加载'));
+}
+function saveImage(){
+  toast('正在生成图片…');
+  // 截图前临时隐藏「未保存警示」（找回二维码已改到「下载数据」里，截图保持干净）
+  const warn = document.getElementById('sec-savewarn');
+  const warnDisp = warn ? warn.style.display : '';
+  if(warn) warn.style.display = 'none';
+  const card = document.getElementById('report-card');
+  ensureH2C().then(()=> html2canvas(card,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}))
+  .then(canvas=>{
+    if(warn) warn.style.display = warnDisp;
+    const link=document.createElement('a');
+    link.download='我的性别角色报告.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    toast('已保存，去发小红书吧 💗');
+  }).catch(()=>{
+    if(warn) warn.style.display = warnDisp;
+    toast('图片生成失败，可直接截图保存哦');
+  });
+}
+
+/* ============ 数据找回：?uid= 恢复页 ============ */
+const TYPE_CN={androgynous:'双性化',masculine:'男性化',feminine:'女性化',undifferentiated:'未分化'};
+async function recoverData(uid){
+  currentRecUid = uid;
+  show('recover');
+  const status=document.getElementById('rec-status');
+  const summary=document.getElementById('rec-summary');
+  if(!status) return;
+  status.textContent='正在取回…';
+  try{
+    const resp=await fetch(API_BASE+'/api/mine',{headers:{'x-cris-uid':uid},cache:'no-store'});
+    if(!resp.ok){ status.textContent='未找到该记录（可能已删除，或提取码有误）。'; if(summary) summary.textContent='—'; return; }
+    const rec=await resp.json();
+    status.textContent='已取回 ✅ 这是凭提取码找回的你的作答。';
+    const when=rec.createdAt? new Date(rec.createdAt).toLocaleString('zh-CN'):'';
+    if(summary) summary.innerHTML='类型：<b>'+(TYPE_CN[rec.type]||rec.type)+'</b>　男性化 '+Number(rec.m).toFixed(2)+'　女性化 '+Number(rec.f).toFixed(2)+'<br>提交时间：'+when;
+  }catch(e){ status.textContent='网络异常，取回失败，请稍后重试。'; }
+}
+/* 启动：读取 URL 参数（平台来源 ?src= / 数据找回 ?uid=） */
+(function initFromURL(){
+  try{
+    const p=new URLSearchParams(location.search);
+    const src=(p.get('src')||'direct').toString().slice(0,16);
+    currentSource = /^[A-Za-z0-9_-]+$/.test(src) ? src : 'direct';
+    const uid=p.get('uid');
+    if(uid && /^[A-Za-z0-9_-]{8,64}$/.test(uid)){ recoverData(uid); }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
