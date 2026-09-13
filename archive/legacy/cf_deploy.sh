@@ -4,10 +4,10 @@
 # 说明：群体数据改用 D1（一行一个 respondent），不再用单 KV key 做 read-modify-write；
 #       Worker 会按 answers 后端自算 M/F/type、校验输入、并按 uid 去重。
 set -e
-PY="${PYTHON_BIN:-python3}"
+PY="${PYTHON_BIN:-python3}"   # 可移植：默认 python3，需要时用 PYTHON_BIN 覆盖
 TOKEN="${CLOUDFLARE_API_TOKEN:?请提供 CLOUDFLARE_API_TOKEN 环境变量（不要硬编码进文件）}"
 ACCT="ae27d2977eacb9430d01773a28d42c93"
-SCRIPT="polished-moon-b698"
+SCRIPT="polished-moon-b698"          # 你已建的 Worker 名
 DB_NAME="cris"
 API="https://api.cloudflare.com/client/v4"
 AUTH="Authorization: Bearer $TOKEN"
