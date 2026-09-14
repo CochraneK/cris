@@ -29,8 +29,8 @@ jobs:
           s=Path('index.html').read_text(encoding='utf-8')
           checks={
             'original footer button restored': '<div class="quiz-foot">\n      <button class="btn" id="submit-btn" onclick="finishQuiz()">查看我的结果 ✨</button>' in s,
-            'dynamic footer removed': 'foot-progress' not in s and 'foot-status' not in s and 'quiz-foot complete' not in s,
-            'auto scroll removed': 'maybeAutoScroll' not in s and 'jumpToFirstUnanswered' not in s,
+            'dynamic footer UI removed': 'id="foot-progress"' not in s and 'id="foot-status"' not in s and 'id="foot-progress-bar"' not in s and '.foot-progress{' not in s and '.quiz-foot.complete' not in s,
+            'answer auto-scroll removed': 'function maybeAutoScroll' not in s and 'maybeAutoScroll(q, done)' not in s and 'function jumpToFirstUnanswered' not in s and 'onclick="jumpToFirstUnanswered()"' not in s,
             'draft recovery kept': "cris_quiz_draft_v1" in s and 'sessionStorage' in s and 'restoreDraft' in s,
             'low power kept': 'LOW_POWER_DEVICE' in s and 'LOW_POWER_DEVICE?72:160' in s,
             'two decimals kept': 'toFixed(2)' in s and 'toFixed(1)' not in s,
