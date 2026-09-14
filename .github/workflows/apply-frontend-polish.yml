@@ -42,7 +42,11 @@ jobs:
           bad=[k for k,v in checks.items() if not v]
           print(checks)
           if bad: raise SystemExit('failed: '+', '.join(bad))
+          start=s.rfind('<script>')+len('<script>')
+          end=s.rfind('</script>')
+          Path('/tmp/cris-inline.js').write_text(s[start:end], encoding='utf-8')
           PY
+          node --check /tmp/cris-inline.js
           git diff --check
       - name: Commit generated frontend
         run: |
