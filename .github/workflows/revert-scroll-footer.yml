@@ -1,0 +1,59 @@
+name: Revert quiz scroll and footer
+
+on:
+  push:
+    branches:
+      - revert-scroll-footer
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: revert-scroll-footer
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply rollback
+        run: python scripts/revert_scroll_footer.py
+      - name: Validate targeted rollback
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          checks={
+            'original footer button restored': '<div class="quiz-foot">\n      <button class="btn" id="submit-btn" onclick="finishQuiz()">查看我的结果 ✨</button>' in s,
+            'dynamic footer removed': 'foot-progress' not in s and 'foot-status' not in s and 'quiz-foot complete' not in s,
+            'auto scroll removed': 'maybeAutoScroll' not in s and 'jumpToFirstUnanswered' not in s,
+            'draft recovery kept': "cris_quiz_draft_v1" in s and 'sessionStorage' in s and 'restoreDraft' in s,
+            'low power kept': 'LOW_POWER_DEVICE' in s and 'LOW_POWER_DEVICE?72:160' in s,
+            'two decimals kept': 'toFixed(2)' in s and 'toFixed(1)' not in s,
+            'Q1 easter egg kept': 'autoAnswerAndSubmit' in s and 'num.jump' in s,
+            'milestones kept': 'done===17' in s and 'done===33' in s,
+          }
+          bad=[k for k,v in checks.items() if not v]
+          print(checks)
+          if bad: raise SystemExit('failed: '+', '.join(bad))
+          start=s.rfind('<script>')+len('<script>')
+          end=s.rfind('</script>')
+          Path('/tmp/cris-inline.js').write_text(s[start:end], encoding='utf-8')
+          PY
+          node --check /tmp/cris-inline.js
+          git diff --check
+      - name: Commit rollback
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'No index changes to commit'
+          else
+            git commit -m "fix: restore original quiz footer and manual scrolling"
+            git push origin HEAD:revert-scroll-footer
+          fi
