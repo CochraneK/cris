@@ -90,19 +90,11 @@
   .quiz-foot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
     padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#fff 70%,rgba(255,255,255,0));z-index:6;}
   .quiz-foot .btn{padding:14px;font-size:16px;}
-  .foot-progress{background:#fff;border:1px solid #f3dce7;border-radius:16px;padding:11px 13px 12px;box-shadow:0 8px 20px rgba(255,94,138,.16);cursor:pointer;}
-  .foot-progress-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700;color:#6f5e68;margin-bottom:7px;}
-  .foot-progress-row span:last-child{color:var(--pink);}
-  .foot-progress-track{height:8px;background:#f4e8ee;border-radius:999px;overflow:hidden;}
-  .foot-progress-track>i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ff8fab,#ff5e8a,#b388ff);transition:width .28s ease;}
-  #submit-btn{display:none;}
-  .quiz-foot.complete .foot-progress{display:none;}
-  .quiz-foot.complete #submit-btn{display:block;}
   .low-power .blob{animation:none;filter:blur(32px);}
   @media (prefers-reduced-motion: reduce){
     .blob{animation:none!important;}
     .screen{animation:none!important;}
-    .progress>i,.foot-progress-track>i,.opt,.btn{transition:none!important;}
+    .progress>i,.opt,.btn{transition:none!important;}
   }
 
   /* ===== 报告 ===== */
@@ -293,11 +285,7 @@
       <p class="q-hint">请为下面每句话与自己的符合程度打分（1 = 很不符合，7 = 很符合）。</p>
     </div>
     <div class="q-list" id="q-list"></div>
-    <div class="quiz-foot" id="quiz-foot">
-      <div class="foot-progress" id="foot-progress" onclick="jumpToFirstUnanswered()" role="button" tabindex="0" title="点这里跳到下一道未答题">
-        <div class="foot-progress-row"><span id="foot-status">已完成 0 / 50</span><span id="foot-pct">0%</span></div>
-        <div class="foot-progress-track"><i id="foot-progress-bar"></i></div>
-      </div>
+    <div class="quiz-foot">
       <button class="btn" id="submit-btn" onclick="finishQuiz()">查看我的结果 ✨</button>
     </div>
   </section>
@@ -502,29 +490,6 @@ function restoreDraft(){
     return {done};
   }catch(e){ return null; }
 }
-function jumpToFirstUnanswered(){
-  const first = answers.findIndex(a=>a===0);
-  if(first < 0) return;
-  const card = document.querySelectorAll('.q-card')[first];
-  if(card) card.scrollIntoView({behavior:PREFERS_REDUCED_MOTION?'auto':'smooth',block:'center'});
-}
-function maybeAutoScroll(q, done){
-  if(PREFERS_REDUCED_MOTION || done >= 50) return;
-  let next = answers.findIndex((a,i)=>i>q && a===0);
-  if(next < 0) next = answers.findIndex(a=>a===0);
-  if(next < 0) return;
-  setTimeout(()=>{
-    const card = document.querySelectorAll('.q-card')[next];
-    if(!card) return;
-    const rect = card.getBoundingClientRect();
-    const foot = document.getElementById('quiz-foot');
-    const safeBottom = window.innerHeight - (foot ? foot.offsetHeight : 84);
-    // 下一题已经在舒适阅读区就不抢滚动；只有偏低/被底栏挡住时才轻推。
-    if(rect.top > window.innerHeight*0.60 || rect.bottom > safeBottom + 36){
-      card.scrollIntoView({behavior:LOW_POWER_DEVICE?'auto':'smooth',block:'center'});
-    }
-  }, LOW_POWER_DEVICE ? 50 : 110);
-}
 
 /* ============ 渲染答题 ============ */
 function renderQuiz(){
@@ -546,14 +511,12 @@ function renderQuiz(){
   box.querySelectorAll('.opt').forEach(el=>{
     el.addEventListener('click',()=>{
       const q = +el.dataset.q, v = +el.dataset.v;
-      const wasAnswered = answers[q] > 0;
       answers[q] = v;
       const siblings = box.querySelectorAll(`.opt[data-q="${q}"]`);
       siblings.forEach(s=>s.classList.remove('on'));
       el.classList.add('on');
       saveDraft();
-      const done = updateProgress();
-      if(!wasAnswered) maybeAutoScroll(q, done);
+      updateProgress();
     });
   });
   // 隐藏入口：点第 1 题的序号「1」自动作答一份示例数据（不落库，仅本地演示）
@@ -567,12 +530,6 @@ function updateProgress(opts){
   const pct = done/50*100;
   document.getElementById('prog-text').textContent = done + ' / 50';
   document.getElementById('prog-bar').style.width = pct+'%';
-  const fs=document.getElementById('foot-status'), fp=document.getElementById('foot-pct'), fb=document.getElementById('foot-progress-bar');
-  if(fs) fs.textContent = `已完成 ${done} / 50`;
-  if(fp) fp.textContent = Math.round(pct) + '%';
-  if(fb) fb.style.width = pct + '%';
-  const foot=document.getElementById('quiz-foot');
-  if(foot) foot.classList.toggle('complete', done===50);
   const silent = !!(opts && opts.silent);
   if(!silent && done===17 && !_milestoneShown[17]){
     _milestoneShown[17]=true;
