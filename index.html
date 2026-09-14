@@ -90,6 +90,20 @@
   .quiz-foot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
     padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#fff 70%,rgba(255,255,255,0));z-index:6;}
   .quiz-foot .btn{padding:14px;font-size:16px;}
+  .foot-progress{background:#fff;border:1px solid #f3dce7;border-radius:16px;padding:11px 13px 12px;box-shadow:0 8px 20px rgba(255,94,138,.16);cursor:pointer;}
+  .foot-progress-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700;color:#6f5e68;margin-bottom:7px;}
+  .foot-progress-row span:last-child{color:var(--pink);}
+  .foot-progress-track{height:8px;background:#f4e8ee;border-radius:999px;overflow:hidden;}
+  .foot-progress-track>i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ff8fab,#ff5e8a,#b388ff);transition:width .28s ease;}
+  #submit-btn{display:none;}
+  .quiz-foot.complete .foot-progress{display:none;}
+  .quiz-foot.complete #submit-btn{display:block;}
+  .low-power .blob{animation:none;filter:blur(32px);}
+  @media (prefers-reduced-motion: reduce){
+    .blob{animation:none!important;}
+    .screen{animation:none!important;}
+    .progress>i,.foot-progress-track>i,.opt,.btn{transition:none!important;}
+  }
 
   /* ===== 报告 ===== */
   .result{padding:0 0 40px;position:relative;z-index:1;}
@@ -279,7 +293,11 @@
       <p class="q-hint">请为下面每句话与自己的符合程度打分（1 = 很不符合，7 = 很符合）。</p>
     </div>
     <div class="q-list" id="q-list"></div>
-    <div class="quiz-foot">
+    <div class="quiz-foot" id="quiz-foot">
+      <div class="foot-progress" id="foot-progress" onclick="jumpToFirstUnanswered()" role="button" tabindex="0" title="点这里跳到下一道未答题">
+        <div class="foot-progress-row"><span id="foot-status">已完成 0 / 50</span><span id="foot-pct">0%</span></div>
+        <div class="foot-progress-track"><i id="foot-progress-bar"></i></div>
+      </div>
       <button class="btn" id="submit-btn" onclick="finishQuiz()">查看我的结果 ✨</button>
     </div>
   </section>
@@ -452,6 +470,62 @@ const SCALE = ["很不符合","基本不是","比较不符合","说不清","较�
 const answers = new Array(50).fill(0);
 let _milestoneShown = {17:false, 33:false}; // 1/3、2/3 鼓励提示只弹一次（50 题下的约数）
 
+const DRAFT_KEY = 'cris_quiz_draft_v1';
+const PREFERS_REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+const LOW_POWER_DEVICE = ((navigator.hardwareConcurrency || 8) <= 4) || ((navigator.deviceMemory || 8) <= 4);
+if(LOW_POWER_DEVICE) document.documentElement.classList.add('low-power');
+
+function saveDraft(){
+  try{
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+      answers: answers.slice(),
+      gender: currentGender || '',
+      savedAt: Date.now()
+    }));
+  }catch(e){}
+}
+function clearDraft(){ try{ sessionStorage.removeItem(DRAFT_KEY); }catch(e){} }
+function restoreDraft(){
+  try{
+    const raw = sessionStorage.getItem(DRAFT_KEY);
+    if(!raw) return null;
+    const d = JSON.parse(raw);
+    if(!d || !Array.isArray(d.answers) || d.answers.length !== 50) return null;
+    const vals = d.answers.map(Number);
+    if(!vals.every(v=>Number.isInteger(v) && v>=0 && v<=7)) return null;
+    const done = vals.filter(v=>v>0).length;
+    if(done >= 50){ clearDraft(); return null; }
+    vals.forEach((v,i)=>answers[i]=v);
+    if(d.gender === 'male' || d.gender === 'female') currentGender = d.gender;
+    _milestoneShown[17] = done >= 17;
+    _milestoneShown[33] = done >= 33;
+    return {done};
+  }catch(e){ return null; }
+}
+function jumpToFirstUnanswered(){
+  const first = answers.findIndex(a=>a===0);
+  if(first < 0) return;
+  const card = document.querySelectorAll('.q-card')[first];
+  if(card) card.scrollIntoView({behavior:PREFERS_REDUCED_MOTION?'auto':'smooth',block:'center'});
+}
+function maybeAutoScroll(q, done){
+  if(PREFERS_REDUCED_MOTION || done >= 50) return;
+  let next = answers.findIndex((a,i)=>i>q && a===0);
+  if(next < 0) next = answers.findIndex(a=>a===0);
+  if(next < 0) return;
+  setTimeout(()=>{
+    const card = document.querySelectorAll('.q-card')[next];
+    if(!card) return;
+    const rect = card.getBoundingClientRect();
+    const foot = document.getElementById('quiz-foot');
+    const safeBottom = window.innerHeight - (foot ? foot.offsetHeight : 84);
+    // 下一题已经在舒适阅读区就不抢滚动；只有偏低/被底栏挡住时才轻推。
+    if(rect.top > window.innerHeight*0.60 || rect.bottom > safeBottom + 36){
+      card.scrollIntoView({behavior:LOW_POWER_DEVICE?'auto':'smooth',block:'center'});
+    }
+  }, LOW_POWER_DEVICE ? 50 : 110);
+}
+
 /* ============ 渲染答题 ============ */
 function renderQuiz(){
   const box = document.getElementById('q-list');
@@ -461,7 +535,7 @@ function renderQuiz(){
     card.className = 'q-card';
     let opts = '';
     for(let v=1;v<=7;v++){
-      opts += `<div class="opt" data-q="${idx}" data-v="${v}">${v}</div>`;
+      opts += `<div class="opt${answers[idx]===v?' on':''}" data-q="${idx}" data-v="${v}">${v}</div>`;
     }
     card.innerHTML = `
       <div class="q-top"><span class="num${idx===0?' jump':''}"${idx===0?' title="悄悄点一下，自动作答并生成一份示例数据"':''}>${idx+1}</span><span class="word">${q.word}</span></div>
@@ -472,11 +546,14 @@ function renderQuiz(){
   box.querySelectorAll('.opt').forEach(el=>{
     el.addEventListener('click',()=>{
       const q = +el.dataset.q, v = +el.dataset.v;
+      const wasAnswered = answers[q] > 0;
       answers[q] = v;
       const siblings = box.querySelectorAll(`.opt[data-q="${q}"]`);
       siblings.forEach(s=>s.classList.remove('on'));
       el.classList.add('on');
-      updateProgress();
+      saveDraft();
+      const done = updateProgress();
+      if(!wasAnswered) maybeAutoScroll(q, done);
     });
   });
   // 隐藏入口：点第 1 题的序号「1」自动作答一份示例数据（不落库，仅本地演示）
@@ -485,18 +562,29 @@ function renderQuiz(){
 }
 
 /* 鼓励特效：累计填完 17 题（≈1/3）、33 题（≈2/3）时各弹一次（50 题下的约数） */
-function updateProgress(){
+function updateProgress(opts){
   const done = answers.filter(a=>a>0).length;
+  const pct = done/50*100;
   document.getElementById('prog-text').textContent = done + ' / 50';
-  document.getElementById('prog-bar').style.width = (done/50*100)+'%';
-  if(done===17 && !_milestoneShown[17]){
+  document.getElementById('prog-bar').style.width = pct+'%';
+  const fs=document.getElementById('foot-status'), fp=document.getElementById('foot-pct'), fb=document.getElementById('foot-progress-bar');
+  if(fs) fs.textContent = `已完成 ${done} / 50`;
+  if(fp) fp.textContent = Math.round(pct) + '%';
+  if(fb) fb.style.width = pct + '%';
+  const foot=document.getElementById('quiz-foot');
+  if(foot) foot.classList.toggle('complete', done===50);
+  const silent = !!(opts && opts.silent);
+  if(!silent && done===17 && !_milestoneShown[17]){
     _milestoneShown[17]=true;
-    cheer('已完成 1/3 啦 🌟\n慢慢来，你愿意花时间看看自己，就很了不起');
+    cheer('已完成 1/3 啦 🌟
+慢慢来，你愿意花时间看看自己，就很了不起');
   }
-  if(done===33 && !_milestoneShown[33]){
+  if(!silent && done===33 && !_milestoneShown[33]){
     _milestoneShown[33]=true;
-    cheer('完成 2/3 了 💪\n再坚持一下，你离「看清自己」更近一步');
+    cheer('完成 2/3 了 💪
+再坚持一下，你离「看清自己」更近一步');
   }
+  return done;
 }
 
 /* ============ 计分 & 分类（分界 = CSRI-50 常模中位数：男性化 4.8 / 女性化 5.0） ============ */
@@ -620,8 +708,8 @@ function renderReport(r){
   /* 分数条 */
   const mPct = Math.min(100, r.mScore/7*100);
   const fPct = Math.min(100, r.fScore/7*100);
-  document.getElementById('val-m').innerHTML = r.mScore.toFixed(1) + '<span class="unit"> / 7</span>';
-  document.getElementById('val-f').innerHTML = r.fScore.toFixed(1) + '<span class="unit"> / 7</span>';
+  document.getElementById('val-m').innerHTML = r.mScore.toFixed(2) + '<span class="unit"> / 7</span>';
+  document.getElementById('val-f').innerHTML = r.fScore.toFixed(2) + '<span class="unit"> / 7</span>';
   requestAnimationFrame(()=>{
     document.getElementById('bar-m').style.width = mPct+'%';
     document.getElementById('bar-f').style.width = fPct+'%';
@@ -643,9 +731,10 @@ function startQuiz(){
     return;
   }
   renderQuiz(); updateProgress();
+  saveDraft();
   show('quiz');
 }
-function pickGender(g){
+function pickGender(g, skipSave){
   currentGender = g;
   document.querySelectorAll('.gp').forEach(b=>{
     const on = b.dataset.g===g;
@@ -653,6 +742,7 @@ function pickGender(g){
     b.classList.toggle('male', on && g==='male');
     b.classList.toggle('female', on && g==='female');
   });
+  if(!skipSave) saveDraft();
 }
 /* 隐藏入口：点第 1 题序号「1」——自动作答一份随机但合理的问卷，生成示例报告（不落库）。 */
 function autoAnswerAndSubmit(){
@@ -725,6 +815,7 @@ function finishQuiz(){
   const r = compute();
   ensureUid();              // 生成/取回本机匿名码（仅作后端主键去重用，不展示）
   renderReport(r);
+  clearDraft();
   show('result');
   submitAndLoadPoints(r);
 }
@@ -732,6 +823,7 @@ function restart(){
   answers.fill(0);
   pickGender(null);            // 清空性别选择（含 UI 高亮），避免污染下次重测
   _milestoneShown = {17:false, 33:false};   // 重置鼓励提示，重测可再次触发 1/3、2/3 喝彩
+  clearDraft();
   show('cover');
 }
 function toast(msg){
@@ -742,11 +834,11 @@ function toast(msg){
 
 /* ============ 动态居中鼓励弹层 + 撒花 ============ */
 function launchConfetti(){
-  const c=document.getElementById('confetti'); if(!c) return;
+  const c=document.getElementById('confetti'); if(!c || PREFERS_REDUCED_MOTION) return;
   const ctx=c.getContext('2d');
   const W=c.width=window.innerWidth, H=c.height=window.innerHeight;
   const colors=['#ff5e8a','#3f7fe0','#b388ff','#ffd166','#06d6a0','#ff8fab'];
-  const N=160, parts=[];
+  const N=LOW_POWER_DEVICE?72:160, maxMs=LOW_POWER_DEVICE?1800:2800, parts=[];
   for(let i=0;i<N;i++){
     parts.push({x:Math.random()*W, y:-20-Math.random()*H*0.4,
       vx:(Math.random()-0.5)*5, vy:2+Math.random()*4.5,
@@ -756,6 +848,7 @@ function launchConfetti(){
   const t0=performance.now();
   (function frame(t){
     ctx.clearRect(0,0,W,H);
+    if(document.hidden) return;
     let alive=false;
     for(const p of parts){
       p.x+=p.vx; p.y+=p.vy; p.vy+=0.045; p.rot+=p.vr;
@@ -768,7 +861,7 @@ function launchConfetti(){
         ctx.restore();
       }
     }
-    if(alive && t-t0<2800) requestAnimationFrame(frame);
+    if(alive && t-t0<maxMs) requestAnimationFrame(frame);
     else ctx.clearRect(0,0,W,H);
   })(t0);
 }
@@ -982,7 +1075,7 @@ function buildPrompt(r){
   const rep = REPORT[r.type];
   const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
   return `我刚做完一份「中国大学生性别角色量表（CSRI-50）」小测验。
-我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(1)}/7，女性化特质 ${r.fScore.toFixed(1)}/7；在本站男性化 4.8 / 女性化 5.0 常模分界下归为「${rep.title}」。
+我的性别：${g}；得分：男性化特质 ${r.mScore.toFixed(2)}/7，女性化特质 ${r.fScore.toFixed(2)}/7；在本站男性化 4.8 / 女性化 5.0 常模分界下归为「${rep.title}」。
 附件 JSON 是我 50 道题的具体作答（含每题类别 M/F/中性 与我的打分）。
 请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊：
 1）这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战；
@@ -993,7 +1086,7 @@ function buildPrompt(r){
 function buildPromptHTML(r){
   const rep = REPORT[r.type];
   const g = currentGender==='male' ? '男生' : currentGender==='female' ? '女生' : '未填写';
-  const m = r.mScore.toFixed(1), f = r.fScore.toFixed(1);
+  const m = r.mScore.toFixed(2), f = r.fScore.toFixed(2);
   return `我刚做完一份「中国大学生性别角色量表（CSRI-50）」小测验。 我的性别：<b class="pp-gender">${g}</b>；得分：<span class="pp-masc">男性化特质 ${m}/7</span>，<span class="pp-fem">女性化特质 ${f}/7</span>；在本站男性化 4.8 / 女性化 5.0 常模分界下归为「<span class="pp-type">${rep.title}</span>」。 附件 JSON 是我 50 道题的具体作答（含每题类别 M/F/中性 与我的打分）。 请基于这份真实数据，像一位温和、懂心理学的朋友那样，具体而不套模板地和我聊： <span class="pp-num">1）</span>这样的性别角色特质，在亲密关系里可能带来哪些优势与挑战； <span class="pp-num">2）</span>在团队合作和职业选择里，我更适合扮演什么角色； <span class="pp-num">3）</span>有哪些被我忽略、但其实很珍贵的特质。 谢谢，请多结合我的具体作答来谈。`;
 }
 async function downloadData(uidArg){
@@ -1115,9 +1208,18 @@ async function recoverData(uid){
     const src=(p.get('src')||'direct').toString().slice(0,16);
     currentSource = /^[A-Za-z0-9_-]+$/.test(src) ? src : 'direct';
     const uid=p.get('uid');
-    if(uid && /^[A-Za-z0-9_-]{8,64}$/.test(uid)){ recoverData(uid); }
+    if(uid && /^[A-Za-z0-9_-]{8,64}$/.test(uid)){ recoverData(uid); return; }
+    const restored = restoreDraft();
+    if(restored && currentGender) pickGender(currentGender, true);
+    if(restored && restored.done>0){
+      renderQuiz(); updateProgress({silent:true}); show('quiz');
+      setTimeout(()=>toast(`已恢复上次进度 · ${restored.done} / 50 ✨`), 120);
+    }
   }catch(e){}
 })();
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target && e.target.id==='foot-progress'){ e.preventDefault(); jumpToFirstUnanswered(); }
+});
 </script>
 </body>
 </html>
