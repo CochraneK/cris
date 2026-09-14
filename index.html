@@ -576,13 +576,11 @@ function updateProgress(opts){
   const silent = !!(opts && opts.silent);
   if(!silent && done===17 && !_milestoneShown[17]){
     _milestoneShown[17]=true;
-    cheer('已完成 1/3 啦 🌟
-慢慢来，你愿意花时间看看自己，就很了不起');
+    cheer('已完成 1/3 啦 🌟\n慢慢来，你愿意花时间看看自己，就很了不起');
   }
   if(!silent && done===33 && !_milestoneShown[33]){
     _milestoneShown[33]=true;
-    cheer('完成 2/3 了 💪
-再坚持一下，你离「看清自己」更近一步');
+    cheer('完成 2/3 了 💪\n再坚持一下，你离「看清自己」更近一步');
   }
   return done;
 }
