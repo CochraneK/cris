@@ -1,4 +1,23 @@
-# 性别角色探索测验（CRIS · CSRI-50 中文版）
+<div align="center">
+
+# CRIS · 性别角色探索测验
+
+**移动优先的双维度自我探索网页与四象限可视化。**
+
+<p>
+  <img alt="Scale" src="https://img.shields.io/badge/items-50-6C63FF">
+  <img alt="Dimensions" src="https://img.shields.io/badge/dimensions-2-2F80ED">
+  <img alt="UI" src="https://img.shields.io/badge/design-mobile--first-27AE60">
+  <img alt="Purpose" src="https://img.shields.io/badge/purpose-self--exploration-F2994A">
+</p>
+
+[**在线体验**](https://cochranek.github.io/cris/)
+
+</div>
+
+> [!NOTE]
+> 本项目适合自我探索与研究原型展示，不应把单次网页结果用于临床诊断、人格定性或对个体作高风险决策。
+
 
 > 一个**移动优先**的性别角色自我探索网页：基于中国大学生性别角色量表（CSRI-50），在「男性化 / 女性化」两个独立维度上看见自己的交织方式，并在**四象限落点图**上找到自己的位置、看见其他真实填写者的分布。
 
