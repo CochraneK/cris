@@ -751,9 +751,12 @@ async function loadCommunityPoints(me){
       : `真实数据收集中～你是较早填写的人之一，来当第 1 位吧 🌟`;
     renderScatter(realPoints, me || null);
   }catch(e){
-    // 后端不可达：保留缓存（若有），否则提示
-    if(!cached.length){
-      document.getElementById('counter').textContent = '暂时连不上数据服务（网络问题）——先看看你自己的位置吧，稍后再试 ✨';
+    // 后端不可达：有缓存时明确标成旧缓存，避免一直显示“正在刷新…”
+    if(cached.length){
+      document.getElementById('counter').textContent = `显示本地缓存的 ${cached.length} 个位置 · 云端数据服务暂不可用`;
+      renderScatter(cached, me || null);
+    }else{
+      document.getElementById('counter').textContent = '云端数据服务暂不可用——先看看你自己的位置吧 ✨';
     }
   }
 }
