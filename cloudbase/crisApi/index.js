@@ -71,8 +71,18 @@ function corsHeaders(){
 function json(body, status = 200, extra = {}){
   return { statusCode: status, headers: Object.assign(corsHeaders(), extra), body: JSON.stringify(body) };
 }
+function privateJson(body, status = 200){
+  return json(body, status, {
+    'Cache-Control': 'no-store, private',
+    'Pragma': 'no-cache'
+  });
+}
 
 function backupIdForToken(token){
+  const hash = crypto.createHash('sha256').update(String(token), 'utf8').digest('hex');
+  return 'r_' + hash;
+}
+function responseIdForToken(token){
   const hash = crypto.createHash('sha256').update(String(token), 'utf8').digest('hex');
   return 'r_' + hash;
 }
@@ -90,13 +100,14 @@ async function listPoints(){
   // 1) 原始 responses：这是历史真实逐人落点的主数据源。
   while(true){
     const res = await db.collection(COLLECTION)
-      .field({ uid: true, m: true, f: true, gender: true, demo: true, source: true })
+      .field({ _id: true, uid: true, m: true, f: true, gender: true, demo: true, source: true })
       .skip(skip).limit(LIMIT).get();
     const list = res.data || [];
     for(const d of list){
       if(d.demo === true || d.source === 'test' || !validPoint(d)) continue;
       out.push({ m: Number(d.m), f: Number(d.f), gender: d.gender, source: d.source });
-      if(d.uid) seenBackupIds.add(backupIdForToken(d.uid));
+      if(d._id && /^r_[a-f0-9]{64}$/.test(String(d._id))) seenBackupIds.add(String(d._id));
+      else if(d.uid) seenBackupIds.add(backupIdForToken(d.uid));
     }
     if(list.length < LIMIT) break;
     skip += LIMIT;
@@ -163,9 +174,10 @@ exports.main = async (event, context) => {
         return json({ error: 'answers must be an array of exactly 50 integers in 1..7' }, 400);
       const { m, f, type } = computeScores(answers);
       const demo = body.demo === true;
-      const doc = { uid, gender, answers, m, f, type, createdAt: Date.now(), demo, source: String(body.source||'direct').slice(0,16) };
-      await db.collection(COLLECTION).doc(uid).set(doc);
-      return json({ uid, m, f, type, demo });
+      const doc = { gender, answers, m, f, type, createdAt: Date.now(), demo, source: String(body.source||'direct').slice(0,16), schemaVersion: 2 };
+      // 新记录只使用恢复凭证的 SHA-256 派生 ID，数据库不再保存明文 uid。
+      await db.collection(COLLECTION).doc(responseIdForToken(uid)).set(doc);
+      return privateJson({ uid, m, f, type, demo });
     }
 
     if(path.endsWith('/api/mine') && method === 'GET'){
@@ -173,17 +185,21 @@ exports.main = async (event, context) => {
       const uid = String(hdr['x-cris-uid'] || hdr['X-CRIS-UID'] || hdr['x-cris-token'] || hdr['X-CRIS-TOKEN'] || '').slice(0, 128);
       if(!uid) return json({ error: 'missing x-cris-uid' }, 400);
 
-      // 先按原版逻辑读取 responses。
-      const res = await db.collection(COLLECTION).doc(uid.slice(0,64)).get().catch(()=>({data:[]}));
-      const d = (res.data && res.data[0]) || null;
+      // 新版先按恢复凭证哈希读取；找不到时再兼容旧版以明文 uid 为文档 ID 的记录。
+      let res = await db.collection(COLLECTION).doc(responseIdForToken(uid)).get().catch(()=>({data:[]}));
+      let d = (res.data && res.data[0]) || null;
+      if(!d){
+        res = await db.collection(COLLECTION).doc(uid.slice(0,64)).get().catch(()=>({data:[]}));
+        d = (res.data && res.data[0]) || null;
+      }
       if(d){
-        return json({ uid: d.uid, gender: d.gender, answers: d.answers, m: d.m, f: d.f, type: d.type, createdAt: d.createdAt, source: d.source });
+        return privateJson({ gender: d.gender, answers: d.answers, m: d.m, f: d.f, type: d.type, createdAt: d.createdAt, source: d.source });
       }
 
       // 再兼容 v2 的哈希备份。
       const b = await getBackupByToken(uid);
-      if(!b) return json({ error: 'not found' }, 404);
-      return json({ uid, gender: b.gender, answers: b.answers, m: b.m, f: b.f, type: b.type, createdAt: b.createdAt, source: b.source, legacyV2: true });
+      if(!b) return privateJson({ error: 'not found' }, 404);
+      return privateJson({ gender: b.gender, answers: b.answers, m: b.m, f: b.f, type: b.type, createdAt: b.createdAt, source: b.source, legacyV2: true });
     }
 
     if(path.endsWith('/api/delete') && (method === 'POST' || method === 'DELETE')){
@@ -192,13 +208,15 @@ exports.main = async (event, context) => {
       const hdr = event.headers || {};
       const uid = String(b.uid || hdr['x-cris-uid'] || hdr['X-CRIS-UID'] || hdr['x-cris-token'] || hdr['X-CRIS-TOKEN'] || '').slice(0, 128);
       if(!uid) return json({ error: 'missing uid' }, 400);
-      await db.collection(COLLECTION).doc(uid.slice(0,64)).remove().catch(()=>{});
+      await db.collection(COLLECTION).doc(responseIdForToken(uid)).remove().catch(()=>{});
+      await db.collection(COLLECTION).doc(uid.slice(0,64)).remove().catch(()=>{}); // 兼容旧版明文 uid 文档
       await db.collection(BACKUP_COLLECTION).doc(backupIdForToken(uid)).remove().catch(()=>{});
-      return json({ ok: true });
+      return privateJson({ ok: true });
     }
 
     return json({ error: 'not found' }, 404);
   }catch(e){
-    return json({ error: String((e && e.message) || e) }, 500);
+    console.error('crisApi error', { message: e && e.message, stack: e && e.stack });
+    return json({ error: 'internal server error' }, 500);
   }
 };
