@@ -14,7 +14,7 @@
 
 ### 1. 建数据库集合
 - 环境 → **数据库** → 新建集合 `responses`。
-- 权限：选「**仅管理端可写，所有人可读**」（云函数以管理员身份写入；前端只读全体落点，已由接口控制）。
+- 权限：选「**仅管理员可读写**」。浏览器不应直接读取数据库；所有公开访问都经 `crisApi` 云函数过滤。
 
 ### 2. 部署云函数
 **方式 A（CLI，推荐）**
@@ -35,6 +35,7 @@ ENV_ID=你的环境ID bash deploy_cloudbase.sh
   （`<APP_ID>` 是腾讯云账号 appid，**必须带**，否则域名 404；以控制台「访问服务 / 网关」显示的**完整**域名为准）
 - 或者开启 **云接入**（环境 → 云接入 → 新建路由 `/crisApi` → 指向 `crisApi`），并在「跨域配置」白名单加入 `https://cochranek.github.io`。
 - ⚠️ 无论哪种，都必须允许来源 `https://cochranek.github.io`。云函数代码里 CORS 已写死该域名；若以后换前端域名，记得同步改 `index.js` 的 `ALLOWED_ORIGIN`。
+- ⚠️ **生产环境不要继续使用 CloudBase 默认 `*.app.tcloudbase.com` 测试域名。** 腾讯云目前明确说明默认域名有访问频率限制，可能触发风控；正式使用应在 HTTP 网关绑定已备案的自定义域名，然后把该正式 HTTPS 地址填入前端 `API_BASE`。
 
 ### 4. 填入前端地址
 - 打开 `index.html`，把第 727 行附近的
@@ -46,12 +47,12 @@ ENV_ID=你的环境ID bash deploy_cloudbase.sh
 
 ### 5. 验证
 - 浏览器直接访问 `https://<你的域名>/crisApi/api/points` 应返回 `{"points":[]}`。
-- 打开 `https://cochranek.github.io/cris/`，做一份测验（或点第 2 题「自动作答」），刷新后应看到落点出现在群体分布里。
+- 打开 `https://cochranek.github.io/cris/`，做一份测验（或点第 1 题题号进入本地演示），确认真实提交时能正常保存、群体落点能刷新；再点「下载数据」确认只有云端记录存在时才会同时生成恢复二维码。
 
 ## 接口
-- `GET  /api/points`：全体落点 `[{uid,m,f,gender}]`
-- `POST /api/submit`：body `{uid,gender,answers[50]}` → 服务端按 50 题重算 m/f/type、按 uid 主键去重，返回 `{uid,m,f,type}`
-- `GET  /api/mine`（头 `x-cris-uid`）：返回本人完整记录（含 answers）
+- `GET  /api/points`：全体落点 `[{m,f,gender,source}]`（不返回恢复凭证）
+- `POST /api/submit`：body `{uid,gender,answers[50]}` → 服务端按 50 题重算 m/f/type，并以恢复凭证的 SHA-256 派生 ID 保存；新记录不在数据库中保存明文 uid，返回 `{uid,m,f,type}`
+- `GET  /api/mine`（头 `x-cris-uid`）：按恢复凭证哈希定位并返回本人完整记录（含 answers）；响应为 `no-store, private`，同时兼容历史明文 uid 记录
 
 ## 费用
 - 免费版 / 基础版1 含一定云函数调用次数与 1 GB 云数据库存储，小型匿名测验足够；超量再考虑升级。
