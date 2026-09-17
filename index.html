@@ -499,7 +499,7 @@ function renderQuiz(){
     card.className = 'q-card';
     let opts = '';
     for(let v=1;v<=7;v++){
-      opts += `<div class="opt${answers[idx]===v?' on':''}" data-q="${idx}" data-v="${v}">${v}</div>`;
+      opts += `<button type="button" class="opt${answers[idx]===v?' on':''}" data-q="${idx}" data-v="${v}" aria-label="${q.word}：${v} 分" aria-pressed="${answers[idx]===v?'true':'false'}">${v}</button>`;
     }
     card.innerHTML = `
       <div class="q-top"><span class="num${idx===0?' jump':''}"${idx===0?' title="悄悄点一下，自动作答并生成一份示例数据"':''}>${idx+1}</span><span class="word">${q.word}</span></div>
@@ -512,8 +512,9 @@ function renderQuiz(){
       const q = +el.dataset.q, v = +el.dataset.v;
       answers[q] = v;
       const siblings = box.querySelectorAll(`.opt[data-q="${q}"]`);
-      siblings.forEach(s=>s.classList.remove('on'));
+      siblings.forEach(s=>{ s.classList.remove('on'); s.setAttribute('aria-pressed','false'); });
       el.classList.add('on');
+      el.setAttribute('aria-pressed','true');
       saveDraft();
       updateProgress();
     });
